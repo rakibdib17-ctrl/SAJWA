@@ -83,7 +83,16 @@ class MainActivity : Activity() {
         webView.webViewClient = WebViewClient()
         webView.webChromeClient = WebChromeClient()
         webView.setBackgroundColor(android.graphics.Color.rgb(246, 245, 239))
+        // Keep the WebView content below the status bar / punch-hole cutout
+        // and above the gesture/navigation bar on different Android devices.
+        webView.setOnApplyWindowInsetsListener { view, insets ->
+            val topInset = insets.systemWindowInsetTop
+            val bottomInset = insets.systemWindowInsetBottom
+            view.setPadding(0, topInset, 0, bottomInset)
+            insets
+        }
         setContentView(webView)
+        webView.requestApplyInsets()
         if (savedInstanceState == null) webView.loadUrl("file:///android_asset/index.html")
         else webView.restoreState(savedInstanceState)
     }
