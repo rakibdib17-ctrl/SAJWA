@@ -42,6 +42,7 @@ import java.util.TimeZone
 class MainActivity : Activity() {
     private lateinit var webView: WebView
     private lateinit var locationManager: LocationManager
+    private val locationExecutor = java.util.concurrent.Executors.newSingleThreadExecutor()
     private val locationPermissionCode = 4102
     private lateinit var sensorManager: SensorManager
     private var rotationSensor: Sensor? = null
@@ -232,49 +233,63 @@ class MainActivity : Activity() {
         }
     }
     private fun publishPrayerData(location: Location) {
-        try {
-            val country = try {
-                if (Build.VERSION.SDK_INT >= 33) {
-                    var code = "US"
-                    val latch = java.util.concurrent.CountDownLatch(1)
-                    Geocoder(this, Locale.getDefault()).getFromLocation(location.latitude, location.longitude, 1) { list ->
-                        if (list.isNotEmpty()) code = list[0].countryCode ?: code
-                        latch.countDown()
+        // Geocoding and prayer calculations run off the UI thread. The Android 13+
+        // Geocoder callback can be delivered on the main looper, so never wait for it
+        // while blocking the UI thread.
+        locationExecutor.execute {
+            try {
+                val country = try {
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        var code = Locale.getDefault().country.uppercase(Locale.US).ifBlank { "US" }
+                        val latch = java.util.concurrent.CountDownLatch(1)
+                        Geocoder(this, Locale.getDefault()).getFromLocation(location.latitude, location.longitude, 1) { list ->
+                            if (list.isNotEmpty()) code = list[0].countryCode ?: code
+                            latch.countDown()
+                        }
+                        latch.await(3, java.util.concurrent.TimeUnit.SECONDS)
+                        code
+                    } else {
+                        @Suppress("DEPRECATION")
+                        Geocoder(this, Locale.getDefault()).getFromLocation(location.latitude, location.longitude, 1)?.firstOrNull()?.countryCode
+                            ?: Locale.getDefault().country.uppercase(Locale.US).ifBlank { "US" }
                     }
-                    latch.await(3, java.util.concurrent.TimeUnit.SECONDS)
-                    code
-                } else {
-                    @Suppress("DEPRECATION")
-                    Geocoder(this, Locale.getDefault()).getFromLocation(location.latitude, location.longitude, 1)?.firstOrNull()?.countryCode ?: "US"
+                } catch (_: Exception) {
+                    Locale.getDefault().country.uppercase(Locale.US).ifBlank { "US" }
                 }
-            } catch (_: Exception) { "US" }
-            val method = when (country.uppercase(Locale.US)) {
-                "AE" -> CalculationMethod.DUBAI
-                "BD", "PK", "IN", "AF" -> CalculationMethod.KARACHI
-                "SA" -> CalculationMethod.UMM_AL_QURA
-                "SG", "MY", "ID" -> CalculationMethod.SINGAPORE
-                "EG" -> CalculationMethod.EGYPTIAN
-                else -> CalculationMethod.MUSLIM_WORLD_LEAGUE
+                val method = when (country.uppercase(Locale.US)) {
+                    "AE" -> CalculationMethod.DUBAI
+                    "BD", "PK", "IN", "AF" -> CalculationMethod.KARACHI
+                    "SA" -> CalculationMethod.UMM_AL_QURA
+                    "SG", "MY", "ID" -> CalculationMethod.SINGAPORE
+                    "EG" -> CalculationMethod.EGYPTIAN
+                    else -> CalculationMethod.MUSLIM_WORLD_LEAGUE
+                }
+                val params = method.getParameters()
+                params.madhab = if (country.uppercase(Locale.US) in listOf("BD", "PK", "IN", "AF")) Madhab.HANAFI else Madhab.SHAFI
+                val coords = Coordinates(location.latitude, location.longitude)
+                val prayers = PrayerTimes(coords, DateComponents.from(Date()), params)
+                val alarmScheduled = PrayerAlarmScheduler.schedule(this, coords, params, country)
+                qiblaBearing = Qibla(coords).direction
+                magneticDeclination = GeomagneticField(location.latitude.toFloat(), location.longitude.toFloat(), location.altitude.toFloat(), System.currentTimeMillis()).declination
+                if (compassRequested) runOnUiThread { registerCompassSensors() }
+                val fmt = SimpleDateFormat("h:mm a", Locale.getDefault()).apply { timeZone = TimeZone.getDefault() }
+                val times = JSONArray()
+                listOf("Fajr" to prayers.fajr, "Sunrise" to prayers.sunrise, "Dhuhr" to prayers.dhuhr, "Asr" to prayers.asr, "Maghrib" to prayers.maghrib, "Isha" to prayers.isha).forEach { (name, date) ->
+                    times.put(JSONObject().put("name", name).put("time", fmt.format(date)).put("timestamp", date.time))
+                }
+                val data = JSONObject().put("ok", true).put("country", country).put("latitude", location.latitude).put("longitude", location.longitude)
+                    .put("method", method.name).put("madhab", params.madhab.name).put("times", times)
+                    .put("qibla", Qibla(coords).direction).put("timezone", TimeZone.getDefault().id).put("alarmsScheduled", alarmScheduled)
+                runOnUiThread {
+                    if (Build.VERSION.SDK_INT >= 33 && ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 4103)
+                    }
+                    webView.evaluateJavascript("window.onSajwaPrayerData && window.onSajwaPrayerData(" + JSONObject.quote(data.toString()) + ")", null)
+                }
+            } catch (_: Exception) {
+                publishError("Prayer time calculation failed. Please try again.")
             }
-            val params = method.getParameters()
-            params.madhab = if (country.uppercase(Locale.US) in listOf("BD", "PK", "IN", "AF")) Madhab.HANAFI else Madhab.SHAFI
-            val coords = Coordinates(location.latitude, location.longitude)
-            val prayers = PrayerTimes(coords, DateComponents.from(Date()), params)
-            val alarmScheduled = PrayerAlarmScheduler.schedule(this, coords, params, country)
-            qiblaBearing = Qibla(coords).direction
-            magneticDeclination = GeomagneticField(location.latitude.toFloat(), location.longitude.toFloat(), location.altitude.toFloat(), System.currentTimeMillis()).declination
-            if (compassRequested) runOnUiThread { registerCompassSensors() }
-            val fmt = SimpleDateFormat("h:mm a", Locale.getDefault()).apply { timeZone = TimeZone.getDefault() }
-            val times = JSONArray()
-            listOf("Fajr" to prayers.fajr, "Sunrise" to prayers.sunrise, "Dhuhr" to prayers.dhuhr, "Asr" to prayers.asr, "Maghrib" to prayers.maghrib, "Isha" to prayers.isha).forEach { (name, date) ->
-                times.put(JSONObject().put("name", name).put("time", fmt.format(date)).put("timestamp", date.time))
-            }
-            val data = JSONObject().put("ok", true).put("country", country).put("latitude", location.latitude).put("longitude", location.longitude)
-                .put("method", method.name).put("madhab", params.madhab.name).put("times", times)
-                .put("qibla", Qibla(coords).direction).put("timezone", TimeZone.getDefault().id).put("alarmsScheduled", alarmScheduled)
-            if (Build.VERSION.SDK_INT >= 33 && ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) { ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 4103) }
-            runOnUiThread { webView.evaluateJavascript("window.onSajwaPrayerData && window.onSajwaPrayerData(" + JSONObject.quote(data.toString()) + ")", null) }
-        } catch (_: Exception) { publishError("Prayer time calculation failed. Please try again.") }
+        }
     }
 
     private fun publishError(message: String) {
@@ -292,6 +307,8 @@ class MainActivity : Activity() {
     override fun onResume() { super.onResume(); if (Build.VERSION.SDK_INT >= 31) { val alarms = getSystemService(ALARM_SERVICE) as AlarmManager; if (alarms.canScheduleExactAlarms()) PrayerAlarmScheduler.rescheduleFromSavedLocation(this) }; if (compassRequested && qiblaBearing != null) registerCompassSensors() }
 
     override fun onPause() { sensorManager.unregisterListener(compassListener); super.onPause() }
+
+    override fun onDestroy() { locationExecutor.shutdownNow(); super.onDestroy() }
 
     override fun onSaveInstanceState(outState: Bundle) {
         webView.saveState(outState)
