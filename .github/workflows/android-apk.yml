@@ -42,6 +42,16 @@ jobs:
           echo "Original duration: $duration seconds"
           echo "New duration: $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$input") seconds"
           test -s "$input"
+      - name: Validate embedded JavaScript syntax
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          source = Path("app/src/main/assets/index.html").read_text(encoding="utf-8")
+          start = source.index("<script>") + len("<script>")
+          end = source.rindex("</script>")
+          Path("/tmp/sajwa-inline.js").write_text(source[start:end], encoding="utf-8")
+          PY
+          node --check /tmp/sajwa-inline.js
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4
