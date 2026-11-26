@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.Context
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -13,6 +14,9 @@ import androidx.core.app.NotificationCompat
 class PrayerAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val prayer = intent.getStringExtra("prayer") ?: "Prayer"
+        val audioIntent = Intent(context, AdhanPlaybackService::class.java).putExtra("prayer", prayer)
+        try { if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(audioIntent) else context.startService(audioIntent) } catch (_: Exception) { }
+        PrayerAlarmScheduler.rescheduleFromSavedLocation(context)
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = "sajwa_prayer_alerts"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
