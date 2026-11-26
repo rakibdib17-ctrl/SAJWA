@@ -114,7 +114,7 @@ class MainActivity : Activity() {
             params.madhab = if (country.uppercase(Locale.US) in listOf("BD", "PK", "IN", "AF")) Madhab.HANAFI else Madhab.SHAFI
             val coords = Coordinates(location.latitude, location.longitude)
             val prayers = PrayerTimes(coords, DateComponents.from(Date()), params)
-            val alarmScheduled = PrayerAlarmScheduler.schedule(this, coords, params)
+            val alarmScheduled = PrayerAlarmScheduler.schedule(this, coords, params, country)
             val fmt = SimpleDateFormat("h:mm a", Locale.getDefault()).apply { timeZone = TimeZone.getDefault() }
             val times = JSONArray()
             listOf("Fajr" to prayers.fajr, "Sunrise" to prayers.sunrise, "Dhuhr" to prayers.dhuhr, "Asr" to prayers.asr, "Maghrib" to prayers.maghrib, "Isha" to prayers.isha).forEach { (name, date) ->
