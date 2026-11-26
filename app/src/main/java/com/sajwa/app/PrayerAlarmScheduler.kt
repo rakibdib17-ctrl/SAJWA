@@ -15,7 +15,7 @@ import java.util.Calendar
 
 object PrayerAlarmScheduler {
     private const val FIRST_REQUEST_CODE = 10
-    private const val LAST_REQUEST_CODE = 69
+    private const val LAST_REQUEST_CODE = 74
 
     fun schedule(context: Context, coordinates: Coordinates, parameters: CalculationParameters, country: String = "US"): Boolean {
         val prefs = context.getSharedPreferences("sajwa_prayer", Context.MODE_PRIVATE)
