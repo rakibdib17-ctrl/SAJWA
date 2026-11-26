@@ -61,6 +61,7 @@ class MainActivity : Activity() {
     private var qiblaAligned = false
     private val compassListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
+            try {
             val rotation = FloatArray(9)
             when (event.sensor.type) {
                 Sensor.TYPE_ROTATION_VECTOR -> SensorManager.getRotationMatrixFromVector(rotation, event.values)
@@ -107,6 +108,9 @@ class MainActivity : Activity() {
                 qiblaAligned = false
             }
             runOnUiThread { webView.evaluateJavascript("window.onSajwaCompass && window.onSajwaCompass($relative,$heading)", null) }
+            } catch (_: Exception) {
+                runOnUiThread { webView.evaluateJavascript("window.onSajwaCompassError && window.onSajwaCompassError('Compass sensor data is temporarily unavailable. Move the phone slowly and try again.')", null) }
+            }
         }
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
             if (accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
@@ -116,20 +120,24 @@ class MainActivity : Activity() {
     }
 
     private fun registerCompassSensors() {
-        val rotation = rotationSensor
-        if (rotation != null) {
-            sensorManager.registerListener(compassListener, rotation, SensorManager.SENSOR_DELAY_UI)
-            return
-        }
-        val accel = accelerometerSensor
-        val magnet = magnetometerSensor
-        if (accel != null && magnet != null) {
-            hasGravity = false
-            hasMagnetic = false
-            sensorManager.registerListener(compassListener, accel, SensorManager.SENSOR_DELAY_UI)
-            sensorManager.registerListener(compassListener, magnet, SensorManager.SENSOR_DELAY_UI)
-        } else {
-            webView.evaluateJavascript("window.onSajwaCompassError && window.onSajwaCompassError('This phone does not expose the sensors needed for a live compass.')", null)
+        try {
+            sensorManager.unregisterListener(compassListener)
+            val rotation = rotationSensor
+            if (rotation != null && sensorManager.registerListener(compassListener, rotation, SensorManager.SENSOR_DELAY_UI)) return
+            val accel = accelerometerSensor
+            val magnet = magnetometerSensor
+            if (accel != null && magnet != null) {
+                hasGravity = false
+                hasMagnetic = false
+                val accelOk = sensorManager.registerListener(compassListener, accel, SensorManager.SENSOR_DELAY_UI)
+                val magnetOk = sensorManager.registerListener(compassListener, magnet, SensorManager.SENSOR_DELAY_UI)
+                if (accelOk && magnetOk) return
+                sensorManager.unregisterListener(compassListener)
+            }
+            webView.evaluateJavascript("window.onSajwaCompassError && window.onSajwaCompassError('Compass sensors are unavailable or could not be started on this phone.')", null)
+        } catch (_: Exception) {
+            try { sensorManager.unregisterListener(compassListener) } catch (_: Exception) { }
+            webView.evaluateJavascript("window.onSajwaCompassError && window.onSajwaCompassError('The compass could not start. Please close and reopen the Qibla screen.')", null)
         }
     }
     @Suppress("SetJavaScriptEnabled")
@@ -310,7 +318,8 @@ class MainActivity : Activity() {
                             ?: Locale.getDefault().country.uppercase(Locale.US).ifBlank { "US" }
                     }
                 } catch (_: Exception) {
-                    Locale.getDefault().country.uppercase(Locale.US).ifBlank { "US" }
+                    approximateCountry(location.latitude, location.longitude)
+                        ?: Locale.getDefault().country.uppercase(Locale.US).ifBlank { "US" }
                 }
                 val method = when (country.uppercase(Locale.US)) {
                     "AE" -> CalculationMethod.DUBAI
@@ -324,7 +333,14 @@ class MainActivity : Activity() {
                 params.madhab = if (country.uppercase(Locale.US) in listOf("BD", "PK", "IN", "AF")) Madhab.HANAFI else Madhab.SHAFI
                 val coords = Coordinates(location.latitude, location.longitude)
                 val prayers = PrayerTimes(coords, DateComponents.from(Date()), params)
-                val alarmScheduled = PrayerAlarmScheduler.schedule(this, coords, params, country)
+                // Prayer times must still be displayed even if Android blocks exact alarms.
+                val alarmScheduled = try {
+                    PrayerAlarmScheduler.schedule(this, coords, params, country)
+                } catch (_: SecurityException) {
+                    false
+                } catch (_: Exception) {
+                    false
+                }
                 qiblaBearing = Qibla(coords).direction
                 magneticDeclination = GeomagneticField(location.latitude.toFloat(), location.longitude.toFloat(), location.altitude.toFloat(), System.currentTimeMillis()).declination
                 if (compassRequested) runOnUiThread { registerCompassSensors() }
