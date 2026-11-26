@@ -23,6 +23,9 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.app.ActivityCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.ViewCompat
 import com.batoulapps.adhan.CalculationMethod
 import com.batoulapps.adhan.Coordinates
 import com.batoulapps.adhan.data.DateComponents
@@ -71,6 +74,13 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         window.statusBarColor = android.graphics.Color.rgb(8, 43, 35)
         window.navigationBarColor = android.graphics.Color.rgb(8, 43, 35)
+        // Draw edge-to-edge, then inset the WebView content for status bar, gesture bar and camera cutouts.
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val attributes = window.attributes
+            attributes.layoutInDisplayCutoutMode = android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
+            window.attributes = attributes
+        }
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
@@ -83,13 +93,14 @@ class MainActivity : Activity() {
         webView.webViewClient = WebViewClient()
         webView.webChromeClient = WebChromeClient()
         webView.setBackgroundColor(android.graphics.Color.rgb(246, 245, 239))
-        // Keep the WebView content below the status bar / punch-hole cutout
-        // and above the gesture/navigation bar on different Android devices.
-        webView.setOnApplyWindowInsetsListener { view, insets ->
-            val topInset = insets.systemWindowInsetTop
-            val bottomInset = insets.systemWindowInsetBottom
-            view.setPadding(0, topInset, 0, bottomInset)
-            insets
+        // Apply modern Android system-bar and display-cutout insets exactly once.
+        // This prevents the header from rendering underneath a notch or punch-hole.
+        ViewCompat.setOnApplyWindowInsetsListener(webView) { view, insets ->
+            val safe = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(safe.left, safe.top, safe.right, safe.bottom)
+            WindowInsetsCompat.CONSUMED
         }
         setContentView(webView)
         webView.requestApplyInsets()
