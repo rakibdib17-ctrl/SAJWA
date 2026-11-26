@@ -160,7 +160,12 @@ class MainActivity : Activity() {
         webView.settings.allowContentAccess = false
         webView.addJavascriptInterface(SajwaBridge(), "SajwaNative")
         webView.webViewClient = WebViewClient()
-        webView.webChromeClient = WebChromeClient()
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onConsoleMessage(message: android.webkit.ConsoleMessage): Boolean {
+                android.util.Log.e("SAJWA-WebView", "${message.message()} -- line ${message.lineNumber()} of ${message.sourceId()}")
+                return true
+            }
+        }
         // Serve bundled HTML from a secure HTTPS-like origin. file:// origins often
         // block cross-origin Quran APIs, Hadith links and remote web fonts in WebView.
         val assetLoader = WebViewAssetLoader.Builder()
@@ -191,6 +196,24 @@ class MainActivity : Activity() {
     }
 
     inner class SajwaBridge {
+        @JavascriptInterface fun getDiagnostics(): String {
+            val fine = ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            val coarse = ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            val providers = try { locationManager.getProviders(true).joinToString(",") } catch (_: Exception) { "unavailable" }
+            return JSONObject()
+                .put("android", Build.VERSION.RELEASE)
+                .put("sdk", Build.VERSION.SDK_INT)
+                .put("webView", "loaded")
+                .put("locationFine", fine)
+                .put("locationCoarse", coarse)
+                .put("enabledProviders", providers)
+                .put("rotationSensor", rotationSensor != null)
+                .put("accelerometer", accelerometerSensor != null)
+                .put("magnetometer", magnetometerSensor != null)
+                .put("qiblaBearingReady", qiblaBearing != null)
+                .put("compassRequested", compassRequested)
+                .toString()
+        }
         @JavascriptInterface fun requestExactAlarmAccess(): Boolean {
             if (Build.VERSION.SDK_INT < 31) return true
             val alarms = getSystemService(ALARM_SERVICE) as AlarmManager
