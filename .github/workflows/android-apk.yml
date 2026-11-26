@@ -24,11 +24,12 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Fetch CC0 Adhan audio asset
+      - name: Fetch selected Adhan audio
         run: |
           mkdir -p app/src/main/res/raw
-          curl -fL 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Beautiful_adhan.ogg' -o app/src/main/res/raw/adhan.ogg
-          test -s app/src/main/res/raw/adhan.ogg
+          curl -fL --retry 3 --retry-all-errors 'https://download.tvquran.com/download/TvQuran.com__Athan/TvQuran.com__08.athan.mp3' -o app/src/main/res/raw/adhan.mp3
+          test -s app/src/main/res/raw/adhan.mp3
+          file app/src/main/res/raw/adhan.mp3
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4
