@@ -47,6 +47,7 @@ class MainActivity : Activity() {
     private var rotationSensor: Sensor? = null
     private var qiblaBearing: Double? = null
     private var magneticDeclination: Float = 0f
+    private var qiblaAligned = false
     private val compassListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
             val rotation = FloatArray(9)
@@ -64,6 +65,23 @@ class MainActivity : Activity() {
             val heading = (Math.toDegrees(azimuth.toDouble()) + magneticDeclination + 360.0) % 360.0
             val bearing = qiblaBearing ?: return
             val relative = (bearing - heading + 360.0) % 360.0
+            val angularError = minOf(relative, 360.0 - relative)
+            if (angularError <= 3.0 && !qiblaAligned) {
+                qiblaAligned = true
+                runOnUiThread {
+                    try {
+                        val vibrator = getSystemService(VIBRATOR_SERVICE) as android.os.Vibrator
+                        if (Build.VERSION.SDK_INT >= 26) {
+                            vibrator.vibrate(android.os.VibrationEffect.createOneShot(90, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+                        } else {
+                            @Suppress("DEPRECATION")
+                            vibrator.vibrate(90)
+                        }
+                    } catch (_: Exception) { }
+                }
+            } else if (angularError >= 8.0) {
+                qiblaAligned = false
+            }
             runOnUiThread { webView.evaluateJavascript("window.onSajwaCompass && window.onSajwaCompass($relative,$heading)", null) }
         }
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
@@ -107,7 +125,7 @@ class MainActivity : Activity() {
             }
             return false
         }
-        @JavascriptInterface fun startCompass() { runOnUiThread { rotationSensor?.let { sensorManager.registerListener(compassListener, it, SensorManager.SENSOR_DELAY_UI) }; qiblaBearing?.let { webView.evaluateJavascript("window.onSajwaQiblaBearing && window.onSajwaQiblaBearing($it)", null) } } }
+        @JavascriptInterface fun startCompass() { qiblaAligned = false; runOnUiThread { rotationSensor?.let { sensorManager.registerListener(compassListener, it, SensorManager.SENSOR_DELAY_UI) }; qiblaBearing?.let { webView.evaluateJavascript("window.onSajwaQiblaBearing && window.onSajwaQiblaBearing($it)", null) } } }
         @JavascriptInterface fun stopCompass() { runOnUiThread { sensorManager.unregisterListener(compassListener) } }
         @JavascriptInterface fun testAdhan() {
             val intent = Intent(this@MainActivity, AdhanPlaybackService::class.java).putExtra("prayer", "Test")
