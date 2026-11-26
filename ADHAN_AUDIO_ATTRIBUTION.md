@@ -1,11 +1,9 @@
 # SAJWA Adhan audio attribution
 
-The bundled default Adhan recording is fetched at build time from Wikimedia Commons:
+The default Adhan recording is fetched at build time from the selected TVQuran source and bundled unchanged in the Android APK as `res/raw/adhan.mp3`:
 
-- File: [Beautiful adhan.ogg](https://commons.wikimedia.org/wiki/File:Beautiful_adhan.ogg)
-- Author: Adam-synagda
-- Licence: CC0 1.0 Universal Public Domain Dedication
-- Recording length: approximately 2 minutes 34 seconds
-- The recording is included unchanged in the Android APK as `res/raw/adhan.ogg`.
+- Audio: [TVQuran.com — Athan 08](https://download.tvquran.com/download/TvQuran.com__Athan/TvQuran.com__08.athan.mp3)
+- Rights: The project owner confirmed permission to use this recording in SAJWA.
+- Playback: In-app playback through SAJWA's Android audio service; the bundled asset is available offline.
 
-This replaces the previous approximately 42-second generic Adhan recording. SAJWA currently uses the same recording for all five prayer alarms; a separate Fajr recording is not yet bundled.
+SAJWA currently uses the same recording for all five prayer alarms; a separate Fajr recording is not yet bundled.
