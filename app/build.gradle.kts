@@ -20,4 +20,5 @@ android {
 }
 dependencies {
     implementation("com.batoulapps.adhan:adhan:1.2.1")
+    implementation("androidx.core:core-ktx:1.15.0")
 }
