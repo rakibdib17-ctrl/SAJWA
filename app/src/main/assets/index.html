@@ -437,6 +437,7 @@ const dailyReflections=[
 {kind:'HADITH · সহিহ মুসলিম',ar:'مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ',bn:'যে ব্যক্তি জ্ঞান অর্জনের উদ্দেশ্যে কোনো পথে চলে, আল্লাহ তার জন্য জান্নাতের পথ সহজ করে দেন।',en:'Whoever follows a path seeking knowledge, Allah makes a path to Paradise easy for them.',ref:'Sahih Muslim 2699a'},
 {kind:'HADITH · সহিহ বুখারি',ar:'أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ',bn:'আল্লাহর কাছে সবচেয়ে প্রিয় আমল হলো যা নিয়মিত করা হয়, যদিও তা অল্প হয়।',en:'The deeds most beloved to Allah are those done consistently, even if they are few.',ref:'Sahih al-Bukhari 6464'}
 ];
+dailyReflectionsReady=true;
 function updateDailyReflection(){
  const slot=Math.floor(Date.now()/300000)%dailyReflections.length,d=dailyReflections[slot],lang=localStorage.getItem('sajwa-lang')||'en';
  $('dailyKind').textContent=d.kind;$('dailyArabic').textContent=d.ar;
