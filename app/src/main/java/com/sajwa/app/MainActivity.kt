@@ -99,6 +99,17 @@ class MainActivity : Activity() {
         }
         @JavascriptInterface fun startCompass() { runOnUiThread { rotationSensor?.let { sensorManager.registerListener(compassListener, it, SensorManager.SENSOR_DELAY_UI) }; qiblaBearing?.let { webView.evaluateJavascript("window.onSajwaQiblaBearing && window.onSajwaQiblaBearing($it)", null) } } }
         @JavascriptInterface fun stopCompass() { runOnUiThread { sensorManager.unregisterListener(compassListener) } }
+        @JavascriptInterface fun chooseAdhanVideo() {
+            runOnUiThread {
+                val pick = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "video/*"
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                try { startActivityForResult(pick, 4104) }
+                catch (_: Exception) { webView.evaluateJavascript("window.onSajwaAdhanImported && window.onSajwaAdhanImported(false,'Could not open the video picker.')", null) }
+            }
+        }
         @JavascriptInterface fun testAdhan() {
             val intent = Intent(this@MainActivity, AdhanPlaybackService::class.java).putExtra("prayer", "Test")
             try { if (Build.VERSION.SDK_INT >= 26) startForegroundService(intent) else startService(intent) } catch (_: Exception) { }
@@ -113,6 +124,30 @@ class MainActivity : Activity() {
                     ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), locationPermissionCode)
                 } else fetchLocation()
+            }
+        }
+    }
+
+    @Deprecated("Deprecated in Android")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 4104) {
+            if (resultCode != RESULT_OK || data?.data == null) {
+                webView.evaluateJavascript("window.onSajwaAdhanImported && window.onSajwaAdhanImported(false,'No video selected.')", null)
+                return
+            }
+            try {
+                val source = data.data!!
+                val destination = java.io.File(filesDir, "sajwa_adhan_source")
+                contentResolver.openInputStream(source).use { input ->
+                    requireNotNull(input) { "Unable to read the selected video." }
+                    destination.outputStream().use { output -> input.copyTo(output) }
+                }
+                getSharedPreferences("sajwa_prayer", MODE_PRIVATE).edit()
+                    .putString("adhan_custom_file", destination.absolutePath).apply()
+                webView.evaluateJavascript("window.onSajwaAdhanImported && window.onSajwaAdhanImported(true,'Video imported. Press Test Adhan to check its audio.')", null)
+            } catch (_: Exception) {
+                webView.evaluateJavascript("window.onSajwaAdhanImported && window.onSajwaAdhanImported(false,'Could not import this video. Please try another video file.')", null)
             }
         }
     }
