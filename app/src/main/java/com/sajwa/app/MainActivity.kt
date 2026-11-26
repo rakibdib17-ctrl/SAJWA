@@ -114,6 +114,7 @@ class MainActivity : Activity() {
             params.madhab = if (country.uppercase(Locale.US) in listOf("BD", "PK", "IN", "AF")) Madhab.HANAFI else Madhab.SHAFI
             val coords = Coordinates(location.latitude, location.longitude)
             val prayers = PrayerTimes(coords, DateComponents.from(Date()), params)
+            val alarmScheduled = PrayerAlarmScheduler.schedule(this, coords, params)
             val fmt = SimpleDateFormat("h:mm a", Locale.getDefault()).apply { timeZone = TimeZone.getDefault() }
             val times = JSONArray()
             listOf("Fajr" to prayers.fajr, "Sunrise" to prayers.sunrise, "Dhuhr" to prayers.dhuhr, "Asr" to prayers.asr, "Maghrib" to prayers.maghrib, "Isha" to prayers.isha).forEach { (name, date) ->
@@ -121,7 +122,8 @@ class MainActivity : Activity() {
             }
             val data = JSONObject().put("ok", true).put("country", country).put("latitude", location.latitude).put("longitude", location.longitude)
                 .put("method", method.name).put("madhab", params.madhab.name).put("times", times)
-                .put("qibla", Qibla(coords).direction).put("timezone", TimeZone.getDefault().id)
+                .put("qibla", Qibla(coords).direction).put("timezone", TimeZone.getDefault().id).put("alarmsScheduled", alarmScheduled)
+            if (Build.VERSION.SDK_INT >= 33 && ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) { ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 4103) }
             runOnUiThread { webView.evaluateJavascript("window.onSajwaPrayerData && window.onSajwaPrayerData(" + JSONObject.quote(data.toString()) + ")", null) }
         } catch (_: Exception) { publishError("Prayer time calculation failed. Please try again.") }
     }
