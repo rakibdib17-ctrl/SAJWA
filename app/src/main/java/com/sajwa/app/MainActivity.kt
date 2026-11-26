@@ -211,7 +211,7 @@ class MainActivity : Activity() {
             val fine = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
             val enabled = locationManager.getProviders(true)
             val preferred = if (fine) {
-                listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER, LocationManager.PASSIVE_PROVIDER)
+                listOf(LocationManager.NETWORK_PROVIDER, LocationManager.GPS_PROVIDER, LocationManager.PASSIVE_PROVIDER)
             } else {
                 listOf(LocationManager.NETWORK_PROVIDER, LocationManager.GPS_PROVIDER, LocationManager.PASSIVE_PROVIDER)
             }
@@ -227,16 +227,31 @@ class MainActivity : Activity() {
                 publishPrayerData(recent)
                 return
             }
-            val provider = providers.first()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                locationManager.getCurrentLocation(provider, null, mainExecutor) { location ->
-                    if (location != null) publishPrayerData(location)
-                    else if (recent != null) publishPrayerData(recent)
-                    else publishError("Could not get a location fix. Turn on GPS, check location permission and try again.")
+                // Ask every permitted provider. Network location is usually quicker indoors;
+                // GPS can still return a fix if the network provider has no result.
+                val delivered = java.util.concurrent.atomic.AtomicBoolean(false)
+                val pending = java.util.concurrent.atomic.AtomicInteger(providers.size)
+                for (provider in providers) {
+                    try {
+                        locationManager.getCurrentLocation(provider, null, mainExecutor) { location ->
+                            if (location != null && delivered.compareAndSet(false, true)) {
+                                publishPrayerData(location)
+                            } else if (pending.decrementAndGet() == 0 && !delivered.get()) {
+                                if (recent != null) publishPrayerData(recent)
+                                else publishError("Could not get a location fix. Turn on GPS, allow location permission and try again.")
+                            }
+                        }
+                    } catch (_: SecurityException) {
+                        if (pending.decrementAndGet() == 0 && !delivered.get()) {
+                            if (recent != null) publishPrayerData(recent)
+                            else publishError("Allow precise or approximate location access for SAJWA in Android settings.")
+                        }
+                    }
                 }
             } else {
                 @Suppress("DEPRECATION")
-                locationManager.requestSingleUpdate(provider, object : LocationListener {
+                locationManager.requestSingleUpdate(providers.first(), object : LocationListener {
                     override fun onLocationChanged(location: Location) = publishPrayerData(location)
                     @Deprecated("Deprecated") override fun onStatusChanged(p: String?, s: Int, e: Bundle?) {}
                     override fun onProviderEnabled(p: String) {}
@@ -249,6 +264,21 @@ class MainActivity : Activity() {
             publishError("Could not read location. Turn on Location and check the app permission.")
         }
     }
+    private fun approximateCountry(lat: Double, lon: Double): String? {
+        return when {
+            lat in 22.5..26.5 && lon in 51.0..56.5 -> "AE"
+            lat in 20.5..26.8 && lon in 88.0..92.8 -> "BD"
+            lat in 23.5..37.5 && lon in 60.5..77.5 -> "PK"
+            lat in 6.0..37.5 && lon in 68.0..97.5 -> "IN"
+            lat in 16.0..33.5 && lon in 34.0..56.0 -> "SA"
+            lat in 1.1..1.5 && lon in 103.6..104.1 -> "SG"
+            lat in 0.8..7.5 && lon in 99.0..120.0 -> "MY"
+            lat in -11.0..6.5 && lon in 95.0..141.0 -> "ID"
+            lat in 22.0..32.0 && lon in 24.0..37.0 -> "EG"
+            else -> null
+        }
+    }
+
     private fun publishPrayerData(location: Location) {
         // Geocoding and prayer calculations run off the UI thread. The Android 13+
         // Geocoder callback can be delivered on the main looper, so never wait for it
@@ -257,7 +287,8 @@ class MainActivity : Activity() {
             try {
                 val country = try {
                     if (Build.VERSION.SDK_INT >= 33) {
-                        var code = Locale.getDefault().country.uppercase(Locale.US).ifBlank { "US" }
+                        var code = approximateCountry(location.latitude, location.longitude)
+                            ?: Locale.getDefault().country.uppercase(Locale.US).ifBlank { "US" }
                         val latch = java.util.concurrent.CountDownLatch(1)
                         Geocoder(this, Locale.getDefault()).getFromLocation(location.latitude, location.longitude, 1) { list ->
                             if (list.isNotEmpty()) code = list[0].countryCode ?: code
