@@ -30,6 +30,18 @@ jobs:
           curl -fL --retry 3 --retry-all-errors 'https://download.tvquran.com/download/TvQuran.com__Athan/TvQuran.com__08.athan.mp3' -o app/src/main/res/raw/adhan.mp3
           test -s app/src/main/res/raw/adhan.mp3
           file app/src/main/res/raw/adhan.mp3
+      - name: Trim final 9.5 seconds from Adhan audio
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          input="app/src/main/res/raw/adhan.mp3"
+          duration=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$input")
+          trim_duration=$(awk -v d="$duration" 'BEGIN { t=d-9.5; if (t <= 0) exit 1; printf "%.3f", t }')
+          ffmpeg -y -i "$input" -t "$trim_duration" -vn -codec:a libmp3lame -q:a 2 app/src/main/res/raw/adhan-trimmed.mp3
+          mv app/src/main/res/raw/adhan-trimmed.mp3 "$input"
+          echo "Original duration: $duration seconds"
+          echo "New duration: $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$input") seconds"
+          test -s "$input"
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4
