@@ -7,6 +7,14 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.app.AlarmManager
+import android.content.Intent
+import android.provider.Settings
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.webkit.JavascriptInterface
@@ -31,6 +39,22 @@ class MainActivity : Activity() {
     private lateinit var webView: WebView
     private lateinit var locationManager: LocationManager
     private val locationPermissionCode = 4102
+    private lateinit var sensorManager: SensorManager
+    private var rotationSensor: Sensor? = null
+    private var qiblaBearing: Double? = null
+    private val compassListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            val rotation = FloatArray(9)
+            val orientation = FloatArray(3)
+            SensorManager.getRotationMatrixFromVector(rotation, event.values)
+            val azimuth = SensorManager.getOrientation(rotation, orientation)[0]
+            val heading = (Math.toDegrees(azimuth.toDouble()) + 360.0) % 360.0
+            val bearing = qiblaBearing ?: return
+            val relative = (bearing - heading + 360.0) % 360.0
+            runOnUiThread { webView.evaluateJavascript(\"window.onSajwaCompass && window.onSajwaCompass($relative,$heading)\", null) }
+        }
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    }
 
     @Suppress("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +62,8 @@ class MainActivity : Activity() {
         window.statusBarColor = android.graphics.Color.rgb(8, 43, 35)
         window.navigationBarColor = android.graphics.Color.rgb(8, 43, 35)
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
         webView = WebView(this)
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
@@ -53,6 +79,16 @@ class MainActivity : Activity() {
     }
 
     inner class SajwaBridge {
+        @JavascriptInterface fun requestExactAlarmAccess() {
+            if (Build.VERSION.SDK_INT >= 31) {
+                val alarms = getSystemService(ALARM_SERVICE) as AlarmManager
+                if (!alarms.canScheduleExactAlarms()) {
+                    try { startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse(\"package:\" + packageName))) } catch (_: Exception) { }
+                }
+            }
+        }
+        @JavascriptInterface fun startCompass() { runOnUiThread { rotationSensor?.let { sensorManager.registerListener(compassListener, it, SensorManager.SENSOR_DELAY_UI) }; qiblaBearing?.let { webView.evaluateJavascript(\"window.onSajwaQiblaBearing && window.onSajwaQiblaBearing($it)\", null) } } }
+        @JavascriptInterface fun stopCompass() { runOnUiThread { sensorManager.unregisterListener(compassListener) } }
         @JavascriptInterface fun requestLocation() {
             runOnUiThread {
                 if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -115,6 +151,7 @@ class MainActivity : Activity() {
             val coords = Coordinates(location.latitude, location.longitude)
             val prayers = PrayerTimes(coords, DateComponents.from(Date()), params)
             val alarmScheduled = PrayerAlarmScheduler.schedule(this, coords, params, country)
+            qiblaBearing = Qibla(coords).direction
             val fmt = SimpleDateFormat("h:mm a", Locale.getDefault()).apply { timeZone = TimeZone.getDefault() }
             val times = JSONArray()
             listOf("Fajr" to prayers.fajr, "Sunrise" to prayers.sunrise, "Dhuhr" to prayers.dhuhr, "Asr" to prayers.asr, "Maghrib" to prayers.maghrib, "Isha" to prayers.isha).forEach { (name, date) ->
@@ -139,6 +176,10 @@ class MainActivity : Activity() {
             else publishError("Location permission is needed to calculate local prayer times.")
         }
     }
+
+    override fun onResume() { super.onResume(); if (Build.VERSION.SDK_INT >= 31) { val alarms = getSystemService(ALARM_SERVICE) as AlarmManager; if (alarms.canScheduleExactAlarms()) PrayerAlarmScheduler.rescheduleFromSavedLocation(this) } }
+
+    override fun onPause() { sensorManager.unregisterListener(compassListener); super.onPause() }
 
     override fun onSaveInstanceState(outState: Bundle) {
         webView.saveState(outState)
