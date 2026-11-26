@@ -7,6 +7,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.hardware.GeomagneticField
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -42,13 +43,14 @@ class MainActivity : Activity() {
     private lateinit var sensorManager: SensorManager
     private var rotationSensor: Sensor? = null
     private var qiblaBearing: Double? = null
+    private var magneticDeclination: Float = 0f
     private val compassListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
             val rotation = FloatArray(9)
             val orientation = FloatArray(3)
             SensorManager.getRotationMatrixFromVector(rotation, event.values)
             val azimuth = SensorManager.getOrientation(rotation, orientation)[0]
-            val heading = (Math.toDegrees(azimuth.toDouble()) + 360.0) % 360.0
+            val heading = (Math.toDegrees(azimuth.toDouble()) + magneticDeclination + 360.0) % 360.0
             val bearing = qiblaBearing ?: return
             val relative = (bearing - heading + 360.0) % 360.0
             runOnUiThread { webView.evaluateJavascript("window.onSajwaCompass && window.onSajwaCompass($relative,$heading)", null) }
@@ -152,6 +154,7 @@ class MainActivity : Activity() {
             val prayers = PrayerTimes(coords, DateComponents.from(Date()), params)
             val alarmScheduled = PrayerAlarmScheduler.schedule(this, coords, params, country)
             qiblaBearing = Qibla(coords).direction
+            magneticDeclination = GeomagneticField(location.latitude.toFloat(), location.longitude.toFloat(), location.altitude.toFloat(), System.currentTimeMillis()).declination
             val fmt = SimpleDateFormat("h:mm a", Locale.getDefault()).apply { timeZone = TimeZone.getDefault() }
             val times = JSONArray()
             listOf("Fajr" to prayers.fajr, "Sunrise" to prayers.sunrise, "Dhuhr" to prayers.dhuhr, "Asr" to prayers.asr, "Maghrib" to prayers.maghrib, "Isha" to prayers.isha).forEach { (name, date) ->
