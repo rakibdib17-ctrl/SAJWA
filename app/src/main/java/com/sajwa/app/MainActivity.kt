@@ -51,7 +51,7 @@ class MainActivity : Activity() {
             val heading = (Math.toDegrees(azimuth.toDouble()) + 360.0) % 360.0
             val bearing = qiblaBearing ?: return
             val relative = (bearing - heading + 360.0) % 360.0
-            runOnUiThread { webView.evaluateJavascript(\"window.onSajwaCompass && window.onSajwaCompass($relative,$heading)\", null) }
+            runOnUiThread { webView.evaluateJavascript("window.onSajwaCompass && window.onSajwaCompass($relative,$heading)", null) }
         }
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
@@ -83,11 +83,11 @@ class MainActivity : Activity() {
             if (Build.VERSION.SDK_INT >= 31) {
                 val alarms = getSystemService(ALARM_SERVICE) as AlarmManager
                 if (!alarms.canScheduleExactAlarms()) {
-                    try { startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse(\"package:\" + packageName))) } catch (_: Exception) { }
+                    try { startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + packageName))) } catch (_: Exception) { }
                 }
             }
         }
-        @JavascriptInterface fun startCompass() { runOnUiThread { rotationSensor?.let { sensorManager.registerListener(compassListener, it, SensorManager.SENSOR_DELAY_UI) }; qiblaBearing?.let { webView.evaluateJavascript(\"window.onSajwaQiblaBearing && window.onSajwaQiblaBearing($it)\", null) } } }
+        @JavascriptInterface fun startCompass() { runOnUiThread { rotationSensor?.let { sensorManager.registerListener(compassListener, it, SensorManager.SENSOR_DELAY_UI) }; qiblaBearing?.let { webView.evaluateJavascript("window.onSajwaQiblaBearing && window.onSajwaQiblaBearing($it)", null) } } }
         @JavascriptInterface fun stopCompass() { runOnUiThread { sensorManager.unregisterListener(compassListener) } }
         @JavascriptInterface fun requestLocation() {
             runOnUiThread {
