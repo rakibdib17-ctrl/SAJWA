@@ -27,7 +27,7 @@ jobs:
       - name: Fetch CC0 Adhan audio asset
         run: |
           mkdir -p app/src/main/res/raw
-          curl -fL 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Adhan.ogg' -o app/src/main/res/raw/adhan.ogg
+          curl -fL 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Beautiful_adhan.ogg' -o app/src/main/res/raw/adhan.ogg
           test -s app/src/main/res/raw/adhan.ogg
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
