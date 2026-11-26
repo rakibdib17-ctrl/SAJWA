@@ -31,11 +31,8 @@ class AdhanPlaybackService : Service() {
         startForeground(4201, notification)
         try {
             player?.release()
-            val selectedPath = getSharedPreferences("sajwa_prayer", MODE_PRIVATE).getString("adhan_custom_file", null)
-            val selectedVideo = selectedPath?.let { File(it) }?.takeIf { it.exists() && it.length() > 0 }
             val localFile = File(getExternalFilesDir(android.os.Environment.DIRECTORY_MUSIC), "sajwa_adhan.mp3")
-            val uri = selectedVideo?.let { Uri.fromFile(it) }
-                ?: if (localFile.exists() && localFile.length() > 0) Uri.fromFile(localFile)
+            val uri = if (localFile.exists() && localFile.length() > 0) Uri.fromFile(localFile)
                 else intent?.getStringExtra("audio_uri")?.let { Uri.parse(it) }
                 ?: Uri.parse("android.resource://$packageName/${R.raw.adhan}")
             player = MediaPlayer().apply {
