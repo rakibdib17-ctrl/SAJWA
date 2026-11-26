@@ -99,6 +99,14 @@ class MainActivity : Activity() {
         }
         @JavascriptInterface fun startCompass() { runOnUiThread { rotationSensor?.let { sensorManager.registerListener(compassListener, it, SensorManager.SENSOR_DELAY_UI) }; qiblaBearing?.let { webView.evaluateJavascript("window.onSajwaQiblaBearing && window.onSajwaQiblaBearing($it)", null) } } }
         @JavascriptInterface fun stopCompass() { runOnUiThread { sensorManager.unregisterListener(compassListener) } }
+        @JavascriptInterface fun testAdhan() {
+            val intent = Intent(this@MainActivity, AdhanPlaybackService::class.java).putExtra("prayer", "Test")
+            try { if (Build.VERSION.SDK_INT >= 26) startForegroundService(intent) else startService(intent) } catch (_: Exception) { }
+        }
+        @JavascriptInterface fun stopAdhan() { stopService(Intent(this@MainActivity, AdhanPlaybackService::class.java)) }
+        @JavascriptInterface fun setAdhanEnabled(enabled: Boolean) {
+            getSharedPreferences("sajwa_prayer", MODE_PRIVATE).edit().putBoolean("adhan_enabled", enabled).apply()
+        }
         @JavascriptInterface fun requestLocation() {
             runOnUiThread {
                 if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
