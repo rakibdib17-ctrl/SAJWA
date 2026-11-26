@@ -96,13 +96,16 @@ class MainActivity : Activity() {
     }
 
     inner class SajwaBridge {
-        @JavascriptInterface fun requestExactAlarmAccess() {
-            if (Build.VERSION.SDK_INT >= 31) {
-                val alarms = getSystemService(ALARM_SERVICE) as AlarmManager
-                if (!alarms.canScheduleExactAlarms()) {
-                    try { startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + packageName))) } catch (_: Exception) { }
-                }
+        @JavascriptInterface fun requestExactAlarmAccess(): Boolean {
+            if (Build.VERSION.SDK_INT < 31) return true
+            val alarms = getSystemService(ALARM_SERVICE) as AlarmManager
+            if (alarms.canScheduleExactAlarms()) return true
+            runOnUiThread {
+                try {
+                    startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + packageName)))
+                } catch (_: Exception) { }
             }
+            return false
         }
         @JavascriptInterface fun startCompass() { runOnUiThread { rotationSensor?.let { sensorManager.registerListener(compassListener, it, SensorManager.SENSOR_DELAY_UI) }; qiblaBearing?.let { webView.evaluateJavascript("window.onSajwaQiblaBearing && window.onSajwaQiblaBearing($it)", null) } } }
         @JavascriptInterface fun stopCompass() { runOnUiThread { sensorManager.unregisterListener(compassListener) } }
