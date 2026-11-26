@@ -22,6 +22,9 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import androidx.webkit.WebViewAssetLoader
 import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -150,10 +153,24 @@ class MainActivity : Activity() {
         webView.addJavascriptInterface(SajwaBridge(), "SajwaNative")
         webView.webViewClient = WebViewClient()
         webView.webChromeClient = WebChromeClient()
+        // Serve bundled HTML from a secure HTTPS-like origin. file:// origins often
+        // block cross-origin Quran APIs, Hadith links and remote web fonts in WebView.
+        val assetLoader = WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
+            .build()
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+                return assetLoader.shouldInterceptRequest(request.url)
+            }
+            @Suppress("DEPRECATION")
+            override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
+                return assetLoader.shouldInterceptRequest(android.net.Uri.parse(url))
+            }
+        }
         webView.setBackgroundColor(android.graphics.Color.rgb(246, 245, 239))
         // Decor fitting handles status/navigation bars and cutouts; do not add a second inset.
         setContentView(webView)
-        if (savedInstanceState == null) webView.loadUrl("file:///android_asset/index.html")
+        if (savedInstanceState == null) webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
         else webView.restoreState(savedInstanceState)
     }
 
