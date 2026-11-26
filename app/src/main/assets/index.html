@@ -530,6 +530,32 @@ body.dark .tasbeeh-ring-label{color:#f5d995}
 body.dark .tasbeeh-progress{background:#ffffff30}
 body.dark .tasbeeh-bead{border-color:#f6dda0;box-shadow:inset 0 5px 10px #fff8,inset 0 -12px 22px #241507a8,0 16px 28px #0008,0 0 0 8px #d9bd8228,0 0 0 10px #d9bd8260}
 @media(max-width:380px){#dhikrPreset.tasbeeh-select{font-size:15px;padding-inline:10px}}
+
+/* Build 113: startup, reading typography, prayer loading and theme polish */
+html{background:#f5f3ec}
+body{min-height:100vh;background:var(--paper);font-family:"Hind Siliguri","Noto Sans Bengali","DM Sans",sans-serif}
+#appIntro{transition:opacity .22s ease,visibility .22s ease}
+#appIntro.dismissed{opacity:0;visibility:hidden;pointer-events:none}
+.ayah-ar{font-family:"Amiri","Noto Naskh Arabic",serif;font-size:clamp(30px,5vw,36px);line-height:2.25;letter-spacing:0;word-spacing:1px}
+.ayah-tr{font-family:"Hind Siliguri","Noto Sans Bengali",sans-serif;font-size:clamp(17px,2.5vw,19px);line-height:2.05;letter-spacing:0}
+.readerbar h3,.viewtop h2{font-family:"Hind Siliguri","Amiri",serif}
+.surahrow,.surahrow b,.surahrow small{font-family:"Hind Siliguri","DM Sans",sans-serif}
+.prayer-grid{min-height:94px}
+.prayer-cell span{font-variant-numeric:tabular-nums}
+body.dark .readerbar select,body.dark .search,body.dark .field{background:#17241e;color:#f0f4ef;border-color:#45584b}
+body.dark .notice{background:#26382e;color:#d5dfd7}
+body.dark .error{background:#482d25;color:#ffe1d1}
+body.dark .prayer-cell{background:#26382e;color:#eef4ed}
+body.dark .prayer-cell span{color:#b9c8bd}
+body.dark .ayah-no{color:#e0c58b;border-color:#9e8656}
+body.dark .book{background:#1b2922;color:#edf2ed;border-color:#3b4d42}
+@media(max-width:760px){
+ main{padding-left:14px;padding-right:14px}
+ .hero{min-height:300px}
+ .ayah-ar{font-size:30px;line-height:2.2}
+ .ayah-tr{font-size:18px;line-height:2.05}
+ .prayer-grid{gap:7px}
+}
 </style></head><body>
 
 <div id="appIntro" role="dialog" aria-label="SAJWA welcome animation">
@@ -619,7 +645,7 @@ function sajwaTranslateTree(root=document.body,lang=localStorage.getItem('sajwa-
 let sajwaObserver=null;
 function sajwaEnableTranslation(){if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body);sajwaObserver=new MutationObserver(records=>{const lang=localStorage.getItem('sajwa-lang')||'en';for(const record of records){if(record.type==='characterData')sajwaTranslateNode(record.target,lang);record.addedNodes?.forEach(n=>{if(n.nodeType===3)sajwaTranslateNode(n,lang);else if(n.nodeType===1)sajwaTranslateTree(n,lang)})}});sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true})}
 function dismissIntro(){const el=document.getElementById('appIntro');if(el)el.classList.add('dismissed');try{sessionStorage.setItem('sajwa-intro-seen','1')}catch(e){}}
-function playIntro(){const el=document.getElementById('appIntro');if(!el)return;try{if(sessionStorage.getItem('sajwa-intro-seen')==='1'){el.classList.add('dismissed');return}}catch(e){}setTimeout(dismissIntro,3600)}
+function playIntro(){const el=document.getElementById('appIntro');if(!el)return;try{if(sessionStorage.getItem('sajwa-intro-seen')==='1'){el.classList.add('dismissed');return}}catch(e){}setTimeout(dismissIntro,1100)}
 
 const words={en:{welcome:"Let your heart find its way back.",intro:"A thoughtful space for Quran, prayer and remembrance — made for your everyday journey."},bn:{welcome:"হৃদয় ফিরে আসুক প্রশান্তির পথে।",intro:"কুরআন, নামাজ ও আল্লাহর স্মরণের জন্য আপনার প্রতিদিনের সঙ্গী।"},ar:{welcome:"دع قلبك يجد طريقه إلى السكينة.",intro:"مساحة للتلاوة والصلاة والذكر في رحلتك اليومية."}};
 let dailyReflectionsReady=false;
@@ -645,7 +671,7 @@ const sunnahSlugs=['bukhari','muslim','abudawud','tirmidhi','nasai','ibnmajah'];
 function openHadithBook(i){const b=books[i],slug=sunnahSlugs[i],box=$('hadithResults');box.style.display='block';box.innerHTML='<h3>'+b[1]+'</h3><p class="muted">Open the collection at Sunnah.com. The source website provides the original collection structure and its book and hadith references.</p><div class="action-row"><a class="primary" style="display:inline-block;text-decoration:none" href="https://sunnah.com/'+slug+'">Browse '+b[1]+' ↗</a><button class="smallbtn" onclick="copyHadithLink('+i+')">Copy collection link</button></div><div class="notice">SAJWA opens the source collection rather than copying narrations from an unverified feed. Hadith text, translations and grading should always be checked against the cited source edition.</div>'}
 function copyHadithLink(i){const u='https://sunnah.com/'+sunnahSlugs[i];if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(u).catch(()=>{});}
 let compassStartPending=false;
-function requestPrayerTimes(){if(window.SajwaNative){$('prayerStatus').textContent='Requesting location to calculate local prayer times…';$('locBtn').disabled=true;try{SajwaNative.requestLocation()}catch(e){$('locBtn').disabled=false;$('prayerStatus').textContent='Could not request location. Please check app permissions and try again.'}}else $('prayerStatus').textContent='Location-based calculation is available in the Android app.'}
+function requestPrayerTimes(){if(window.SajwaNative){$('prayerStatus').textContent='Requesting location to calculate local prayer times…';$('prayerGrid').innerHTML='<div class="prayer-cell"><b>Fajr</b><span>— —</span></div><div class="prayer-cell"><b>Sunrise</b><span>— —</span></div><div class="prayer-cell"><b>Dhuhr</b><span>— —</span></div><div class="prayer-cell"><b>Asr</b><span>— —</span></div><div class="prayer-cell"><b>Maghrib</b><span>— —</span></div><div class="prayer-cell"><b>Isha</b><span>— —</span></div>';$('locBtn').disabled=true;try{SajwaNative.requestLocation()}catch(e){$('locBtn').disabled=false;$('prayerStatus').textContent='Could not request location. Please check app permissions and try again.'}}else $('prayerStatus').textContent='Location-based calculation is available in the Android app.'}
 function requestExactAlarms(){if(!window.SajwaNative){$('adhanStatus').textContent='Exact alarm access is available in the Android app.';return}const allowed=SajwaNative.requestExactAlarmAccess();$('adhanStatus').textContent=allowed?'Exact prayer alarm access is enabled.':'Enable Alarms & reminders for SAJWA in Android settings, then return and tap this button again.'}
 window.onSajwaPrayerData=function(raw){try{prayerData=JSON.parse(raw);if(!prayerData||!Array.isArray(prayerData.times)||!prayerData.times.length)throw Error('Missing prayer data');$('locationLabel').textContent=(prayerData.country||'Local location')+' · '+(prayerData.timezone||'Device time');$('prayerGrid').innerHTML=prayerData.times.map(x=>'<div class="prayer-cell"><b>'+esc(x.name)+'</b><span>'+esc(x.time)+'</span></div>').join('');$('prayerStatus').textContent='Method: '+prayerData.method+' · Asr: '+prayerData.madhab+'. '+(prayerData.alarmsScheduled?'Automatic Adhan alarms scheduled for the next 7 days.':'Prayer times calculated. Enable exact alarms for automatic Adhan.')+' Confirm with local mosque timetable.';$('locBtn').disabled=false;$('locBtn').textContent='Refresh location';$('qiblaDegree').textContent=Number(prayerData.qibla).toFixed(1)+'°';if(compassStartPending&&window.SajwaNative){compassStartPending=false;SajwaNative.startCompass();$('compassStatus').textContent='Compass active · point your phone toward the Kaaba direction.'}}catch(e){$('locBtn').disabled=false;$('prayerStatus').textContent='Prayer times could not be displayed. Please refresh location.'}};
 window.onSajwaPrayerError=msg=>{$('locBtn').disabled=false;$('prayerStatus').textContent=msg;compassStartPending=false;if(currentView==='qibla'&&$('compassStatus'))$('compassStatus').textContent=msg};
