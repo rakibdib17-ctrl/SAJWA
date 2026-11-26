@@ -34,7 +34,7 @@ class AdhanPlaybackService : Service() {
             val localFile = File(getExternalFilesDir(android.os.Environment.DIRECTORY_MUSIC), "sajwa_adhan.mp3")
             val uri = if (localFile.exists() && localFile.length() > 0) Uri.fromFile(localFile)
                 else intent?.getStringExtra("audio_uri")?.let { Uri.parse(it) }
-            if (uri == null) { stopSelf(); return START_NOT_STICKY }
+                ?: Uri.parse("android.resource://$packageName/${R.raw.adhan}")
             player = MediaPlayer().apply {
                 setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
                 setDataSource(this@AdhanPlaybackService, uri)
