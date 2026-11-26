@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Build
 import com.batoulapps.adhan.CalculationParameters
 import com.batoulapps.adhan.Coordinates
-import com.batoulapps.adhan.DateComponents
+import com.batoulapps.adhan.data.DateComponents
 import com.batoulapps.adhan.PrayerTimes
 import java.util.Calendar
 
