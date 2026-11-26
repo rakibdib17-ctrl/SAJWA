@@ -228,6 +228,42 @@ html[dir=rtl] .bottomnav{direction:rtl}
 @media(max-width:760px){.hero-art{right:-8px;width:220px;height:205px;opacity:.55}.hero-copy{max-width:75%}#appIntro svg{width:min(78vw,300px)}}
 @media(prefers-reduced-motion:reduce){#appIntro *,button,.feature{animation:none!important;transition:none!important}}
 
+
+/* Bengali glyph shaping, comfortable reading size, and robust mobile spacing */
+html[lang="bn"] body,
+html[lang="bn"] body *,
+html[lang="bn"] input,
+html[lang="bn"] button,
+html[lang="bn"] select,
+html[lang="bn"] textarea {
+  font-family:"Noto Sans Bengali","Hind Siliguri",sans-serif !important;
+  font-synthesis:none;
+}
+html[lang="bn"] body{font-size:17px;line-height:1.65}
+html[lang="bn"] p,
+html[lang="bn"] .notice,
+html[lang="bn"] .step-row,
+html[lang="bn"] .check-row,
+html[lang="bn"] .ayah-tr,
+html[lang="bn"] .dua-tr{font-size:16px;line-height:1.8}
+html[lang="bn"] .feature-copy strong{font-size:15px;line-height:1.5}
+html[lang="bn"] .feature-copy small,
+html[lang="bn"] .muted,
+html[lang="bn"] .feature-section-head>span{font-size:12px;line-height:1.55}
+html[lang="bn"] .brandtag{font-size:10px;letter-spacing:.3px}
+html[lang="bn"] .hero h1{line-height:1.45}
+html[lang="bn"] .hero p{font-size:16px;line-height:1.85}
+html[lang="bn"] .viewtop h2{font-size:29px;line-height:1.45}
+html[lang="bn"] .bottomnav button{font-size:12px;line-height:1.5}
+@media(max-width:760px){
+  html[lang="bn"] header{padding-left:12px;padding-right:12px;gap:8px}
+  html[lang="bn"] .brandname{font-size:17px;letter-spacing:2px}
+  html[lang="bn"] .headtools{gap:5px}
+  html[lang="bn"] .headtools select{max-width:112px;padding:8px 6px;font-size:13px}
+}
+/* Avoid relying on CSS safe-area padding when Android already fits system bars. */
+html,body{padding-top:0}
+
 </style></head><body>
 
 <div id="appIntro" role="dialog" aria-label="SAJWA welcome animation">
