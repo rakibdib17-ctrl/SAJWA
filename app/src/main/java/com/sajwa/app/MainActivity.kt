@@ -47,9 +47,17 @@ class MainActivity : Activity() {
     private val compassListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
             val rotation = FloatArray(9)
+            val remappedRotation = FloatArray(9)
             val orientation = FloatArray(3)
             SensorManager.getRotationMatrixFromVector(rotation, event.values)
-            val azimuth = SensorManager.getOrientation(rotation, orientation)[0]
+            val (axisX, axisY) = when (windowManager.defaultDisplay.rotation) {
+                android.view.Surface.ROTATION_90 -> SensorManager.AXIS_Y to SensorManager.AXIS_MINUS_X
+                android.view.Surface.ROTATION_180 -> SensorManager.AXIS_MINUS_X to SensorManager.AXIS_MINUS_Y
+                android.view.Surface.ROTATION_270 -> SensorManager.AXIS_MINUS_Y to SensorManager.AXIS_X
+                else -> SensorManager.AXIS_X to SensorManager.AXIS_Y
+            }
+            SensorManager.remapCoordinateSystem(rotation, axisX, axisY, remappedRotation)
+            val azimuth = SensorManager.getOrientation(remappedRotation, orientation)[0]
             val heading = (Math.toDegrees(azimuth.toDouble()) + magneticDeclination + 360.0) % 360.0
             val bearing = qiblaBearing ?: return
             val relative = (bearing - heading + 360.0) % 360.0
