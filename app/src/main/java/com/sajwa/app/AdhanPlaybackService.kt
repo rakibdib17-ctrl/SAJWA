@@ -5,10 +5,13 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import java.io.File
 
 class AdhanPlaybackService : Service() {
     private var player: MediaPlayer? = null
@@ -17,25 +20,36 @@ class AdhanPlaybackService : Service() {
         val channelId = "sajwa_adhan_playback"
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= 26) {
-            manager.createNotificationChannel(NotificationChannel(channelId, "Adhan playback", NotificationManager.IMPORTANCE_LOW))
+            manager.createNotificationChannel(NotificationChannel(channelId, "SAJWA Adhan playback", NotificationManager.IMPORTANCE_LOW).apply { setSound(null, null) })
         }
         val notification: Notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle("SAJWA · $prayer Adhan")
-            .setContentText("Adhan is playing")
+            .setContentText("SAJWA audio playback")
             .setOngoing(true)
             .build()
         startForeground(4201, notification)
         try {
             player?.release()
-            player = MediaPlayer.create(this, R.raw.adhan)
-            player?.setOnCompletionListener { stopSelf() }
-            player?.setOnErrorListener { _, _, _ -> stopSelf(); true }
-            player?.start()
+            val localFile = File(getExternalFilesDir(android.os.Environment.DIRECTORY_MUSIC), "sajwa_adhan.mp3")
+            val uri = if (localFile.exists() && localFile.length() > 0) Uri.fromFile(localFile)
+                else intent?.getStringExtra("audio_uri")?.let { Uri.parse(it) }
+            if (uri == null) { stopSelf(); return START_NOT_STICKY }
+            player = MediaPlayer().apply {
+                setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
+                setDataSource(this@AdhanPlaybackService, uri)
+                setOnCompletionListener { stopSelf() }
+                setOnErrorListener { _, _, _ -> stopSelf(); true }
+                setOnPreparedListener { it.start() }
+                prepareAsync()
+            }
         } catch (_: Exception) { stopSelf() }
         return START_NOT_STICKY
     }
-    override fun onDestroy() { player?.stopSafely(); player?.release(); player = null; super.onDestroy() }
+    override fun onDestroy() {
+        player?.let { try { if (it.isPlaying) it.stop() } catch (_: Exception) {}; it.release() }
+        player = null
+        super.onDestroy()
+    }
     override fun onBind(intent: Intent?): IBinder? = null
-    private fun MediaPlayer.stopSafely() { try { if (isPlaying) stop() } catch (_: Exception) {} }
 }
