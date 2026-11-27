@@ -143,8 +143,21 @@ class MainActivity : Activity() {
     @Suppress("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.statusBarColor = android.graphics.Color.rgb(8, 43, 35)
-        window.navigationBarColor = android.graphics.Color.rgb(8, 43, 35)
+        val sajwaForest = android.graphics.Color.rgb(8, 43, 35)
+        // Keep the system-bar/inset area the same forest green as the sticky SAJWA header.
+        // This also supplies the correct color on devices that briefly expose the window
+        // background before the WebView has finished drawing.
+        window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(sajwaForest))
+        window.statusBarColor = sajwaForest
+        window.navigationBarColor = sajwaForest
+        androidx.core.view.WindowInsetsControllerCompat(window, window.decorView).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
+        if (Build.VERSION.SDK_INT >= 29) {
+            window.isStatusBarContrastEnforced = false
+            window.isNavigationBarContrastEnforced = false
+        }
         // Let Android fit the app window below the status bar and around display cutouts.
         // This avoids WebView content being laid out underneath the camera notch.
         WindowCompat.setDecorFitsSystemWindows(window, true)
