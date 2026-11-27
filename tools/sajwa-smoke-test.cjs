@@ -81,7 +81,20 @@ const { chromium } = require('playwright');
   await page.evaluate(() => window.openView('qibla'));
   await page.waitForTimeout(100);
   const qiblaBn = await page.locator('#qiblaView').innerText();
-  if (!qiblaBn.includes('কিবলার দিক') || !qiblaBn.includes('কম্পাস চালু করুন')) throw new Error('Qibla Bengali localization regression.');
+  if (!qiblaBn.includes('কিবলার দিক') || !qiblaBn.includes('কম্পাস চালু করুন')) {
+    const qiblaDebug = await page.evaluate(() => ({
+      language: localStorage.getItem('sajwa-lang'),
+      selected: document.getElementById('lang')?.value,
+      dataLanguage: document.getElementById('qiblaView')?.getAttribute('data-language'),
+      bearing: document.getElementById('qiblaBearingLabel')?.textContent,
+      heading: document.getElementById('phoneHeadingLabel')?.textContent,
+      start: document.getElementById('startCompassBtn')?.textContent,
+      openViewType: typeof window.openView,
+      setLangType: typeof window.setLang,
+      text: document.getElementById('qiblaView')?.innerText
+    }));
+    throw new Error('Qibla Bengali localization regression: ' + JSON.stringify(qiblaDebug));
+  }
 
   await page.evaluate(() => window.openView('hadith'));
   await page.waitForTimeout(100);
