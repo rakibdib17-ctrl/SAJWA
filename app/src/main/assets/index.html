@@ -2616,7 +2616,6 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
   };
   const oldRender=window.renderPrayerDashboard;
   window.renderPrayerDashboard=function(){
-    if(!window.prayerData||!Array.isArray(window.prayerData.times)||!window.prayerData.times.length)return;
     oldRender();
     const grid=document.getElementById('prayerGrid');
     if(!grid)return;
@@ -2624,7 +2623,7 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
     const present=new Set([...grid.querySelectorAll('[data-prayer]')].map(el=>el.getAttribute('data-prayer')));
     if(required.some(key=>!present.has(key))) {
       const labels=(localStorage.getItem('sajwa-lang')||'en')==='bn'?{fajr:'ফজর',sunrise:'সূর্যোদয়',dhuhr:'যোহর',asr:'আসর',maghrib:'মাগরিব',isha:'এশা'}:{fajr:'Fajr',sunrise:'Sunrise',dhuhr:'Dhuhr',asr:'Asr',maghrib:'Maghrib',isha:'Isha'};
-      const times=window.prayerData.times;
+      const times=(window.prayerData&&window.prayerData.times)||[];
       required.forEach(key=>{
         if(present.has(key))return;
         const item=times.find(x=>window.prayerKey(x.name)===key);
@@ -2647,7 +2646,7 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
       put('startCompassBtn',t.start);put('stopCompassBtn',t.stop);put('compassStatus',t.status);put('qiblaNotice',t.notice);
     }
   }
-  window.setLang=function(lang){if(typeof oldSetLang==='function')oldSetLang(lang);applyQiblaLanguage(lang);if(window.prayerData)window.renderPrayerDashboard()};
+  window.setLang=function(lang){if(typeof oldSetLang==='function')oldSetLang(lang);applyQiblaLanguage(lang);window.renderPrayerDashboard()};
   const oldCompass=window.onSajwaCompass;
   window.onSajwaCompass=function(relative,heading){if(typeof oldCompass==='function')oldCompass(relative,heading);const lang=localStorage.getItem('sajwa-lang')||'en';const el=document.getElementById('compassStatus');if(el)el.textContent=(qiblaText[lang]||qiblaText.en).live};
   const oldStop=window.stopCompass;
