@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import android.widget.FrameLayout
 import android.webkit.WebViewClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -44,6 +45,7 @@ import java.util.TimeZone
 
 class MainActivity : Activity() {
     private lateinit var webView: WebView
+    private lateinit var rootLayout: FrameLayout
     private lateinit var locationManager: LocationManager
     private val locationExecutor = java.util.concurrent.Executors.newSingleThreadExecutor()
     private val locationPermissionCode = 4102
@@ -203,18 +205,26 @@ class MainActivity : Activity() {
                 return assetLoader.shouldInterceptRequest(android.net.Uri.parse(url))
             }
         }
-        // Keep the system-bar background green while ensuring page content never sits
-        // underneath status icons, the camera cutout, or the bottom gesture/navigation bar.
-        webView.setBackgroundColor(sajwaForest)
-        ViewCompat.setOnApplyWindowInsetsListener(webView) { view, insets ->
-            val safeInsets = insets.getInsets(
+        // Put system insets on a native root container, not WebView padding.
+        // This keeps HTML content fully below the status bar/cutout and above navigation.
+        webView.setBackgroundColor(android.graphics.Color.rgb(248, 249, 244))
+        rootLayout = FrameLayout(this).apply {
+            setBackgroundColor(sajwaForest)
+            clipToPadding = false
+            addView(webView, FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            ))
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
+            val safe = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
             )
-            view.setPadding(0, safeInsets.top, 0, safeInsets.bottom)
+            view.setPadding(safe.left, safe.top, safe.right, safe.bottom)
             insets
         }
-        setContentView(webView)
-        ViewCompat.requestApplyInsets(webView)
+        setContentView(rootLayout)
+        ViewCompat.requestApplyInsets(rootLayout)
         if (savedInstanceState == null) webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
         else webView.restoreState(savedInstanceState)
     }
