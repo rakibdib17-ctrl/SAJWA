@@ -712,6 +712,70 @@ main{position:relative;z-index:0;margin-top:0!important;padding-top:20px!importa
 @media(max-width:380px){.tasbeeh-bead{width:min(70vw,218px)}.tasbeeh-tap-hint .tap-en{font-size:8px}.tasbeeh-tap-hint .tap-bn{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.tasbeeh-bead{animation:none!important}}
 
+
+/* SAJWA complete theme engine — centralized tokens for every surface and accent.
+   Keep this block last so legacy component styles cannot leak their old palette. */
+:root{
+ --sajwa-primary:#0b3b2d;--sajwa-primary-2:#1d6549;--sajwa-accent:#c5a66c;
+ --sajwa-accent-soft:#eadbb8;--sajwa-on-primary:#fff8e8;--sajwa-tint:#e7efe8;
+ --sajwa-card:#fffefa;--sajwa-card-2:#f3f6f1;--sajwa-outline:#dce5dc;
+ --sajwa-glow:rgba(11,59,45,.18);--sajwa-dark-primary:#09291f;
+}
+body[data-theme="emerald"]{--sajwa-primary:#0b3b2d;--sajwa-primary-2:#1d6549;--sajwa-accent:#c5a66c;--sajwa-accent-soft:#eadbb8;--sajwa-on-primary:#fff8e8;--sajwa-tint:#e7efe8;--sajwa-card:#fffefa;--sajwa-card-2:#f3f6f1;--sajwa-outline:#dce5dc;--sajwa-glow:rgba(11,59,45,.18);--sajwa-dark-primary:#09291f}
+body[data-theme="ocean"]{--sajwa-primary:#123d55;--sajwa-primary-2:#23768a;--sajwa-accent:#79b8c5;--sajwa-accent-soft:#d2edf0;--sajwa-on-primary:#f1fcff;--sajwa-tint:#e5f1f4;--sajwa-card:#fbfeff;--sajwa-card-2:#edf6f8;--sajwa-outline:#d4e5e9;--sajwa-glow:rgba(18,61,85,.18);--sajwa-dark-primary:#0b2636}
+body[data-theme="midnight"]{--sajwa-primary:#202d4a;--sajwa-primary-2:#465e8d;--sajwa-accent:#aab9e4;--sajwa-accent-soft:#dce4ff;--sajwa-on-primary:#f5f6ff;--sajwa-tint:#e9edf8;--sajwa-card:#fcfcff;--sajwa-card-2:#f0f2fa;--sajwa-outline:#dce1ef;--sajwa-glow:rgba(32,45,74,.2);--sajwa-dark-primary:#111827}
+body[data-theme="royal"]{--sajwa-primary:#49345f;--sajwa-primary-2:#765591;--sajwa-accent:#b79bd0;--sajwa-accent-soft:#eadcf5;--sajwa-on-primary:#fff8ff;--sajwa-tint:#f0eaf5;--sajwa-card:#fffefe;--sajwa-card-2:#f7f1fa;--sajwa-outline:#e6ddec;--sajwa-glow:rgba(73,52,95,.18);--sajwa-dark-primary:#21182d}
+body[data-theme="rose"]{--sajwa-primary:#663b4b;--sajwa-primary-2:#a45d70;--sajwa-accent:#c78b92;--sajwa-accent-soft:#f1d5d9;--sajwa-on-primary:#fff7f8;--sajwa-tint:#f6e9eb;--sajwa-card:#fffdfd;--sajwa-card-2:#fbf1f2;--sajwa-outline:#eddddf;--sajwa-glow:rgba(102,59,75,.18);--sajwa-dark-primary:#291a20}
+body[data-theme="sand"]{--sajwa-primary:#69543b;--sajwa-primary-2:#98764c;--sajwa-accent:#bd9a68;--sajwa-accent-soft:#f0dfc1;--sajwa-on-primary:#fffaf0;--sajwa-tint:#f0e8db;--sajwa-card:#fffdf8;--sajwa-card-2:#f7f1e7;--sajwa-outline:#e8dece;--sajwa-glow:rgba(105,84,59,.18);--sajwa-dark-primary:#292218}
+
+/* All app chrome, navigation, primary actions and selected states */
+body[data-theme] header,body[data-theme] .bottomnav{background:var(--sajwa-primary)!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .brandmark,body[data-theme] #soundToggle,body[data-theme] .headtools select,body[data-theme] .iconbtn{background:var(--sajwa-primary-2)!important;border-color:var(--sajwa-accent)!important;color:var(--sajwa-on-primary)!important}
+body[data-theme] .brandname,body[data-theme] .brandmark{color:var(--sajwa-accent-soft)!important}
+body[data-theme] .bottomnav button.on,body[data-theme] .home-tab.active{background:var(--sajwa-primary-2)!important;border-color:var(--sajwa-accent)!important;color:var(--sajwa-on-primary)!important}
+body[data-theme] .primary,body[data-theme] .settings-switch[aria-checked="true"]{background:linear-gradient(135deg,var(--sajwa-accent-soft),var(--sajwa-accent))!important;color:var(--sajwa-primary)!important}
+body[data-theme] .settings-heading-icon,body[data-theme] .settings-preview-btn,body[data-theme] .settings-privacy-note,body[data-theme] .notice,body[data-theme] .smallbtn,body[data-theme] .bookmark-btn{background:var(--sajwa-tint)!important;color:var(--ink)!important;border-color:var(--sajwa-outline)!important}
+body[data-theme] .settings-hero{background:radial-gradient(circle at 90% 15%,var(--sajwa-primary-2),transparent 42%),linear-gradient(120deg,var(--sajwa-primary),var(--sajwa-primary-2))!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .settings-heading-icon,body[data-theme] .settings-action>b,body[data-theme] .section-kicker,body[data-theme] .feature-arrow,body[data-theme] .home-search>span{color:var(--sajwa-accent)!important}
+body[data-theme] .hero{background:radial-gradient(ellipse at 82% 25%,var(--sajwa-primary-2),transparent 45%),linear-gradient(120deg,var(--sajwa-dark-primary),var(--sajwa-primary-2))!important}
+body[data-theme] .hero:before{border-color:color-mix(in srgb,var(--sajwa-accent) 55%,transparent)!important;box-shadow:0 0 0 15px color-mix(in srgb,var(--sajwa-accent) 10%,transparent),0 0 0 32px color-mix(in srgb,var(--sajwa-accent) 6%,transparent),inset 0 0 60px color-mix(in srgb,var(--sajwa-accent) 10%,transparent)!important}
+body[data-theme] .feature-icon,body[data-theme] .feature .art{background:linear-gradient(145deg,var(--sajwa-primary-2),var(--sajwa-primary))!important;color:var(--sajwa-on-primary)!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .prayer-cell.active,body[data-theme] .quran-reading-modes .smallbtn.active{background:linear-gradient(145deg,var(--sajwa-primary-2),var(--sajwa-primary))!important;border-color:var(--sajwa-accent)!important;color:var(--sajwa-on-primary)!important}
+body[data-theme] .prayer-cell.active span{color:var(--sajwa-accent-soft)!important}
+body[data-theme] .daily,body[data-theme] .daily-reflection{background:linear-gradient(120deg,var(--sajwa-tint),var(--sajwa-card-2))!important;color:var(--ink)!important;border-color:var(--sajwa-outline)!important}
+body[data-theme] .daily .arabic,body[data-theme] .daily-arabic{color:var(--sajwa-primary-2)!important}
+body[data-theme] .daily p,body[data-theme] .daily-meaning{color:var(--muted)!important}
+body[data-theme] .progress-fill{background:linear-gradient(90deg,var(--sajwa-primary-2),var(--sajwa-accent))!important}
+body[data-theme] .check-row input,body[data-theme] .settings-range input{accent-color:var(--sajwa-primary-2)!important}
+body[data-theme] .surahrow.selected,body[data-theme] .surahrow:hover{background:var(--sajwa-tint)!important}
+body[data-theme] .surahrow .sno,body[data-theme] .step-no{background:var(--sajwa-tint)!important;color:var(--sajwa-primary-2)!important}
+body[data-theme] .surahar,body[data-theme] .book .bookicon,body[data-theme] .bismillah,body[data-theme] .ayah-no{color:var(--sajwa-primary-2)!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .pronunciation,body[data-theme] .learn-chip,body[data-theme] .learn-step{background:var(--sajwa-tint)!important;color:var(--sajwa-primary-2)!important;border-color:var(--sajwa-outline)!important}
+body[data-theme] .learn-note,body[data-theme] .learn-intro{background:var(--sajwa-tint)!important;color:var(--ink)!important;border-color:var(--sajwa-outline)!important}
+body[data-theme] .compass-wrap{background:radial-gradient(circle at 50% 38%,var(--sajwa-primary-2),var(--sajwa-primary) 62%,var(--sajwa-dark-primary))!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .compass-status,body[data-theme] .compass-readout span{color:var(--sajwa-accent-soft)!important}
+body[data-theme] .tasbeeh-shell{background:radial-gradient(ellipse at 50% -12%,var(--sajwa-primary-2),var(--sajwa-primary) 58%,var(--sajwa-dark-primary))!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .tasbeeh-bead{border-color:var(--sajwa-accent)!important;background:radial-gradient(circle at 35% 25%,var(--sajwa-accent-soft),var(--sajwa-accent) 38%,var(--sajwa-primary-2) 78%,var(--sajwa-primary))!important}
+body[data-theme] .bead-inner{background:radial-gradient(circle at 35% 22%,var(--sajwa-primary-2),var(--sajwa-primary) 72%,var(--sajwa-dark-primary))!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .tasbeeh-dhikr,body[data-theme] .tasbeeh-count,body[data-theme] .tasbeeh-ring-label,body[data-theme] .tasbeeh-live,body[data-theme] .tasbeeh-count-label,body[data-theme] .tasbeeh-target-row,body[data-theme] .tasbeeh-topline,body[data-theme] .tasbeeh-actions{color:var(--sajwa-accent-soft)!important}
+body[data-theme] .tasbeeh-actions .smallbtn{background:color-mix(in srgb,var(--sajwa-on-primary) 12%,transparent)!important;border-color:var(--sajwa-accent)!important;color:var(--sajwa-on-primary)!important}
+body[data-theme] .tasbeeh-select,body[data-theme] #dhikrPreset.tasbeeh-select,body[data-theme] #customDhikr.field{background:var(--sajwa-card-2)!important;color:var(--ink)!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .mushaf-page{background:linear-gradient(180deg,var(--sajwa-card),var(--sajwa-tint))!important;color:var(--ink)!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .mushaf-verse-ar{color:var(--sajwa-primary)!important}
+body[data-theme] .mushaf-page-head,body[data-theme] .mushaf-page-foot,body[data-theme] .mushaf-surah-heading{color:var(--sajwa-primary-2)!important;border-color:var(--sajwa-outline)!important}
+body[data-theme] .mushaf-translation{color:var(--ink)!important;border-color:var(--sajwa-outline)!important}
+body[data-theme] .settings-switch[aria-checked="true"]{background:var(--sajwa-primary-2)!important}
+body[data-theme] .settings-theme-grid .theme-choice.active{border-color:var(--sajwa-accent)!important}
+body[data-theme] .settings-select,body[data-theme] .settings-action,body[data-theme] .field,body[data-theme] .search,body[data-theme] .readerbar select{background:var(--sajwa-card-2)!important;color:var(--ink)!important;border-color:var(--sajwa-outline)!important}
+body[data-theme] .theme-check{background:var(--sajwa-accent)!important;color:var(--sajwa-primary)!important}
+
+/* Dark mode keeps the selected hue; it does not fall back to generic green. */
+body.dark[data-theme] .daily,body.dark[data-theme] .daily-reflection{background:linear-gradient(120deg,var(--surface),var(--soft))!important;color:var(--ink)!important;border-color:var(--line)!important}
+body.dark[data-theme] .mushaf-page{background:linear-gradient(180deg,var(--surface),var(--soft))!important;color:var(--ink)!important}
+body.dark[data-theme] .mushaf-verse-ar{color:var(--gold2)!important}
+body.dark[data-theme] .tasbeeh-select,body.dark[data-theme] #dhikrPreset.tasbeeh-select,body.dark[data-theme] #customDhikr.field{background:var(--surface)!important;color:var(--ink)!important}
+body.dark[data-theme] .learn-note,body.dark[data-theme] .learn-intro,body.dark[data-theme] .learn-step{background:var(--soft)!important;color:var(--ink)!important;border-color:var(--line)!important}
+
 </style>
 </head><body>
 
