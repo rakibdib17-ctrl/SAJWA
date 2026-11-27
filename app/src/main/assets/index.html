@@ -2433,8 +2433,13 @@ function showHijri(){try{const d=new Date(),fmt=new Intl.DateTimeFormat('en-u-ca
     document.documentElement.lang=next;
     document.documentElement.dir='ltr';
     if(langSelect&&langSelect.value!==next)langSelect.value=next;
-    // Re-run after renderers update their language-specific content.
-    requestAnimationFrame(()=>sajwaTranslateTree(document.body,next));
+    // Update only the two brand-name nodes. The base setLang already translates
+    // the page; a second full-document TreeWalker here caused avoidable UI jank.
+    const brandName=document.querySelector('header .brandname');
+    const introName=document.querySelector('#appIntro .intro-name');
+    const displayName=next==='bn'?'সাজওয়া':'SAJWA';
+    if(brandName)brandName.textContent=displayName;
+    if(introName)introName.textContent=displayName;
   };
   // The inline onchange handler resolves setLang at event time.
   if(langSelect)langSelect.onchange=e=>window.setLang(e.target.value);
@@ -2644,4 +2649,20 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
   apply();
 })();
 </script>
+
+<style id="sajwa-smooth-motion-optimization">
+/* Lightweight transitions: avoid per-frame blur/filter work on mobile GPUs. */
+:root{--sa-motion-ease:cubic-bezier(.2,.7,.25,1)}
+.view.active{animation:sajwaViewEnter .18s var(--sa-motion-ease) both!important}
+@keyframes sajwaViewEnter{from{opacity:0;transform:translate3d(0,6px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.feature,.book,.module-card,.prayer-cell,.smallbtn,.back,.primary,.ghost,.home-tab,.bookmark-btn{
+ transition:transform .16s var(--sa-motion-ease),background-color .16s ease,border-color .16s ease,box-shadow .16s ease!important;
+}
+button{ -webkit-tap-highlight-color:transparent }
+@media(prefers-reduced-motion:reduce){
+ .view.active{animation:none!important}
+ *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+</style>
+
 </body></html>
