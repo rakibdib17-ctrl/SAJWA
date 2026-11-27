@@ -714,7 +714,7 @@ function sajwaTranslateTree(root=document.body,lang=localStorage.getItem('sajwa-
 let sajwaObserver=null;
 function sajwaEnableTranslation(){if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body);sajwaObserver=new MutationObserver(records=>{const lang=localStorage.getItem('sajwa-lang')||'en';for(const record of records){if(record.type==='characterData')sajwaTranslateNode(record.target,lang);record.addedNodes?.forEach(n=>{if(n.nodeType===3)sajwaTranslateNode(n,lang);else if(n.nodeType===1)sajwaTranslateTree(n,lang)})}});sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true})}
 function dismissIntro(){const el=document.getElementById('appIntro');if(el)el.classList.add('dismissed');try{sessionStorage.setItem('sajwa-intro-seen','1')}catch(e){}}
-function playIntro(){const el=document.getElementById('appIntro');if(!el)return;try{if(sessionStorage.getItem('sajwa-intro-seen')==='1'){el.classList.add('dismissed');return}}catch(e){}setTimeout(dismissIntro,1100)}
+function playIntro(){const el=document.getElementById('appIntro');if(!el)return;try{if(sessionStorage.getItem('sajwa-intro-seen')==='1'){el.classList.add('dismissed');return}}catch(e){}setTimeout(dismissIntro,3000)}
 
 const words={en:{welcome:"Let your heart find its way back.",intro:"A thoughtful space for Quran, prayer and remembrance — made for your everyday journey."},bn:{welcome:"হৃদয় ফিরে আসুক প্রশান্তির পথে।",intro:"কুরআন, নামাজ ও আল্লাহর স্মরণের জন্য আপনার প্রতিদিনের সঙ্গী।"},ar:{welcome:"دع قلبك يجد طريقه إلى السكينة.",intro:"مساحة للتلاوة والصلاة والذكر في رحلتك اليومية."}};
 let dailyReflectionsReady=false;
@@ -868,3 +868,17 @@ function showHijri(){try{const d=new Date(),fmt=new Intl.DateTimeFormat('en-u-ca
 })();
 
 </script></body></html>
+
+/* Build 126: smoother motion while respecting the device's system refresh-rate choice */
+html{scroll-behavior:auto}
+header,.bottomnav{backdrop-filter:none;-webkit-backdrop-filter:none}
+#appIntro{will-change:opacity;contain:layout paint}
+#appIntro .intro-glow,#appIntro svg{will-change:transform,opacity}
+.feature,.feature-icon,.compass-face,.tasbeeh-bead{will-change:auto}
+.hero-art svg{filter:none}
+.feature,.prayer,.daily,.module-card,.listpanel,.readingpanel,.contentpanel,.book{box-shadow:0 5px 16px #092b240a}
+@media(prefers-reduced-motion:reduce){
+ #appIntro .intro-glow,#appIntro .intro-moon,#appIntro .intro-star,
+ #appIntro .intro-minaret,#appIntro .intro-dome,#appIntro .intro-name,
+ #appIntro .intro-tag,#appIntro .intro-line{animation:none!important}
+}
