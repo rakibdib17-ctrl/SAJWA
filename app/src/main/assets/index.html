@@ -2606,18 +2606,11 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
     if(subtitle)subtitle.textContent=isBn?qiblaBn.subtitle:'A precision-inspired brass navigation instrument';
     root.setAttribute('data-language',isBn?'bn':'en');
   }
+  // Qibla text is refreshed synchronously by the single central setLang controller.
+  // Delayed callbacks here previously re-applied stale languages after rapid switching.
   function refreshQiblaLanguage(lang){
-    applyQiblaLanguage(lang);
-    requestAnimationFrame(()=>applyQiblaLanguage(lang));
-    setTimeout(()=>applyQiblaLanguage(lang),30);
-  }
-  const originalSetLang=window.setLang;
-  if(typeof originalSetLang==='function'){
-    window.setLang=function(value){
-      const lang=['bn','en','ar'].includes(value)?value:'en';
-      originalSetLang(lang);
-      refreshQiblaLanguage(lang);
-    };
+    const current=['bn','en','ar'].includes(lang)?lang:'en';
+    applyQiblaLanguage(current);
   }
   const originalOpenView=window.openView;
   if(typeof originalOpenView==='function'){
@@ -2628,7 +2621,7 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
     };
   }
   const langSelect=document.getElementById('lang');
-  if(langSelect)langSelect.onchange=event=>window.setLang(event.target.value);
+  if(langSelect)langSelect.onchange=event=>setLang(event.target.value);
   refreshQiblaLanguage(localStorage.getItem('sajwa-lang')||'en');
 })();
 </script>
@@ -2675,4 +2668,9 @@ body .home-adhan-toggle:not(.is-on){
 <style id="sajwa-adhan-theme-final-fix">
 .home-adhan-toggle,.home-adhan-toggle.is-on,.home-adhan-toggle:not(.is-on),body[data-theme] .home-adhan-toggle,body[data-theme] .home-adhan-toggle.is-on,body[data-theme] .home-adhan-toggle:not(.is-on){background:linear-gradient(135deg,var(--sajwa-primary-2,var(--sajwa-primary,#075344)),var(--sajwa-primary,#075344))!important;color:var(--sajwa-on-primary,#fff)!important;border:1px solid var(--sajwa-accent,#d8b66d)!important}
 .home-adhan-toggle .home-adhan-state{background:var(--sajwa-accent,#d8b66d)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--sajwa-accent,#d8b66d) 24%,transparent)!important}
+</style><style id="sajwa-smooth-motion-and-language-fix">
+:root{scroll-behavior:smooth}
+button,.feature,.prayer-cell,.notice,.card,.panel,.settings-switch,.bottomnav button{transition-property:background-color,border-color,color,opacity,box-shadow,transform!important;transition-duration:160ms!important;transition-timing-function:cubic-bezier(.2,.75,.25,1)!important}
+main,.view,.view.active,.view-content{will-change:auto}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style></body></html>
