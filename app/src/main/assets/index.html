@@ -2042,7 +2042,31 @@ ar:{
 "Update prayer times":"تحديث أوقات الصلاة","Enable exact prayer alarms":"تفعيل تنبيهات الصلاة الدقيقة","Exact prayer alarm access is enabled.":"تم تفعيل إذن تنبيهات الصلاة الدقيقة.","Enable Alarms & reminders for SAJWA in Android settings, then return and tap this button again.":"فعّل إذن المنبهات والتذكيرات لتطبيق SAJWA من إعدادات أندرويد، ثم عد واضغط الزر مرة أخرى.","Location is turned off. Enable Location/GPS in Android settings and try again.":"خدمات الموقع متوقفة. فعّل الموقع أو GPS من إعدادات أندرويد ثم حاول مرة أخرى.","Compass accuracy is low. Move away from magnets and slowly rotate the phone in a figure-eight.":"دقة البوصلة منخفضة. ابتعد عن المغناطيس والمعادن وحرّك الهاتف ببطء على شكل رقم ثمانية."
 }};
 const sajwaOriginalText=new WeakMap(),sajwaOriginalAttrs=new WeakMap();
-function sajwaTranslateNode(node,lang){if(!node||node.nodeType!==3)return;let state=sajwaOriginalText.get(node);if(!state){state={original:node.nodeValue,lastApplied:node.nodeValue};sajwaOriginalText.set(node,state)}else if(node.nodeValue!==state.lastApplied){state.original=node.nodeValue}const original=state.original,clean=original.trim();if(!clean)return;const dict=sajwaTranslations[lang]||{};let result=dict[clean];if(!result){result=clean;const keys=Object.keys(dict).sort((a,b)=>b.length-a.length);for(const key of keys){if(result.includes(key))result=result.split(key).join(dict[key])}}const lead=original.match(/^\\s*/)?.[0]||'',trail=original.match(/\\s*$/)?.[0]||'',next=lead+result+trail;state.lastApplied=next;if(node.nodeValue!==next)node.nodeValue=next}
+function sajwaCanonicalText(value){
+ const text=String(value??'');
+ const dictionaries=[sajwaTranslations.bn||{},sajwaTranslations.ar||{}];
+ for(const dict of dictionaries){
+  const pairs=Object.entries(dict).sort((a,b)=>b[1].length-a[1].length);
+  for(const [english,translated] of pairs){if(translated&&text.trim()===translated.trim())return english}
+ }
+ let result=text;
+ for(const dict of dictionaries){
+  const pairs=Object.entries(dict).sort((a,b)=>b[1].length-a[1].length);
+  for(const [english,translated] of pairs){if(translated&&result.includes(translated))result=result.split(translated).join(english)}
+ }
+ return result;
+}
+function sajwaTranslateNode(node,lang){
+ if(!node||node.nodeType!==3)return;
+ let state=sajwaOriginalText.get(node);
+ if(!state){const incoming=node.nodeValue;state={original:sajwaCanonicalText(incoming),lastApplied:incoming};sajwaOriginalText.set(node,state)}
+ else if(node.nodeValue!==state.lastApplied){state.original=sajwaCanonicalText(node.nodeValue)}
+ const original=state.original,clean=original.trim();if(!clean)return;
+ const dict=sajwaTranslations[lang]||{};let result=dict[clean];
+ if(!result){result=clean;const keys=Object.keys(dict).sort((a,b)=>b.length-a.length);for(const key of keys){if(result.includes(key))result=result.split(key).join(dict[key])}}
+ const lead=original.match(/^\\s*/)?.[0]||'',trail=original.match(/\\s*$/)?.[0]||'',next=lead+result+trail;
+ state.lastApplied=next;if(node.nodeValue!==next)node.nodeValue=next;
+}
 function sajwaTranslateTree(root=document.body,lang=localStorage.getItem('sajwa-lang')||'en'){const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;while((node=walker.nextNode())){if(node.parentElement?.closest('script,style,#welcome,#intro,.ayah-ar,.ayah-tr,.dua-ar,.dua-tr,.pronunciation,.daily-arabic,.daily-meaning,.tasbeeh-dhikr,[data-no-translate]'))continue;if(!node.parentElement?.closest('.learn-content'))sajwaTranslateNode(node,lang)}root.querySelectorAll?.('input[placeholder],input[aria-label],button[aria-label],select[aria-label],img[alt],title').forEach(el=>{for(const attr of ['placeholder','aria-label','alt','title'])if(el.hasAttribute(attr)){let saved=sajwaOriginalAttrs.get(el);if(!saved){saved={};sajwaOriginalAttrs.set(el,saved)}if(saved[attr]===undefined)saved[attr]=el.getAttribute(attr);const raw=saved[attr];el.setAttribute(attr,(sajwaTranslations[lang]||{})[raw]||raw)}})}
 let sajwaObserver=null;
 function sajwaEnableTranslation(){if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body);sajwaObserver=new MutationObserver(records=>{const lang=localStorage.getItem('sajwa-lang')||'en';for(const record of records){if(record.type==='characterData')sajwaTranslateNode(record.target,lang);record.addedNodes?.forEach(n=>{if(n.nodeType===3)sajwaTranslateNode(n,lang);else if(n.nodeType===1)sajwaTranslateTree(n,lang)})}});sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true})}
@@ -2051,7 +2075,22 @@ function playIntro(){const el=document.getElementById('appIntro');if(!el)return;
 
 const words={en:{welcome:"Let your heart find its way back.",intro:"A thoughtful space for Quran, prayer and remembrance — made for your everyday journey."},bn:{welcome:"হৃদয় ফিরে আসুক প্রশান্তির পথে।",intro:"কুরআন, নামাজ ও আল্লাহর স্মরণের জন্য আপনার প্রতিদিনের সঙ্গী।"},ar:{welcome:"دع قلبك يجد طريقه إلى السكينة.",intro:"مساحة للتلاوة والصلاة والذكر في رحلتك اليومية."}};
 let dailyReflectionsReady=false;
-function translateTasbeehControls(lang){const select=$('dhikrPreset');document.querySelectorAll('.tasbeeh-tap-hint').forEach(el=>{const en=el.querySelector('.tap-en'),bn=el.querySelector('.tap-bn');if(en)en.hidden=lang!=='en';if(bn)bn.hidden=lang!=='bn';el.dir=lang==='ar'?'rtl':'ltr';});if(!select)return;const labels={en:['سُبْحَانَ اللَّهِ · SubhanAllah','الْحَمْدُ لِلَّهِ · Alhamdulillah','اللَّهُ أَكْبَرُ · Allahu Akbar','أَسْتَغْفِرُ اللَّهَ · Astaghfirullah','Custom dhikr…'],bn:['سُبْحَانَ اللَّهِ · সুবহানাল্লাহ','الْحَمْدُ لِلَّهِ · আলহামদুলিল্লাহ','اللَّهُ أَكْبَرُ · আল্লাহু আকবার','أَسْتَغْفِرُ اللَّهَ · আস্তাগফিরুল্লাহ','নিজের জিকির লিখুন…'],ar:['سُبْحَانَ اللَّهِ · سبحان الله','الْحَمْدُ لِلَّهِ · الحمد لله','اللَّهُ أَكْبَرُ · الله أكبر','أَسْتَغْفِرُ اللَّهَ · أستغفر الله','ذكر مخصص…']};[...select.options].forEach((o,i)=>{if(i<5)o.textContent=labels[lang][i]});select.dir='ltr';select.style.textAlign='start';const custom=$('customDhikr');if(custom){custom.placeholder=lang==='bn'?'নিজের জিকির লিখুন':lang==='ar'?'اكتب ذكرك':'Write your own dhikr';custom.dir=lang==='ar'?'rtl':'auto'}const target=$('tasTarget');if(target)target.dir='ltr';} function setLang(v){if(!['en','bn','ar'].includes(v))v='en';try{localStorage.setItem('sajwa-lang',v)}catch(e){}document.documentElement.lang=v;document.documentElement.dir=v==='ar'?'rtl':'ltr';const selector=$('lang');if(selector&&selector.value!==v)selector.value=v;$('welcome').textContent=words[v].welcome;$('intro').textContent=words[v].intro;if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body,v);$('welcome').textContent=words[v].welcome;$('intro').textContent=words[v].intro;if(typeof renderPrayerDashboard==='function'&&prayerData)renderPrayerDashboard();translateTasbeehControls(v);if(dailyReflectionsReady)updateDailyReflection();if(document.getElementById('learnContent')&&document.getElementById('learnView')?.classList.contains('active'))showLearnTab(window.sajwaLearnTab||'kalima');if(sajwaObserver)sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true});}
+function translateTasbeehControls(lang){const select=$('dhikrPreset');document.querySelectorAll('.tasbeeh-tap-hint').forEach(el=>{const en=el.querySelector('.tap-en'),bn=el.querySelector('.tap-bn');if(en)en.hidden=lang!=='en';if(bn)bn.hidden=lang!=='bn';el.dir=lang==='ar'?'rtl':'ltr';});if(!select)return;const labels={en:['سُبْحَانَ اللَّهِ · SubhanAllah','الْحَمْدُ لِلَّهِ · Alhamdulillah','اللَّهُ أَكْبَرُ · Allahu Akbar','أَسْتَغْفِرُ اللَّهَ · Astaghfirullah','Custom dhikr…'],bn:['سُبْحَانَ اللَّهِ · সুবহানাল্লাহ','الْحَمْدُ لِلَّهِ · আলহামদুলিল্লাহ','اللَّهُ أَكْبَرُ · আল্লাহু আকবার','أَسْتَغْفِرُ اللَّهَ · আস্তাগফিরুল্লাহ','নিজের জিকির লিখুন…'],ar:['سُبْحَانَ اللَّهِ · سبحان الله','الْحَمْدُ لِلَّهِ · الحمد لله','اللَّهُ أَكْبَرُ · الله أكبر','أَسْتَغْفِرُ اللَّهَ · أستغفر الله','ذكر مخصص…']};[...select.options].forEach((o,i)=>{if(i<5)o.textContent=labels[lang][i]});select.dir='ltr';select.style.textAlign='start';const custom=$('customDhikr');if(custom){custom.placeholder=lang==='bn'?'নিজের জিকির লিখুন':lang==='ar'?'اكتب ذكرك':'Write your own dhikr';custom.dir=lang==='ar'?'rtl':'auto'}const target=$('tasTarget');if(target)target.dir='ltr';} function setLang(v){
+ if(!['en','bn','ar'].includes(v))v='en';
+ try{localStorage.setItem('sajwa-lang',v)}catch(e){}
+ document.documentElement.lang=v;document.documentElement.dir=v==='ar'?'rtl':'ltr';
+ const selector=$('lang');if(selector&&selector.value!==v)selector.value=v;
+ if(sajwaObserver)sajwaObserver.disconnect();
+ sajwaTranslateTree(document.body,v);
+ $('welcome').textContent=words[v].welcome;$('intro').textContent=words[v].intro;
+ if(typeof renderPrayerDashboard==='function'&&prayerData)renderPrayerDashboard();
+ if(typeof syncHomeAdhanToggle==='function')syncHomeAdhanToggle();
+ translateTasbeehControls(v);
+ if(dailyReflectionsReady&&typeof updateDailyReflection==='function')updateDailyReflection();
+ if(typeof refreshQiblaLanguage==='function')refreshQiblaLanguage(v);
+ if(document.getElementById('learnContent')&&document.getElementById('learnView')?.classList.contains('active'))showLearnTab(window.sajwaLearnTab||'kalima');
+ if(sajwaObserver)sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true});
+}
 const savedSajwaLang=localStorage.getItem('sajwa-lang')||'en';const initialSajwaLang=['en','bn','ar'].includes(savedSajwaLang)?savedSajwaLang:'en';$('lang').value=initialSajwaLang;setLang(initialSajwaLang);sajwaEnableTranslation();playIntro();$('lang').onchange=e=>setLang(e.target.value);
 function setTheme(d){const enabled=!!d;document.body.classList.toggle('dark',enabled);document.documentElement.style.colorScheme=enabled?'dark':'light';$('theme').textContent=enabled?'☀':'☾';$('theme').setAttribute('aria-label',enabled?'Switch to light mode':'Switch to dark mode');try{localStorage.setItem('sajwa-dark',enabled?'1':'0')}catch(e){}if(window.syncSettingsControls)syncSettingsControls()}
 let savedTheme='0';try{savedTheme=localStorage.getItem('sajwa-dark')||'0'}catch(e){}setTheme(savedTheme==='1');$('theme').addEventListener('click',()=>setTheme(!document.body.classList.contains('dark')));
@@ -2633,4 +2672,7 @@ body .home-adhan-toggle:not(.is-on){
   box-shadow:0 0 0 3px color-mix(in srgb,var(--sajwa-accent,#d8b66d) 24%,transparent)!important;
 }
 </style>
-</body></html>
+<style id="sajwa-adhan-theme-final-fix">
+.home-adhan-toggle,.home-adhan-toggle.is-on,.home-adhan-toggle:not(.is-on),body[data-theme] .home-adhan-toggle,body[data-theme] .home-adhan-toggle.is-on,body[data-theme] .home-adhan-toggle:not(.is-on){background:linear-gradient(135deg,var(--sajwa-primary-2,var(--sajwa-primary,#075344)),var(--sajwa-primary,#075344))!important;color:var(--sajwa-on-primary,#fff)!important;border:1px solid var(--sajwa-accent,#d8b66d)!important}
+.home-adhan-toggle .home-adhan-state{background:var(--sajwa-accent,#d8b66d)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--sajwa-accent,#d8b66d) 24%,transparent)!important}
+</style></body></html>
