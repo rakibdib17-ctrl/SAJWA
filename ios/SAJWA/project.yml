@@ -1,0 +1,26 @@
+name: SAJWA
+options:
+  bundleIdPrefix: com.sajwa
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  SAJWA:
+    type: application
+    platform: iOS
+    sources:
+      - path: .
+        excludes:
+          - project.yml
+      - path: ../../app/src/main/assets/index.html
+        buildPhase: resources
+        name: index.html
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sajwa.mobile
+        PRODUCT_NAME: SAJWA
+        INFOPLIST_KEY_CFBundleDisplayName: SAJWA
+        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: SAJWA uses your location to calculate prayer times and Qibla direction.
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        SWIFT_VERSION: 5.0
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: YES
