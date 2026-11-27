@@ -574,6 +574,30 @@ body.dark .book{background:#1b2922;color:#edf2ed;border-color:#3b4d42}
  .ayah-tr{font-size:18px;line-height:2.05}
  .prayer-grid{gap:7px}
 }
+
+/* Build 122: remove Android/WebView blue tap flash while retaining clear keyboard focus */
+html,body,button,a,.feature,.book,.home-tab,.surahrow,.prayer-cell,.iconbtn,.ghost,.primary,.back,.smallbtn,.bookmark-btn,.bottomnav button,[role="button"]{
+ -webkit-tap-highlight-color:transparent;
+}
+button,.feature,.book,.home-tab,.surahrow,.prayer-cell,[role="button"]{
+ outline:none;
+}
+button:focus:not(:focus-visible),.feature:focus:not(:focus-visible),.book:focus:not(:focus-visible),.home-tab:focus:not(:focus-visible),.surahrow:focus:not(:focus-visible),.prayer-cell:focus:not(:focus-visible){
+ outline:none!important;
+ box-shadow:inherit;
+}
+button:focus-visible,.feature:focus-visible,.book:focus-visible,.home-tab:focus-visible,.surahrow:focus-visible{
+ outline:2px solid var(--gold)!important;outline-offset:3px;
+}
+button,.feature,.book,.home-tab,.surahrow,.prayer-cell{
+ transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease,filter .18s ease;
+}
+button:active,.feature:active,.book:active,.home-tab:active,.surahrow:active{
+ filter:brightness(.98);
+}
+@media(hover:hover){
+ .feature:hover,.book:hover{transform:translateY(-2px)}
+}
 </style>
 <!-- Authoritative Android WebView header/inset override. Android decor fitting already handles the status bar. -->
 <style id="sajwa-header-inset-fix">
