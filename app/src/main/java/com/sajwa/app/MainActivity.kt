@@ -171,6 +171,10 @@ class MainActivity : Activity() {
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         magnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
         webView = WebView(this)
+        // Keep WebView composited by the GPU for scrolling and CSS transforms.
+        // No preferred refresh rate is forced: Android follows the user's display setting.
+        webView.setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
+        webView.overScrollMode = android.view.View.OVER_SCROLL_NEVER
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.settings.allowFileAccess = true
