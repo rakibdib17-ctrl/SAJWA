@@ -2595,3 +2595,65 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
 </script>
 
 </body></html>
+
+
+/* SAJWA reliability patch: prayer aliases, persistent language, Qibla controls */
+(function(){
+  const qiblaText={
+    en:{back:'Back',title:'Qibla Compass',subtitle:'A precision-inspired brass navigation instrument',bearing:'Qibla bearing',heading:'Phone heading',start:'Start compass',stop:'Stop',status:'The compass will request your location and start automatically. Hold your phone flat and keep it away from magnets and metal objects.',notice:'The compass uses your phone’s rotation sensor and local magnetic declination correction. If the needle is unstable, move the phone in a slow figure-eight and compare the direction with a trusted mosque or map.',live:'Live Qibla lock · The Kaaba marker and red pointer show the Qibla direction. Keep the phone flat for best accuracy.',paused:'Compass paused. Tap Start compass to resume.',finding:'Finding your location and activating the sensor…'},
+    bn:{back:'ফিরে যান',title:'কিবলা কম্পাস',subtitle:'নির্ভুল দিকনির্দেশনার জন্য বিশেষ কম্পাস',bearing:'কিবলার দিক',heading:'ফোনের দিক',start:'কম্পাস চালু করুন',stop:'বন্ধ করুন',status:'কম্পাস চালু করতে আপনার অবস্থানের অনুমতি প্রয়োজন। ফোন সমতল রাখুন এবং চুম্বক ও ধাতব বস্তু থেকে দূরে রাখুন।',notice:'কম্পাসটি ফোনের ঘূর্ণন সেন্সর ও স্থানীয় চৌম্বকীয় সংশোধন ব্যবহার করে। কাঁটা স্থির না থাকলে ফোনটি ধীরে আটের আকৃতিতে ঘোরান এবং নির্ভরযোগ্য মসজিদ বা মানচিত্রের সঙ্গে মিলিয়ে নিন।',live:'কিবলার দিক নির্ণয় সক্রিয়। কাবার চিহ্ন ও লাল কাঁটা কিবলার দিক নির্দেশ করে। নির্ভুলতার জন্য ফোন সমতল রাখুন।',paused:'কম্পাস বিরতিতে আছে। আবার চালু করতে কম্পাস চালু করুন চাপুন।',finding:'আপনার অবস্থান খোঁজা হচ্ছে এবং সেন্সর চালু হচ্ছে…'}
+  };
+  const oldKey=window.prayerKey;
+  window.prayerKey=function(name){
+    const raw=String(name||'').normalize('NFKD').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9\u0980-\u09ff\u0600-\u06ff]+/g,' ').trim();
+    if(/fajr|subh|ফজর|الفجر/.test(raw))return'fajr';
+    if(/sunrise|shuruq|shurooq|সূর্যোদয়|الشروق/.test(raw))return'sunrise';
+    if(/dhuhr|zuhr|zuhur|noon|যোহর|الظهر/.test(raw))return'dhuhr';
+    if(/asr|আসর|العصر/.test(raw))return'asr';
+    if(/maghrib|sunset|iftar|মাগরিব|المغرب/.test(raw))return'maghrib';
+    if(/isha|এশা|العشاء/.test(raw))return'isha';
+    return typeof oldKey==='function'?oldKey(name):raw;
+  };
+  const oldRender=window.renderPrayerDashboard;
+  window.renderPrayerDashboard=function(){
+    if(!window.prayerData||!Array.isArray(window.prayerData.times)||!window.prayerData.times.length)return;
+    oldRender();
+    const grid=document.getElementById('prayerGrid');
+    if(!grid)return;
+    const required=['fajr','sunrise','dhuhr','asr','maghrib','isha'];
+    const present=new Set([...grid.querySelectorAll('[data-prayer]')].map(el=>el.getAttribute('data-prayer')));
+    if(required.some(key=>!present.has(key))) {
+      const labels=(localStorage.getItem('sajwa-lang')||'en')==='bn'?{fajr:'ফজর',sunrise:'সূর্যোদয়',dhuhr:'যোহর',asr:'আসর',maghrib:'মাগরিব',isha:'এশা'}:{fajr:'Fajr',sunrise:'Sunrise',dhuhr:'Dhuhr',asr:'Asr',maghrib:'Maghrib',isha:'Isha'};
+      const times=window.prayerData.times;
+      required.forEach(key=>{
+        if(present.has(key))return;
+        const item=times.find(x=>window.prayerKey(x.name)===key);
+        const cell=document.createElement('div');cell.className='prayer-cell';cell.dataset.prayer=key;
+        const name=document.createElement('b');name.textContent=labels[key];
+        const time=document.createElement('span');time.textContent=item?.time||'—';
+        cell.append(name,time);grid.appendChild(cell);
+      });
+    }
+  };
+  const oldSetLang=window.setLang;
+  function applyQiblaLanguage(lang){
+    const t=qiblaText[lang]||qiblaText.en;
+    const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value};
+    put('qiblaBearingLabel',t.bearing);put('phoneHeadingLabel',t.heading);
+    const view=document.getElementById('qiblaView');
+    if(view){
+      const h=view.querySelector('.viewtop h2'),p=view.querySelector('.viewtop p'),back=view.querySelector('.viewtop .back');
+      if(h)h.textContent=t.title;if(p)p.textContent=t.subtitle;if(back)back.textContent='← '+t.back;
+      put('startCompassBtn',t.start);put('stopCompassBtn',t.stop);put('compassStatus',t.status);put('qiblaNotice',t.notice);
+    }
+  }
+  window.setLang=function(lang){if(typeof oldSetLang==='function')oldSetLang(lang);applyQiblaLanguage(lang);if(window.prayerData)window.renderPrayerDashboard()};
+  const oldCompass=window.onSajwaCompass;
+  window.onSajwaCompass=function(relative,heading){if(typeof oldCompass==='function')oldCompass(relative,heading);const lang=localStorage.getItem('sajwa-lang')||'en';const el=document.getElementById('compassStatus');if(el)el.textContent=(qiblaText[lang]||qiblaText.en).live};
+  const oldStop=window.stopCompass;
+  window.stopCompass=function(){if(typeof oldStop==='function')oldStop();const lang=localStorage.getItem('sajwa-lang')||'en';const el=document.getElementById('compassStatus');if(el)el.textContent=(qiblaText[lang]||qiblaText.en).paused};
+  const oldStart=window.startCompass;
+  window.startCompass=function(){if(typeof oldStart==='function')oldStart();const lang=localStorage.getItem('sajwa-lang')||'en';const el=document.getElementById('compassStatus');if(el&&window.SajwaNative)el.textContent=(qiblaText[lang]||qiblaText.en).finding};
+  document.addEventListener('DOMContentLoaded',()=>applyQiblaLanguage(localStorage.getItem('sajwa-lang')||'en'));
+  applyQiblaLanguage(localStorage.getItem('sajwa-lang')||'en');
+})();
