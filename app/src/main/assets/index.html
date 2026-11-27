@@ -2549,7 +2549,19 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
           const map=qiblaText.qiblaView;
           const walker=document.createTreeWalker(qroot,NodeFilter.SHOW_TEXT);
           const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
-          nodes.forEach(node=>{const value=node.nodeValue.trim();if(map[value])node.nodeValue=node.nodeValue.replace(value,lang==='bn'?map[value]:value);});
+          nodes.forEach(node=>{
+            const original=sajwaOriginalText.get(node)||node.nodeValue;
+            const value=original.trim();
+            if(map[value])node.nodeValue=node.nodeValue.replace(node.nodeValue.trim(),lang==='bn'?map[value]:value);
+          });
+          qroot.querySelectorAll('button,span,p,h2').forEach(el=>{
+            if(el.children.length)return;
+            const original=el.getAttribute('data-sajwa-original')||el.textContent.trim();
+            if(map[original]){
+              el.setAttribute('data-sajwa-original',original);
+              el.textContent=lang==='bn'?map[original]:original;
+            }
+          });
         }
         if(typeof renderPrayerDashboard==='function'&&prayerData)renderPrayerDashboard();
         if(typeof syncHomeAdhanToggle==='function')syncHomeAdhanToggle();
