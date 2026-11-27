@@ -2543,22 +2543,22 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
     notice:"কম্পাসটি ফোনের ঘূর্ণন সেন্সর ও স্থানীয় চৌম্বক বিচ্যুতি সংশোধন ব্যবহার করে। সূচক স্থির না থাকলে ফোনটি ধীরে আটের মতো ঘোরান এবং নির্ভরযোগ্য মসজিদ বা মানচিত্রের দিকের সঙ্গে মিলিয়ে নিন।"
   };
   function applyQiblaLanguage(lang){
-    const root=document.getElementById('qiblaView'); if(!root)return;
-    const bn=lang==='bn';
-    const values=[
-      ['.viewtop h2','Qibla Compass',qiblaBn.title],
-      ['.viewtop p','A precision-inspired brass navigation instrument',qiblaBn.subtitle],
-      ['.compass-readout div:first-child span','Qibla bearing',qiblaBn.bearing],
-      ['.compass-readout div:nth-child(2) span','Phone heading',qiblaBn.heading],
-      ['#compassStatus','The compass will request your location and start automatically. Hold your phone flat and keep it away from magnets and metal objects.',qiblaBn.status],
-      ['button[onclick="startCompass()"]','Start compass',qiblaBn.start],
-      ['button[onclick="stopCompass()"]','Stop',qiblaBn.stop],
-      [':scope > .notice',"The compass uses your phone's rotation sensor and local magnetic declination correction. If the needle is unstable, move the phone in a slow figure-eight and compare the direction with a trusted mosque or map.",qiblaBn.notice]
-    ];
-    for(const [selector,en,bengali] of values){
-      const el=root.querySelector(selector); if(el)el.textContent=bn?bengali:en;
-    }
-    root.setAttribute('data-language',lang);
+    const root=document.getElementById('qiblaView');
+    if(!root)return;
+    const isBn=lang==='bn';
+    const put=(el,en,bn)=>{if(el){const next=isBn?bn:en;if(el.textContent!==next)el.textContent=next;}};
+    put(root.querySelector('.viewtop h2'),'Qibla Compass',qiblaBn.title);
+    put(root.querySelector('.viewtop p'),'A precision-inspired brass navigation instrument',qiblaBn.subtitle);
+    const readouts=root.querySelectorAll('.compass-readout span');
+    put(readouts[0],'Qibla bearing',qiblaBn.bearing);
+    put(readouts[1],'Phone heading',qiblaBn.heading);
+    put(root.querySelector('#compassStatus'),'The compass will request your location and start automatically. Hold your phone flat and keep it away from magnets and metal objects.',qiblaBn.status);
+    const actionButtons=root.querySelectorAll('.action-row button');
+    put(actionButtons[0],'Start compass',qiblaBn.start);
+    put(actionButtons[1],'Stop',qiblaBn.stop);
+    const notice=Array.from(root.children).find(el=>el.classList&&el.classList.contains('notice'));
+    put(notice,"The compass uses your phone's rotation sensor and local magnetic declination correction. If the needle is unstable, move the phone in a slow figure-eight and compare the direction with a trusted mosque or map.",qiblaBn.notice);
+    root.setAttribute('data-language',isBn?'bn':'en');
   }
   function refreshQiblaLanguage(lang){
     applyQiblaLanguage(lang);
