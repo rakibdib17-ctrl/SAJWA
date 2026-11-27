@@ -62,7 +62,7 @@ const { chromium } = require('playwright');
     theme: getComputedStyle(document.querySelector('#quranView .readingpanel')).backgroundColor,
     royal: document.body.dataset.theme
   }));
-  if (!quranBn.notice.includes('কুরআনের আরবি পাঠ') || !quranBn.surahMode.includes('সূরা') || !quranBn.mushafMode.includes('মুসহাফ')) {
+  if (!quranBn.notice.includes('আরবি পাঠ ও অনুবাদ') || !quranBn.surahMode.includes('সূরা') || !quranBn.mushafMode.includes('মুসহাফ')) {
     throw new Error('Quran Bengali localization regression: ' + JSON.stringify(quranBn));
   }
   if (quranBn.royal !== 'royal') throw new Error('Royal theme was not retained on Quran view.');
