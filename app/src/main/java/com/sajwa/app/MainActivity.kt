@@ -158,9 +158,11 @@ class MainActivity : Activity() {
             window.isStatusBarContrastEnforced = false
             window.isNavigationBarContrastEnforced = false
         }
-        // Let Android fit the app window below the status bar and around display cutouts.
-        // This avoids WebView content being laid out underneath the camera notch.
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        // Draw the forest-green window edge-to-edge, but inset the WebView content
+        // below the real status bar/display cutout and above the navigation/gesture bar.
+        // On Android 15+ decor fitting may be ignored for apps targeting the enforced
+        // edge-to-edge behavior, so apply the insets directly to the WebView.
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
@@ -201,10 +203,18 @@ class MainActivity : Activity() {
                 return assetLoader.shouldInterceptRequest(android.net.Uri.parse(url))
             }
         }
-        // Match the WebView's exposed top inset/blank area to the SAJWA forest-green header.
+        // Keep the system-bar background green while ensuring page content never sits
+        // underneath status icons, the camera cutout, or the bottom gesture/navigation bar.
         webView.setBackgroundColor(sajwaForest)
-        // Decor fitting handles status/navigation bars and cutouts; do not add a second inset.
+        ViewCompat.setOnApplyWindowInsetsListener(webView) { view, insets ->
+            val safeInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(0, safeInsets.top, 0, safeInsets.bottom)
+            insets
+        }
         setContentView(webView)
+        ViewCompat.requestApplyInsets(webView)
         if (savedInstanceState == null) webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
         else webView.restoreState(savedInstanceState)
     }
