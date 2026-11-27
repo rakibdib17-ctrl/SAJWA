@@ -244,6 +244,9 @@ class MainActivity : Activity() {
                 .put("webView", "loaded")
                 .put("locationFine", fine)
                 .put("locationCoarse", coarse)
+                .put("notificationsAllowed", Build.VERSION.SDK_INT < 33 || ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
+                .put("exactAlarmsAllowed", Build.VERSION.SDK_INT < 31 || (getSystemService(ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms())
+                .put("batteryOptimizationIgnored", (getSystemService(POWER_SERVICE) as android.os.PowerManager).isIgnoringBatteryOptimizations(packageName))
                 .put("enabledProviders", providers)
                 .put("rotationSensor", rotationSensor != null)
                 .put("accelerometer", accelerometerSensor != null)
@@ -251,6 +254,12 @@ class MainActivity : Activity() {
                 .put("qiblaBearingReady", qiblaBearing != null)
                 .put("compassRequested", compassRequested)
                 .toString()
+        }
+        @JavascriptInterface fun openBatteryOptimizationSettings() {
+            runOnUiThread {
+                try { startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) }
+                catch (_: Exception) { startActivity(Intent(Settings.ACTION_SETTINGS)) }
+            }
         }
         @JavascriptInterface fun requestExactAlarmAccess(): Boolean {
             if (Build.VERSION.SDK_INT < 31) return true
@@ -299,7 +308,17 @@ class MainActivity : Activity() {
             return
         }
         if (locationGranted) fetchLocation()
+        requestNotificationPermissionOnce()
         requestExactAlarmAccessOnce()
+    }
+
+    private fun requestNotificationPermissionOnce() {
+        if (Build.VERSION.SDK_INT < 33) return
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) return
+        val prefs = getSharedPreferences("sajwa_setup", MODE_PRIVATE)
+        if (prefs.getBoolean("notification_permission_requested", false)) return
+        prefs.edit().putBoolean("notification_permission_requested", true).apply()
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 4103)
     }
 
     private fun requestExactAlarmAccessOnce() {
@@ -471,6 +490,7 @@ class MainActivity : Activity() {
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
             if (locationGranted) {
                 fetchLocation()
+                requestNotificationPermissionOnce()
                 requestExactAlarmAccessOnce()
             } else {
                 publishError("Location permission is needed to calculate local prayer times. You can enable it in Android Settings.")
