@@ -2545,40 +2545,45 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
   function applyQiblaLanguage(lang){
     const root=document.getElementById('qiblaView'); if(!root)return;
     const bn=lang==='bn';
-    const set=(selector,en,bengali)=>{
-      const el=root.querySelector(selector); if(!el)return;
-      const value=bn?bengali:en;
-      if(el.textContent.trim()!==value)el.textContent=value;
-    };
-    set('.viewtop h2','Qibla Compass',qiblaBn.title);
-    set('.viewtop p','A precision-inspired brass navigation instrument',qiblaBn.subtitle);
-    set('.compass-readout div:first-child span','Qibla bearing',qiblaBn.bearing);
-    set('.compass-readout div:nth-child(2) span','Phone heading',qiblaBn.heading);
-    set('#compassStatus','The compass will request your location and start automatically. Hold your phone flat and keep it away from magnets and metal objects.',qiblaBn.status);
-    set('button[onclick="startCompass()"]','Start compass',qiblaBn.start);
-    set('button[onclick="stopCompass()"]','Stop',qiblaBn.stop);
-    set(':scope > .notice',"The compass uses your phone's rotation sensor and local magnetic declination correction. If the needle is unstable, move the phone in a slow figure-eight and compare the direction with a trusted mosque or map.",qiblaBn.notice);
+    const values=[
+      ['.viewtop h2','Qibla Compass',qiblaBn.title],
+      ['.viewtop p','A precision-inspired brass navigation instrument',qiblaBn.subtitle],
+      ['.compass-readout div:first-child span','Qibla bearing',qiblaBn.bearing],
+      ['.compass-readout div:nth-child(2) span','Phone heading',qiblaBn.heading],
+      ['#compassStatus','The compass will request your location and start automatically. Hold your phone flat and keep it away from magnets and metal objects.',qiblaBn.status],
+      ['button[onclick="startCompass()"]','Start compass',qiblaBn.start],
+      ['button[onclick="stopCompass()"]','Stop',qiblaBn.stop],
+      [':scope > .notice',"The compass uses your phone's rotation sensor and local magnetic declination correction. If the needle is unstable, move the phone in a slow figure-eight and compare the direction with a trusted mosque or map.",qiblaBn.notice]
+    ];
+    for(const [selector,en,bengali] of values){
+      const el=root.querySelector(selector); if(el)el.textContent=bn?bengali:en;
+    }
     root.setAttribute('data-language',lang);
+  }
+  function refreshQiblaLanguage(lang){
+    applyQiblaLanguage(lang);
+    requestAnimationFrame(()=>applyQiblaLanguage(lang));
+    setTimeout(()=>applyQiblaLanguage(lang),30);
   }
   const originalSetLang=window.setLang;
   if(typeof originalSetLang==='function'){
     window.setLang=function(value){
       const lang=['bn','en','ar'].includes(value)?value:'en';
       originalSetLang(lang);
-      requestAnimationFrame(()=>applyQiblaLanguage(lang));
+      refreshQiblaLanguage(lang);
     };
   }
   const originalOpenView=window.openView;
   if(typeof originalOpenView==='function'){
     window.openView=function(value){
       const result=originalOpenView(value);
-      if(value==='qibla')requestAnimationFrame(()=>applyQiblaLanguage(localStorage.getItem('sajwa-lang')||'en'));
+      if(value==='qibla')refreshQiblaLanguage(localStorage.getItem('sajwa-lang')||'en');
       return result;
     };
   }
   const langSelect=document.getElementById('lang');
   if(langSelect)langSelect.onchange=event=>window.setLang(event.target.value);
-  applyQiblaLanguage(localStorage.getItem('sajwa-lang')||'en');
+  refreshQiblaLanguage(localStorage.getItem('sajwa-lang')||'en');
 })();
 </script>
 
