@@ -1046,7 +1046,6 @@ function showHijri(){try{const d=new Date(),fmt=new Intl.DateTimeFormat('en-u-ca
       box.innerHTML=h(x.salahTitle)+n(x.note)+cards+h(x.method)+learnSalah.map((v,i)=>'<article class="learn-dua"><h4>'+prayerNames[i]+'</h4><p><b>'+x.fard+': </b>'+v[1]+'</p><p><b>'+x.arrangement+': </b>'+v[2]+'</p></article>').join('')+h(x.duas)+'<div id="salahDuaList"></div>'+n(l==='bn'?'গুরুত্বপূর্ণ: নিয়ত মূলত অন্তরের সংকল্প; মুখে আরবি বাক্য বলা নামাজের শর্ত নয়। জানাজার মৃত ব্যক্তি নারী হলে “لِهَذَا الْمَيِّتِ” অংশের পরিবর্তে “لِهَذِهِ الْمَيِّتَةِ” ব্যবহার করা হয়। কিছু আমল মাজহাবভেদে ভিন্ন হতে পারে।':'Important: Niyyah is fundamentally the intention of the heart; reciting an Arabic formula aloud is not a condition of salah. For a deceased woman, the Janazah wording changes to the feminine form. Some practices vary by madhhab.');
       $('salahDuaList').innerHTML=salahDuaRows.map(learnCard).join('');return;
     }
-    }
   }
   window.showLearnTab=renderLearn;
   // Add missing Bengali-to-English labels so switching back to English never leaves Bangla UI fragments.
