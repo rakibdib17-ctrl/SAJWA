@@ -19,10 +19,26 @@ const { chromium } = require('playwright');
 
   const views = ['quran','prayer','qibla','dua','tasbeeh','tracker','hadith','learn','hajj','calendar','ramadan','settings'];
   for (const view of views) {
-    const card = page.locator('.feature[onclick="openView(\'' + view + '\')"]').first();
-    await card.click();
-    const active = await page.locator('#' + view + 'View').evaluate(el => el.classList.contains('active'));
-    if (!active) throw new Error('Navigation failed for view: ' + view);
+    await page.evaluate(() => window.openView('home'));
+    const card = page.locator('.feature[onclick*="openView(\\'' + view + '\\')"]').first();
+    await card.click({ timeout: 7000 });
+    const state = await page.locator('#' + view + 'View').evaluate(el => ({
+      active: el.classList.contains('active'),
+      hidden: el.hidden,
+      display: getComputedStyle(el).display,
+      rect: el.getBoundingClientRect().toJSON(),
+      ariaHidden: el.getAttribute('aria-hidden')
+    }));
+    if (!state.active || state.hidden || state.display === 'none' || state.rect.height < 1 || state.ariaHidden === 'true') {
+      throw new Error('Navigation target is not visibly rendered for ' + view + ': ' + JSON.stringify(state));
+    }
+    const visibleViews = await page.locator('.view').evaluateAll(els => els.filter(el => {
+      const s = getComputedStyle(el);
+      return s.display !== 'none' && !el.hidden && el.getBoundingClientRect().height > 0;
+    }).map(el => el.id));
+    if (visibleViews.length !== 1 || visibleViews[0] !== view + 'View') {
+      throw new Error('Multiple or incorrect views visible after ' + view + ': ' + JSON.stringify(visibleViews));
+    }
     const lastError = await page.evaluate(() => window.__sajwaLastError || '');
     if (lastError) throw new Error('View initialization error in ' + view + ': ' + lastError);
   }
@@ -33,8 +49,8 @@ const { chromium } = require('playwright');
   await page.locator('#lang').selectOption('en');
   await page.waitForTimeout(100);
 
-  if (pageErrors.length) throw new Error('Browser runtime errors:\n' + pageErrors.join('\n---\n'));
-  console.log('SAJWA smoke test passed: intro, 12 feature routes, theme and language controls.');
+  if (pageErrors.length) throw new Error('Browser runtime errors:\\n' + pageErrors.join('\\n---\\n'));
+  console.log('SAJWA smoke test passed: intro, 12 visibly exclusive feature routes, theme and language controls.');
   await browser.close();
 })().catch(error => {
   console.error(error);
