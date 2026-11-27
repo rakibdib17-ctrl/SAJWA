@@ -1625,6 +1625,20 @@ body.dark .quran-pronunciation-text{color:var(--ink,#f3f6f7);background:rgba(255
 body.dark .quran-pronunciation-image{background:#fff;border-color:rgba(255,255,255,.22);box-shadow:0 4px 16px #0005}
 body.dark .quran-pronunciation-missing{background:rgba(255,255,255,.08);color:var(--ink,#e8eeee)}
 </style>
+<style id="sajwa-home-adhan-luxury">
+.sajwa-hero-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:22px}
+.sajwa-hero-actions .primary,.sajwa-hero-actions .ghost{min-height:43px;padding:10px 15px;border-radius:13px;font-size:12px;letter-spacing:.1px}
+.home-adhan-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:43px;padding:9px 13px;border-radius:13px;border:1px solid rgba(221,195,139,.52);background:rgba(255,255,255,.075);color:#f0dfb9;font:700 12px "DM Sans","Hind Siliguri",sans-serif;box-shadow:inset 0 1px rgba(255,255,255,.09),0 5px 15px rgba(0,0,0,.12);backdrop-filter:blur(12px);transition:background .22s,border-color .22s,transform .22s}
+.home-adhan-toggle:active{transform:scale(.97)}
+.home-adhan-icon{font-size:15px;line-height:1}
+.home-adhan-state{width:7px;height:7px;border-radius:50%;background:#c27a70;box-shadow:0 0 0 3px rgba(194,122,112,.15)}
+.home-adhan-toggle.is-on{background:linear-gradient(135deg,rgba(224,199,147,.22),rgba(255,255,255,.08));border-color:rgba(231,207,157,.82)}
+.home-adhan-toggle.is-on .home-adhan-state{background:#a9d5a6;box-shadow:0 0 0 3px rgba(169,213,166,.17),0 0 10px rgba(169,213,166,.5)}
+@media(max-width:760px){.sajwa-hero-actions{gap:7px;margin-top:18px}.sajwa-hero-actions .primary,.sajwa-hero-actions .ghost,.home-adhan-toggle{min-height:39px;padding:8px 10px;font-size:11px;border-radius:12px}.home-adhan-toggle{gap:6px}}
+body[data-theme] .home-adhan-toggle{color:var(--sajwa-on-primary)!important;border-color:var(--sajwa-accent)!important}
+body[data-theme] .home-adhan-toggle.is-on{background:linear-gradient(135deg,var(--sajwa-primary-2),var(--sajwa-primary))!important}
+body[data-theme] .home-adhan-toggle .home-adhan-state{background:var(--sajwa-accent)!important}
+</style>
 </head><body>
 
 <div id="appIntro" role="dialog" aria-label="SAJWA welcome animation">
@@ -1645,7 +1659,7 @@ body.dark .quran-pronunciation-missing{background:rgba(255,255,255,.08);color:va
 <header><div class="brand"><div class="brandmark" aria-label="SAJWA logo"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 3.5 28.2 15.8 40.5 20 28.2 24.2 24 36.5 19.8 24.2 7.5 20 19.8 15.8 24 3.5Z" stroke="#f3e5c2" stroke-width="1.5"/><path d="M24 11.5 27 20l8.5 3-8.5 3-3 8.5-3-8.5-8.5-3 8.5-3 3-8.5Z" fill="#d6b779"/><circle cx="24" cy="23" r="3.2" fill="#082c23"/><path d="M24 1v5M24 42v5M1 24h5M42 24h5" stroke="#f3e5c2" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="brandname">SAJWA</div><div class="brandtag">FIND PEACE IN FAITH</div></div></div><div class="headtools"><select id="lang" aria-label="Language"><option value="en">English</option><option value="bn">বাংলা</option></select><button class="iconbtn" id="theme" aria-label="Toggle theme">☾</button></div></header>
 <main>
 <section id="home" class="view active">
-<div class="hero"><div class="hero-copy"><div class="eyebrow">A MOMENT OF STILLNESS</div><h1 id="welcome">Let your heart find its way back.</h1><p id="intro">A thoughtful space for Quran, prayer and remembrance — made for your everyday journey.</p><div class="hero-actions"><button class="primary" onclick="openView('quran')">Read the Quran <span>↗</span></button><button class="ghost" onclick="openView('prayer')">Prayer times</button></div></div>
+<div class="hero"><div class="hero-copy"><div class="eyebrow">A MOMENT OF STILLNESS</div><h1 id="welcome">Let your heart find its way back.</h1><p id="intro">A thoughtful space for Quran, prayer and remembrance — made for your everyday journey.</p><div class="hero-actions sajwa-hero-actions"><button class="primary" onclick="openView('quran')">Read the Quran <span>↗</span></button><button class="ghost" onclick="openView('prayer')">Prayer times</button><button type="button" id="homeAdhanToggle" class="home-adhan-toggle" aria-pressed="true" onclick="toggleHomeAdhan()"><span class="home-adhan-icon">◖))</span><span class="home-adhan-label">Adhan On</span><span class="home-adhan-state"></span></button></div></div>
 <div class="hero-art"><svg viewBox="0 0 320 280" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M35 280V153C35 77 91 20 160 20S285 77 285 153V280" stroke="#D9BD82" stroke-opacity=".7" stroke-width="2"/><path d="M58 280V159C58 97 103 53 160 53S262 97 262 159V280" stroke="#D9BD82" stroke-opacity=".45"/><path d="M82 280V166C82 116 115 83 160 83S238 116 238 166V280" fill="#D9BD82" fill-opacity=".07" stroke="#D9BD82" stroke-opacity=".5"/><path d="M160 104C119 104 99 137 99 173V280H221V173C221 137 201 104 160 104Z" fill="#D9BD82" fill-opacity=".08"/><path d="M160 0V26M146 13H174" stroke="#EBD8AC" stroke-width="2"/><circle cx="160" cy="13" r="5" fill="#EBD8AC"/><path d="M112 280V195C112 165 132 143 160 143S208 165 208 195V280" stroke="#EBD8AC" stroke-opacity=".5"/><path d="M130 280V205C130 185 142 169 160 169S190 185 190 205V280" fill="#D9BD82" fill-opacity=".13"/></svg></div></div>
 <section class="prayer prayer-dashboard" id="prayerDashboard">
 <div class="prayer-dash-head"><div><span class="prayer-kicker" id="prayerKicker">YOUR DAILY WORSHIP</span><h2 id="prayerHeading">Prayer times</h2><div class="prayer-meta"><span id="locationLabel">Set your location for accurate local times</span><span>•</span><span id="prayerDate"></span></div></div><button class="prayer-location-btn" onclick="requestPrayerTimes()" id="locBtn">⌖ <span id="locBtnText">Use location</span></button></div>
@@ -1866,9 +1880,11 @@ updateDailyReflection();setInterval(updateDailyReflection,300000);
 function closeModal(){$('modal').classList.remove('open')}
 function testAdhan(){if(window.SajwaNative){SajwaNative.testAdhan();$('adhanStatus').textContent='Starting SAJWA Adhan…'}else $('adhanStatus').textContent='Adhan playback requires the Android app.'}
 function stopAdhan(){if(window.SajwaNative)SajwaNative.stopAdhan();$('adhanStatus').textContent='Adhan stopped.'}
-function saveAdhanSetting(){const enabled=$('adhanEnabled').checked;localStorage.setItem('sajwa-adhan-enabled',enabled?'1':'0');if(window.SajwaNative)SajwaNative.setAdhanEnabled(enabled)}
+function syncHomeAdhanToggle(){const b=document.getElementById('homeAdhanToggle');if(!b)return;const on=localStorage.getItem('sajwa-adhan-enabled')!=='0';b.setAttribute('aria-pressed',on?'true':'false');b.classList.toggle('is-on',on);const lang=localStorage.getItem('sajwa-lang')||'en';const labels={en:on?'Adhan On':'Adhan Off',bn:on?'আজান চালু':'আজান বন্ধ',ar:on?'الأذان يعمل':'الأذان متوقف'};const label=b.querySelector('.home-adhan-label');if(label)label.textContent=labels[lang]||labels.en;b.title=lang==='bn'?'আজানের নোটিফিকেশন ও প্লেব্যাক চালু বা বন্ধ করুন':lang==='ar'?'تشغيل أو إيقاف الأذان':'Turn Adhan playback on or off';}
+function toggleHomeAdhan(){const input=document.getElementById('adhanEnabled');if(!input)return;input.checked=!input.checked;saveAdhanSetting();syncHomeAdhanToggle();}
+function saveAdhanSetting(){const enabled=$('adhanEnabled').checked;localStorage.setItem('sajwa-adhan-enabled',enabled?'1':'0');if(window.SajwaNative)SajwaNative.setAdhanEnabled(enabled);if(window.syncHomeAdhanToggle)syncHomeAdhanToggle()}
 $('adhanEnabled').checked=localStorage.getItem('sajwa-adhan-enabled')!=='0';
-if(window.SajwaNative)SajwaNative.setAdhanEnabled($('adhanEnabled').checked);
+if(window.SajwaNative)SajwaNative.setAdhanEnabled($('adhanEnabled').checked);syncHomeAdhanToggle();
 
 const duaEntries=[
 {ar:'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',bn:'হে আমাদের রব! আমাদের দুনিয়াতে কল্যাণ দিন এবং আখিরাতেও কল্যাণ দিন, আর আমাদের আগুনের শাস্তি থেকে রক্ষা করুন।',bnPron:'রব্বানা আতিনা ফিদ্দুনইয়া হাসানাতাঁও ওয়া ফিল আখিরাতি হাসানাতাঁও ওয়া কিনা আযাবান্নার।',enPron:'Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina adhaban-nar.',en:'Our Lord, give us good in this world and good in the Hereafter and protect us from the punishment of the Fire.',ref:'Quran 2:201'},
@@ -1986,8 +2002,6 @@ function showHijri(){try{const d=new Date(),fmt=new Intl.DateTimeFormat('en-u-ca
 (()=>{
  const KEY='sajwa-ui-sounds',STYLE='sajwa-sound-style',VOL='sajwa-sound-volume',HAPTIC='sajwa-haptics';
  let enabled=localStorage.getItem(KEY)==='1',style=localStorage.getItem(STYLE)||'crystal',volume=Number(localStorage.getItem(VOL)||55),ctx=null,last=0;
- const btn=document.createElement('button');btn.id='soundToggle';btn.type='button';btn.title='Toggle interface sounds';btn.setAttribute('aria-label','Toggle interface sounds');btn.setAttribute('aria-pressed',enabled?'true':'false');btn.textContent=enabled?'♫':'♪';
- const tools=document.querySelector('.headtools');if(tools)tools.insertBefore(btn,tools.querySelector('#theme'));
  function audio(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!ctx)ctx=new AC();if(ctx.state==='suspended')ctx.resume();return ctx}
  function note(freq,at,dur,wave='sine',amp=1){const c=audio();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=wave;o.frequency.setValueAtTime(freq,c.currentTime+at);g.gain.setValueAtTime(.0001,c.currentTime+at);g.gain.exponentialRampToValueAtTime(Math.max(.0002,(volume/100)*.045*amp),c.currentTime+at+.012);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+at+dur);o.connect(g);g.connect(c.destination);o.start(c.currentTime+at);o.stop(c.currentTime+at+dur+.02)}
  window.playSajwaSound=(kind)=>{
@@ -2001,11 +2015,10 @@ function showHijri(){try{const d=new Date(),fmt=new Intl.DateTimeFormat('en-u-ca
  };
  window.saveSajwaSoundStyle=v=>{style=v;localStorage.setItem(STYLE,v);window.playSajwaSound('preview')};
  window.saveSajwaSoundVolume=v=>{volume=Number(v);localStorage.setItem(VOL,String(volume));const out=document.getElementById('soundVolumeValue');if(out)out.textContent=volume+'%'};
- window.toggleSajwaSounds=()=>{enabled=!enabled;localStorage.setItem(KEY,enabled?'1':'0');btn.setAttribute('aria-pressed',enabled?'true':'false');btn.textContent=enabled?'♫':'♪';syncSettingsControls();if(enabled)window.playSajwaSound('preview')};
+ window.toggleSajwaSounds=()=>{enabled=!enabled;localStorage.setItem(KEY,enabled?'1':'0');syncSettingsControls();if(enabled)window.playSajwaSound('preview')};
  window.previewSajwaSound=()=>window.playSajwaSound('preview');
- btn.addEventListener('click',window.toggleSajwaSounds);
  document.addEventListener('click',e=>{
-  const el=e.target.closest('button,.home-tab,.surahrow,.book,.feature');if(!el||el===btn||el.disabled||el.getAttribute('aria-disabled')==='true')return;
+  const el=e.target.closest('button,.home-tab,.surahrow,.book,.feature');if(!el||el.disabled||el.getAttribute('aria-disabled')==='true')return;
   if(el.id==='theme')return;
   window.playSajwaSound('tap');
   if(localStorage.getItem(HAPTIC)==='1'&&navigator.vibrate){try{navigator.vibrate(12)}catch(_){}}
