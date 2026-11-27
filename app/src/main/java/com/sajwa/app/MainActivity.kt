@@ -243,6 +243,16 @@ class MainActivity : Activity() {
     }
 
     inner class SajwaBridge {
+        @JavascriptInterface fun setSystemBarColors(color: String) {
+            if (!Regex("^#[0-9a-fA-F]{6}$").matches(color)) return
+            val parsed = android.graphics.Color.parseColor(color)
+            runOnUiThread {
+                window.statusBarColor = parsed
+                window.navigationBarColor = parsed
+                window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(parsed))
+                if (::rootLayout.isInitialized) rootLayout.setBackgroundColor(parsed)
+            }
+        }
         @JavascriptInterface fun getDiagnostics(): String {
             val fine = ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
             val coarse = ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
