@@ -62,6 +62,7 @@ class MainActivity : Activity() {
     private var magneticDeclination: Float = 0f
     private var qiblaAligned = false
     private val compassListener = object : SensorEventListener {
+        private var lastUiDispatchMs = 0L
         override fun onSensorChanged(event: SensorEvent) {
             try {
             val rotation = FloatArray(9)
@@ -109,7 +110,11 @@ class MainActivity : Activity() {
             } else if (angularError >= 8.0) {
                 qiblaAligned = false
             }
-            runOnUiThread { webView.evaluateJavascript("window.onSajwaCompass && window.onSajwaCompass($relative,$heading)", null) }
+            val nowMs = android.os.SystemClock.elapsedRealtime()
+            if (nowMs - lastUiDispatchMs >= 50L) {
+                lastUiDispatchMs = nowMs
+                runOnUiThread { webView.evaluateJavascript("window.onSajwaCompass && window.onSajwaCompass($relative,$heading)", null) }
+            }
             } catch (_: Exception) {
                 runOnUiThread { webView.evaluateJavascript("window.onSajwaCompassError && window.onSajwaCompassError('Compass sensor data is temporarily unavailable. Move the phone slowly and try again.')", null) }
             }
