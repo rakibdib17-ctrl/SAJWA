@@ -574,7 +574,16 @@ body.dark .book{background:#1b2922;color:#edf2ed;border-color:#3b4d42}
  .ayah-tr{font-size:18px;line-height:2.05}
  .prayer-grid{gap:7px}
 }
-</style></head><body>
+</style>
+<!-- Authoritative Android WebView header/inset override. Android decor fitting already handles the status bar. -->
+<style id="sajwa-header-inset-fix">
+html,body{margin:0!important;padding-top:0!important;min-height:100%;scroll-padding-top:76px}
+header{position:sticky!important;top:0!important;z-index:100!important;box-sizing:border-box!important;height:66px!important;min-height:66px!important;padding:0 max(16px,calc((100vw - 1080px)/2))!important;margin:0!important;background:#103b30!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-bottom:1px solid #ffffff20}
+main{position:relative;z-index:0;margin-top:0!important;padding-top:20px!important}
+.hero{margin-top:0!important;scroll-margin-top:82px}
+@media(max-width:760px){header{height:62px!important;min-height:62px!important;padding:0 14px!important}main{padding:14px 13px 100px!important}}
+</style>
+</head><body>
 
 <div id="appIntro" role="dialog" aria-label="SAJWA welcome animation">
  <button class="intro-skip" onclick="dismissIntro()">Skip</button>
