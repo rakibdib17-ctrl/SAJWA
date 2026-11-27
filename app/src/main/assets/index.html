@@ -2665,4 +2665,45 @@ button{ -webkit-tap-highlight-color:transparent }
 }
 </style>
 
+
+<style id="sajwa-bengali-fasting-layout-v1">
+/* Keep the fasting panel balanced in Bengali and English without changing its content hierarchy. */
+#prayerDashboard .fasting-times{grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);gap:clamp(7px,2.5vw,13px);padding:clamp(13px,3.5vw,18px);align-items:center}
+#prayerDashboard .fasting-title{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:9px;row-gap:4px;align-items:center;min-width:0}
+#prayerDashboard .fasting-title>span{grid-row:1 / span 2}
+#prayerDashboard .fasting-title strong{font-size:clamp(13px,3.6vw,16px);line-height:1.45;min-width:0;overflow-wrap:normal;word-break:normal}
+#prayerDashboard .fasting-title small{grid-column:2;margin:0;font-size:clamp(10px,2.8vw,12px);line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+#prayerDashboard .fasting-time-item{gap:clamp(6px,2vw,10px);min-width:0}
+#prayerDashboard .fasting-time-item small{font-family:"Hind Siliguri","Noto Sans Bengali",sans-serif;font-size:clamp(10px,2.8vw,12px);letter-spacing:0;line-height:1.5;white-space:normal;overflow-wrap:normal;word-break:normal}
+#prayerDashboard .fasting-time-item strong{font-size:clamp(15px,4vw,18px);white-space:nowrap}
+#prayerDashboard .fasting-symbol{width:clamp(30px,8vw,38px);height:clamp(30px,8vw,38px);flex-basis:clamp(30px,8vw,38px)}
+#prayerDashboard .fasting-divider{height:44px}
+#prayerDashboard .prayer-footnote{font-size:clamp(11px,3vw,13px)!important;line-height:1.75!important;overflow-wrap:anywhere}
+html[lang="bn"] #prayerDashboard .fasting-times{font-family:"Hind Siliguri","Noto Sans Bengali",sans-serif}
+html[lang="bn"] #prayerDashboard .fasting-title strong{font-size:clamp(14px,3.8vw,17px)}
+@media(max-width:380px){#prayerDashboard .fasting-times{gap:7px;padding:12px 9px}#prayerDashboard .fasting-time-item{gap:5px}#prayerDashboard .fasting-time-item small{font-size:10px}}
+</style>
+<script id="sajwa-prayer-localization-hotfix-v1">
+(function(){
+ const copy={
+  en:{fastTitle:'Fasting times',fastHint:'Daily · based on local prayer times',sehri:'SEHRI ENDS · FAJR',iftar:'IFTAR · MAGHRIB',status:(p)=>'Method: '+p.method+' · Asr: '+p.madhab+'. '+(p.alarmsScheduled?'Automatic Adhan alarms scheduled for the next 7 days.':'Prayer times calculated. Enable exact alarms for automatic Adhan.')+' Sehri ends at Fajr; Iftar begins at Maghrib. Confirm local mosque timetable.',daily:'Refreshes every 5 minutes · Ayah & Hadith meanings'},
+  bn:{fastTitle:'সেহরি ও ইফতারের সময়',fastHint:'প্রতিদিন · স্থানীয় নামাজের সময় অনুযায়ী',sehri:'সেহরির শেষ সময় · ফজর',iftar:'ইফতারের সময় · মাগরিব',status:(p)=>'পদ্ধতি: '+p.method+' · আসর: '+p.madhab+'. '+(p.alarmsScheduled?'পরবর্তী ৭ দিনের আজানের অ্যালার্ম নির্ধারিত হয়েছে।':'নামাজের সময় হিসাব করা হয়েছে। স্বয়ংক্রিয় আজানের জন্য Exact Alarm অনুমতি দিন।')+' সেহরির শেষ সময় ফজরে; ইফতার শুরু মাগরিবে। স্থানীয় মসজিদের সময়সূচি মিলিয়ে নিন।',daily:'প্রতি ৫ মিনিটে হালনাগাদ · আয়াত ও হাদিসের অর্থ'},
+  ar:{fastTitle:'مواقيت السحور والإفطار',fastHint:'يومياً · حسب مواقيت الصلاة المحلية',sehri:'نهاية السحور · الفجر',iftar:'الإفطار · المغرب',status:(p)=>'طريقة الحساب: '+p.method+' · العصر: '+p.madhab+'. '+(p.alarmsScheduled?'تم جدولة أذان الأيام السبعة القادمة.':'تم حساب مواقيت الصلاة. فعّل التنبيهات الدقيقة للأذان التلقائي.')+' ينتهي السحور عند الفجر ويبدأ الإفطار عند المغرب. يرجى مراجعة توقيت المسجد المحلي.',daily:'يتم التحديث كل ٥ دقائق · معاني الآيات والأحاديث'}
+ };
+ function lang(){return copy[document.documentElement.lang]||copy.en}
+ function apply(){
+  const t=lang(),put=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  put('fastingTimesTitle',t.fastTitle);put('fastingTimesHint',t.fastHint);put('sehriLabel',t.sehri);put('iftarLabel',t.iftar);
+  const daily=document.querySelector('.daily-next');if(daily)daily.textContent=t.daily;
+  if(window.prayerData&&document.getElementById('prayerStatus'))document.getElementById('prayerStatus').textContent=t.status(window.prayerData);
+ }
+ const originalSetLang=window.setLang;
+ if(typeof originalSetLang==='function')window.setLang=function(v){const result=originalSetLang.apply(this,arguments);requestAnimationFrame(apply);setTimeout(apply,60);return result};
+ const originalPrayerData=window.onSajwaPrayerData;
+ if(typeof originalPrayerData==='function')window.onSajwaPrayerData=function(raw){const result=originalPrayerData.apply(this,arguments);requestAnimationFrame(apply);setTimeout(apply,60);return result};
+ const daily=document.querySelector('.daily-next');if(daily)daily.id='dailyNextLabel';
+ apply();
+})();
+</script>
+
 </body></html>
