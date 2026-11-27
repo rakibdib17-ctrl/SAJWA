@@ -47,11 +47,16 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           source = Path("app/src/main/assets/index.html").read_text(encoding="utf-8")
-          start = source.index("<script>") + len("<script>")
-          end = source.rindex("</script>")
-          Path("/tmp/sajwa-inline.js").write_text(source[start:end], encoding="utf-8")
+          import re
+          scripts = re.findall(r"<script\\b[^>]*>([\\s\\S]*?)</script>", source, flags=re.I)
+          if not scripts:
+              raise SystemExit("No inline script blocks found")
+          for index, script in enumerate(scripts):
+              path = Path(f"/tmp/sajwa-inline-{index}.js")
+              path.write_text(script, encoding="utf-8")
+              print(f"Checking inline script {index + 1}/{len(scripts)}")
           PY
-          node --check /tmp/sajwa-inline.js
+          for script in /tmp/sajwa-inline-*.js; do node --check "$script"; done
       - name: Set up Node.js for WebView smoke tests
         uses: actions/setup-node@v4
         with:
