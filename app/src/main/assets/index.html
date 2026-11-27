@@ -1384,6 +1384,188 @@ body.dark[data-theme] select option{background:#202f3a!important;color:#f1f5f8!i
 body.dark[data-theme] .error{background:#442d27!important;color:#ffe0d2!important}
 body.dark[data-theme] footer{color:var(--muted)!important}
 </style>
+
+<style id="sajwa-screenshot-contrast-backbutton-fix">
+/* Screenshot audit: unify all back buttons and neutral/secondary actions with current palette. */
+body[data-theme] .back,
+body[data-theme] button.back,
+body[data-theme] .viewtop .back,
+body[data-theme] .viewtop button{
+ background:linear-gradient(135deg,var(--sajwa-primary-2),var(--sajwa-primary))!important;
+ color:var(--sajwa-on-primary)!important;
+ border:1px solid var(--sajwa-accent)!important;
+ box-shadow:0 5px 16px color-mix(in srgb,var(--sajwa-primary) 24%,transparent)!important;
+}
+body[data-theme] .back svg,
+body[data-theme] .viewtop .back svg{stroke:var(--sajwa-accent-soft)!important;fill:none!important}
+body[data-theme] .back:active,body[data-theme] .viewtop button:active{filter:brightness(1.12)!important}
+body[data-theme] .ghost,
+body[data-theme] .smallbtn,
+body[data-theme] .bookmark-btn,
+body[data-theme] .settings-action,
+body[data-theme] .action-row button,
+body[data-theme] .reader-foot button{
+ background:var(--sajwa-tint)!important;
+ color:var(--sajwa-primary)!important;
+ border:1px solid var(--sajwa-outline)!important;
+}
+body[data-theme] .primary,
+body[data-theme] .hero-actions .primary,
+body[data-theme] .prayer-head .primary{
+ background:linear-gradient(135deg,var(--sajwa-accent-soft),var(--sajwa-accent))!important;
+ color:var(--sajwa-dark-primary)!important;
+ border:1px solid var(--sajwa-accent)!important;
+}
+/* Catch older feature-specific green button states and selected controls. */
+body[data-theme] .home-tab.active,
+body[data-theme] .quran-reading-modes .smallbtn.active,
+body[data-theme] .action-row button.active,
+body[data-theme] .settings-action.active,
+body[data-theme] .bottomnav button.on{
+ background:linear-gradient(135deg,var(--sajwa-primary-2),var(--sajwa-primary))!important;
+ color:var(--sajwa-on-primary)!important;
+ border-color:var(--sajwa-accent)!important;
+}
+body[data-theme] #soundToggle{
+ background:linear-gradient(135deg,var(--sajwa-primary-2),var(--sajwa-primary))!important;
+ color:var(--sajwa-accent-soft)!important;border:1px solid var(--sajwa-accent)!important;
+}
+body[data-theme] .feature-quran .feature-icon,
+body[data-theme] .feature-prayer .feature-icon,
+body[data-theme] .feature-qibla .feature-icon,
+body[data-theme] .feature-dua .feature-icon,
+body[data-theme] .feature-tasbeeh .feature-icon,
+body[data-theme] .feature-hadith .feature-icon,
+body[data-theme] .feature-learn .feature-icon,
+body[data-theme] .feature-hajj .feature-icon,
+body[data-theme] .feature-calendar .feature-icon,
+body[data-theme] .feature-fasting .feature-icon{
+ background:linear-gradient(145deg,var(--sajwa-primary-2),var(--sajwa-primary))!important;
+ color:var(--sajwa-accent-soft)!important;border:1px solid var(--sajwa-accent)!important;
+}
+
+/* Dark mode screenshot: all headings and secondary text must remain readable. */
+body.dark[data-theme]{
+ --paper:#101820!important;--surface:#1b2933!important;--surface-2:#22323d!important;
+ --ink:#f4f7fa!important;--muted:#c5d0d8!important;--line:#465965!important;
+ --soft:#293b47!important;
+ color:#f4f7fa!important;
+}
+body.dark[data-theme] main,
+body.dark[data-theme] main *{text-shadow:none}
+body.dark[data-theme] main h1,
+body.dark[data-theme] main h2,
+body.dark[data-theme] main h3,
+body.dark[data-theme] main h4,
+body.dark[data-theme] main h5,
+body.dark[data-theme] .viewtop h2,
+body.dark[data-theme] .section-title,
+body.dark[data-theme] .sectionhead .muted,
+body.dark[data-theme] .prayer-head h2,
+body.dark[data-theme] .prayer-cell b,
+body.dark[data-theme] .feature-copy strong,
+body.dark[data-theme] .feature strong,
+body.dark[data-theme] .settings-heading h3,
+body.dark[data-theme] .settings-inline-row b,
+body.dark[data-theme] .settings-section h3,
+body.dark[data-theme] .settings-section label,
+body.dark[data-theme] .theme-choice b,
+body.dark[data-theme] .readerbar h3,
+body.dark[data-theme] .surahrow,
+body.dark[data-theme] .surahrow b,
+body.dark[data-theme] .module-card h3,
+body.dark[data-theme] .book b,
+body.dark[data-theme] .contentpanel h3,
+body.dark[data-theme] .listpanel h3,
+body.dark[data-theme] .readingpanel h3,
+body.dark[data-theme] .learn-tabs button,
+body.dark[data-theme] .learn-step b{
+ color:#f4f7fa!important;
+}
+body.dark[data-theme] main p,
+body.dark[data-theme] main small,
+body.dark[data-theme] main .muted,
+body.dark[data-theme] .viewtop p,
+body.dark[data-theme] .feature-copy small,
+body.dark[data-theme] .feature small,
+body.dark[data-theme] .settings-heading p,
+body.dark[data-theme] .settings-inline-row small,
+body.dark[data-theme] .theme-choice small,
+body.dark[data-theme] .prayer-head .muted,
+body.dark[data-theme] .prayer-cell span,
+body.dark[data-theme] .surahrow small,
+body.dark[data-theme] .module-card p,
+body.dark[data-theme] .book small,
+body.dark[data-theme] .ayah-en,
+body.dark[data-theme] .daily p,
+body.dark[data-theme] .daily-meaning,
+body.dark[data-theme] .settings-privacy-note{
+ color:#c5d0d8!important;
+}
+body.dark[data-theme] .viewtop h2{color:#fff!important;text-shadow:0 1px 0 #0003!important}
+body.dark[data-theme] .prayer,
+body.dark[data-theme] .listpanel,
+body.dark[data-theme] .readingpanel,
+body.dark[data-theme] .contentpanel,
+body.dark[data-theme] .module-card,
+body.dark[data-theme] .book,
+body.dark[data-theme] .settings-section,
+body.dark[data-theme] .theme-choice,
+body.dark[data-theme] .feature,
+body.dark[data-theme] .home-search{
+ background:linear-gradient(145deg,#1b2933,#22323d)!important;
+ color:#f4f7fa!important;border-color:#465965!important;
+}
+body.dark[data-theme] .prayer-cell,
+body.dark[data-theme] .surahrow,
+body.dark[data-theme] .search,
+body.dark[data-theme] .field,
+body.dark[data-theme] .settings-select,
+body.dark[data-theme] .readerbar select,
+body.dark[data-theme] .tasbeeh-select,
+body.dark[data-theme] #customDhikr{
+ background:#263945!important;color:#f4f7fa!important;border-color:#526774!important;
+}
+body.dark[data-theme] .notice,
+body.dark[data-theme] .learn-note,
+body.dark[data-theme] .learn-intro,
+body.dark[data-theme] .learn-step,
+body.dark[data-theme] .daily,
+body.dark[data-theme] .daily-reflection,
+body.dark[data-theme] .settings-privacy-note{
+ background:#293c48!important;color:#f4f7fa!important;border-color:#526774!important;
+}
+body.dark[data-theme] .notice *,
+body.dark[data-theme] .learn-note *,
+body.dark[data-theme] .learn-intro *,
+body.dark[data-theme] .learn-step *,
+body.dark[data-theme] .daily *,
+body.dark[data-theme] .settings-privacy-note *{color:inherit}
+body.dark[data-theme] .ayah-ar,
+body.dark[data-theme] .mushaf-verse-ar,
+body.dark[data-theme] .dua-ar,
+body.dark[data-theme] .surahar,
+body.dark[data-theme] .bismillah{color:var(--sajwa-accent-soft)!important}
+body.dark[data-theme] input,
+body.dark[data-theme] textarea,
+body.dark[data-theme] select{color:#f4f7fa!important}
+body.dark[data-theme] input::placeholder,
+body.dark[data-theme] textarea::placeholder{color:#c5d0d8!important;opacity:1!important}
+body.dark[data-theme] .back,
+body.dark[data-theme] button.back,
+body.dark[data-theme] .viewtop .back,
+body.dark[data-theme] .viewtop button{
+ background:linear-gradient(135deg,var(--sajwa-primary-2),var(--sajwa-primary))!important;
+ color:#fff!important;border:1px solid var(--sajwa-accent)!important;
+}
+body.dark[data-theme] .ghost,
+body.dark[data-theme] .smallbtn,
+body.dark[data-theme] .bookmark-btn,
+body.dark[data-theme] .settings-action,
+body.dark[data-theme] .action-row button{
+ background:#2a3d49!important;color:#f4f7fa!important;border:1px solid #526774!important;
+}
+</style>
 </head><body>
 
 <div id="appIntro" role="dialog" aria-label="SAJWA welcome animation">
