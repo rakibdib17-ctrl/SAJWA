@@ -1746,6 +1746,57 @@ body.dark .prayer-cell-name,body.dark .prayer-cell-time{color:#fff0d0!important}
 body.dark .prayer-cell.active,body.dark .prayer-cell.current,body.dark .prayer-cell.next{background:linear-gradient(145deg,#0b7058,#034034)!important;border-color:#e3c77e!important}
 body.dark .fasting-times{background:linear-gradient(120deg,#253f3a,#1a302d)!important;border-color:#b99a5e!important}body.dark .fasting-times :is(strong,small){color:#f5e8ca!important}
 @media(max-width:600px){.prayer-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.prayer-cell{min-height:98px!important;padding:11px 8px!important;gap:7px!important}.prayer-cell-name{font-size:13px!important}.prayer-cell-time{font-size:17px!important}.prayer-cell-state{font-size:8px!important;letter-spacing:.65px!important}.prayer-cell-glyph{font-size:14px!important}.prayer-dashboard{padding:15px!important}}
+
+/* SAJWA visual refinement: calmer hierarchy, cleaner reading rhythm and reliable touch targets */
+:root{--sajwa-radius:20px}
+body{font-size:16px;line-height:1.58;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main{padding-top:26px!important;padding-bottom:112px!important}
+.view{min-height:55vh}
+.viewtop{gap:15px;margin:8px 0 22px;align-items:center}
+.viewtop h2{font-size:clamp(25px,5vw,32px);line-height:1.2;letter-spacing:-.25px}
+.viewtop p{font-size:13px;line-height:1.55;margin-top:5px}
+.contentpanel,.listpanel,.readingpanel{padding:clamp(16px,3.5vw,24px);border-radius:24px}
+.contentpanel h3{line-height:1.35;letter-spacing:-.2px}
+.contentpanel p,.notice,.muted{line-height:1.72}
+.feature-grid{gap:14px}
+.feature{min-height:164px;border-radius:22px;padding:19px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px}
+.feature .feature-icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(145deg,#104b39,#246b50);color:#f1dfb6;font-size:25px;box-shadow:inset 0 1px #ffffff38,0 8px 18px #082b2418}
+.feature .feature-copy{display:block;max-width:100%;padding-right:12px}
+.feature .feature-copy strong{font-size:14px;line-height:1.45;letter-spacing:.05px}
+.feature .feature-copy small{font-size:12px;line-height:1.5;margin-top:4px}
+.feature .feature-arrow{position:absolute;right:15px;top:17px}
+.sectionhead{margin:34px 2px 16px;gap:12px}
+.sectionhead h2,.section-title{line-height:1.3}
+.home-tabs{gap:8px;overflow-x:auto;scrollbar-width:none;padding:3px 0 8px}
+.home-tabs::-webkit-scrollbar{display:none}
+.home-tab{white-space:nowrap;min-height:40px;padding:9px 14px}
+.search,.readerbar select,input,select,textarea{min-height:44px}
+.back,.smallbtn,.primary,.ghost,.prayer-location-btn{min-height:42px}
+.learn-dua{padding:18px!important;margin:13px 0!important;border-radius:18px!important;line-height:1.75}
+.learn-dua h4{font-size:15px;line-height:1.5;margin:0 0 12px}
+.learn-dua .learn-ar{font-size:clamp(23px,5vw,29px);line-height:2.05;padding:14px 10px;overflow-wrap:anywhere}
+.learn-dua p{font-size:14px;line-height:1.85;margin:10px 0}
+.learn-dua p b,.learn-dua .pronunciation-label{display:block;color:var(--muted);font-size:11px;letter-spacing:.35px;margin:8px 0 3px}
+.notice{padding:14px 16px;border-radius:16px}
+#appIntro{z-index:9999;touch-action:manipulation}
+#appIntro.dismissed{pointer-events:none!important}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c8a96a;outline-offset:3px}
+@media(max-width:600px){
+ main{padding:18px 14px 116px!important}
+ .viewtop{margin:4px 0 17px}
+ .viewtop h2{font-size:27px}
+ .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ .feature{min-height:151px;padding:15px;border-radius:19px}
+ .feature .feature-icon{width:43px;height:43px;font-size:22px}
+ .feature .feature-copy strong{font-size:13px}
+ .feature .feature-copy small{font-size:11px}
+ .sectionhead{align-items:flex-start;flex-direction:column;margin:28px 2px 12px}
+ .sectionhead .muted{text-align:left}
+ .contentpanel,.listpanel,.readingpanel{padding:15px;border-radius:19px}
+ .learn-dua{padding:15px!important}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
 </style>
 </head><body>
 
@@ -1863,6 +1914,13 @@ body.dark .fasting-times{background:linear-gradient(120deg,#253f3a,#1a302d)!impo
 window.__sajwaLastError='';
 window.addEventListener('error',e=>{window.__sajwaLastError=(e.message||'JavaScript error')+' @ '+(e.filename||'')+':'+(e.lineno||'');try{localStorage.setItem('sajwa-last-error',window.__sajwaLastError)}catch(_){}});
 window.addEventListener('unhandledrejection',e=>{window.__sajwaLastError='Unhandled promise: '+String(e.reason||'unknown');try{localStorage.setItem('sajwa-last-error',window.__sajwaLastError)}catch(_){}});
+// Release the welcome layer even if a later initializer throws. Registered
+// before feature setup so one optional feature cannot block all taps.
+window.__sajwaStartupReady=false;
+window.__sajwaIntroWatchdog=setTimeout(()=>{const intro=document.getElementById('appIntro');if(intro)intro.classList.add('dismissed');},2200);
+window.addEventListener('error',()=>{const intro=document.getElementById('appIntro');if(intro)intro.classList.add('dismissed');});
+window.addEventListener('unhandledrejection',()=>{const intro=document.getElementById('appIntro');if(intro)intro.classList.add('dismissed');});
+
 function showDiagnostics(){const out=document.getElementById('diagnosticsOutput');if(!out)return;const base={js:'running',language:document.documentElement.lang,theme:document.body.classList.contains('dark')?'dark':'light',bridge:!!window.SajwaNative,lastError:window.__sajwaLastError||localStorage.getItem('sajwa-last-error')||'none'};out.textContent='Checking Android bridge…';try{if(window.SajwaNative&&typeof SajwaNative.getDiagnostics==='function'){base.android=JSON.parse(SajwaNative.getDiagnostics());out.textContent=JSON.stringify(base,null,2)}else{base.android='Bridge missing';out.textContent=JSON.stringify(base,null,2)}}catch(e){base.bridgeError=String(e);out.textContent=JSON.stringify(base,null,2)}}
 const $=id=>document.getElementById(id);let currentView='home',surahs=[],currentSurah=1,prayerData=null,tasCount=Number(localStorage.getItem('sajwa-count')||0),hadithEdition=null;
 
@@ -1881,7 +1939,7 @@ function sajwaTranslateTree(root=document.body,lang=localStorage.getItem('sajwa-
 let sajwaObserver=null;
 function sajwaEnableTranslation(){if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body);sajwaObserver=new MutationObserver(records=>{const lang=localStorage.getItem('sajwa-lang')||'en';for(const record of records){if(record.type==='characterData')sajwaTranslateNode(record.target,lang);record.addedNodes?.forEach(n=>{if(n.nodeType===3)sajwaTranslateNode(n,lang);else if(n.nodeType===1)sajwaTranslateTree(n,lang)})}});sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true})}
 function dismissIntro(){const el=document.getElementById('appIntro');if(el)el.classList.add('dismissed');try{sessionStorage.setItem('sajwa-intro-seen','1')}catch(e){}}
-function playIntro(){const el=document.getElementById('appIntro');if(!el)return;try{if(sessionStorage.getItem('sajwa-intro-seen')==='1'){el.classList.add('dismissed');return}}catch(e){}setTimeout(dismissIntro,3000)}
+function playIntro(){const el=document.getElementById('appIntro');if(!el)return;try{if(sessionStorage.getItem('sajwa-intro-seen')==='1'){el.classList.add('dismissed');return}}catch(e){}setTimeout(dismissIntro,2000)}
 
 const words={en:{welcome:"Let your heart find its way back.",intro:"A thoughtful space for Quran, prayer and remembrance — made for your everyday journey."},bn:{welcome:"হৃদয় ফিরে আসুক প্রশান্তির পথে।",intro:"কুরআন, নামাজ ও আল্লাহর স্মরণের জন্য আপনার প্রতিদিনের সঙ্গী।"},ar:{welcome:"دع قلبك يجد طريقه إلى السكينة.",intro:"مساحة للتلاوة والصلاة والذكر في رحلتك اليومية."}};
 let dailyReflectionsReady=false;
@@ -2275,6 +2333,8 @@ function showHijri(){try{const d=new Date(),fmt=new Intl.DateTimeFormat('en-u-ca
   const current=(localStorage.getItem('sajwa-lang')||'en')==='bn'?'bn':'en';
   try{localStorage.setItem('sajwa-lang',current)}catch(e){}
   window.setLang(current);
+  window.__sajwaStartupReady=true;
+  if(window.__sajwaIntroWatchdog)clearTimeout(window.__sajwaIntroWatchdog);
 })();
 
 </script></body></html>
