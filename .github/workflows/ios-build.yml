@@ -1,0 +1,29 @@
+name: iOS Build (GitHub macOS)
+on:
+  workflow_dispatch:
+  push:
+    branches: [ios-testflight-bootstrap]
+    paths:
+      - "ios/**"
+      - "app/src/main/assets/index.html"
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        working-directory: ios/SAJWA
+        run: xcodegen generate
+      - name: Build iOS Simulator app
+        run: xcodebuild -project ios/SAJWA/SAJWA.xcodeproj -scheme SAJWA -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO
+      - name: Package simulator build
+        run: |
+          cd build/Build/Products/Debug-iphonesimulator
+          zip -r SAJWA-iOS-Simulator.zip SAJWA.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SAJWA-iOS-Simulator
+          path: build/Build/Products/Debug-iphonesimulator/SAJWA-iOS-Simulator.zip
+          if-no-files-found: error
