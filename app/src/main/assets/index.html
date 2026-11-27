@@ -1117,6 +1117,93 @@ html[lang="bn"] body,html[lang="bn"] button,html[lang="bn"] input,html[lang="bn"
 html[lang="bn"] body{line-height:1.75!important}
 html[lang="bn"] :is(.feature-copy strong,.feature-copy small,.prayer-cell b,.prayer-cell span,.settings-section,.contentpanel,.viewtop p){letter-spacing:0!important}
 </style>
+
+<style id="sajwa-final-theme-audit-fix">
+/* FINAL THEME TOKENS — overrides all earlier fixed-color reference mock styling. */
+body[data-theme="emerald"]{--sajwa-primary:#0b4938;--sajwa-primary-2:#16765a;--sajwa-accent:#d7b46b;--sajwa-accent-soft:#f6e5b6;--sajwa-on-primary:#fffaf0;--sajwa-tint:#e7f0e9;--sajwa-card:#fffdf7;--sajwa-card-2:#f2f6f0;--sajwa-outline:#d9e4d9;--sajwa-glow:#0b493826;--sajwa-dark-primary:#06281f;--paper:#f5f3ec;--surface:#fffdf7;--ink:#17382d;--muted:#68796e;--line:#d9e4d9;--soft:#e7f0e9;--gold:#d7b46b;--gold2:#f6e5b6}
+body[data-theme="ocean"]{--sajwa-primary:#124b68;--sajwa-primary-2:#247e98;--sajwa-accent:#8bcbd2;--sajwa-accent-soft:#d8f2f2;--sajwa-on-primary:#f5fdff;--sajwa-tint:#e7f3f6;--sajwa-card:#fbfeff;--sajwa-card-2:#eff7f9;--sajwa-outline:#d3e7eb;--sajwa-glow:#124b6826;--sajwa-dark-primary:#092b3d;--paper:#eff5f7;--surface:#fbfeff;--ink:#173744;--muted:#657f89;--line:#d3e7eb;--soft:#e7f3f6;--gold:#8bcbd2;--gold2:#d8f2f2}
+body[data-theme="midnight"]{--sajwa-primary:#293b63;--sajwa-primary-2:#506ba2;--sajwa-accent:#b4c5f2;--sajwa-accent-soft:#e0e8ff;--sajwa-on-primary:#f8f9ff;--sajwa-tint:#edf0fa;--sajwa-card:#fcfcff;--sajwa-card-2:#f1f3fb;--sajwa-outline:#dce2f1;--sajwa-glow:#293b6326;--sajwa-dark-primary:#151f36;--paper:#f1f3fa;--surface:#fcfcff;--ink:#263451;--muted:#6f7c9a;--line:#dce2f1;--soft:#edf0fa;--gold:#b4c5f2;--gold2:#e0e8ff}
+body[data-theme="royal"]{--sajwa-primary:#50386b;--sajwa-primary-2:#79579b;--sajwa-accent:#c7a5e2;--sajwa-accent-soft:#f0e2ff;--sajwa-on-primary:#fffaff;--sajwa-tint:#f2ebf8;--sajwa-card:#fffefe;--sajwa-card-2:#f8f2fb;--sajwa-outline:#e7dced;--sajwa-glow:#50386b26;--sajwa-dark-primary:#281b38;--paper:#f6f1f8;--surface:#fffefe;--ink:#3b2d49;--muted:#82718e;--line:#e7dced;--soft:#f2ebf8;--gold:#c7a5e2;--gold2:#f0e2ff}
+body[data-theme="rose"]{--sajwa-primary:#704253;--sajwa-primary-2:#a65f78;--sajwa-accent:#e0a0aa;--sajwa-accent-soft:#ffe4e8;--sajwa-on-primary:#fff8fa;--sajwa-tint:#f8ebee;--sajwa-card:#fffdfd;--sajwa-card-2:#fbf2f4;--sajwa-outline:#efdde2;--sajwa-glow:#70425326;--sajwa-dark-primary:#321e27;--paper:#faf3f4;--surface:#fffdfd;--ink:#49313a;--muted:#8c747d;--line:#efdde2;--soft:#f8ebee;--gold:#e0a0aa;--gold2:#ffe4e8}
+body[data-theme="sand"]{--sajwa-primary:#756044;--sajwa-primary-2:#a18458;--sajwa-accent:#d1b27d;--sajwa-accent-soft:#f8e9c9;--sajwa-on-primary:#fffaf2;--sajwa-tint:#f3ecdf;--sajwa-card:#fffdf8;--sajwa-card-2:#f8f2e8;--sajwa-outline:#e9dfcf;--sajwa-glow:#75604426;--sajwa-dark-primary:#302719;--paper:#f7f3eb;--surface:#fffdf8;--ink:#453a2d;--muted:#857969;--line:#e9dfcf;--soft:#f3ecdf;--gold:#d1b27d;--gold2:#f8e9c9}
+body.dark[data-theme="emerald"]{--paper:#0b1713;--surface:#14251e;--ink:#edf5ef;--muted:#b2c1b6;--line:#30483b;--soft:#1d3429;--sajwa-card:#14251e;--sajwa-card-2:#1a3026;--sajwa-tint:#203b2e;--sajwa-outline:#3b5948;--sajwa-on-primary:#fffaf0}
+body.dark[data-theme="ocean"]{--paper:#0a1720;--surface:#142833;--ink:#edf8fb;--muted:#b2c9d0;--line:#304d59;--soft:#1d3945;--sajwa-card:#142833;--sajwa-card-2:#1b3541;--sajwa-tint:#203f4c;--sajwa-outline:#3a5d69;--sajwa-on-primary:#f5fdff}
+body.dark[data-theme="midnight"]{--paper:#0e1422;--surface:#19243a;--ink:#f0f3ff;--muted:#bac4df;--line:#35435f;--soft:#222f49;--sajwa-card:#19243a;--sajwa-card-2:#202e48;--sajwa-tint:#273854;--sajwa-outline:#435575;--sajwa-on-primary:#f8f9ff}
+body.dark[data-theme="royal"]{--paper:#17111f;--surface:#251b30;--ink:#f6effb;--muted:#c8b8d2;--line:#493858;--soft:#32243e;--sajwa-card:#251b30;--sajwa-card-2:#30233d;--sajwa-tint:#3b2a4a;--sajwa-outline:#594469;--sajwa-on-primary:#fffaff}
+body.dark[data-theme="rose"]{--paper:#1d1318;--surface:#2b1d24;--ink:#fff0f3;--muted:#d0b7bf;--line:#503541;--soft:#382630;--sajwa-card:#2b1d24;--sajwa-card-2:#38252f;--sajwa-tint:#432d39;--sajwa-outline:#634653;--sajwa-on-primary:#fff8fa}
+body.dark[data-theme="sand"]{--paper:#1c1812;--surface:#2a241b;--ink:#f8f0e3;--muted:#d0c0a8;--line:#4d4130;--soft:#382f23;--sajwa-card:#2a241b;--sajwa-card-2:#372e22;--sajwa-tint:#443827;--sajwa-outline:#5b4b36;--sajwa-on-primary:#fffaf2}
+
+/* Theme-dependent application background, including the decorative glow. */
+html,body{background:var(--paper)!important;color:var(--ink)!important}
+body{background:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--sajwa-primary-2) 22%,transparent),transparent 42%),radial-gradient(ellipse at 100% 45%,color-mix(in srgb,var(--sajwa-accent) 12%,transparent),transparent 38%),var(--paper)!important}
+body:before{background-image:radial-gradient(circle at 1px 1px,color-mix(in srgb,var(--sajwa-accent) 60%,transparent) 1px,transparent 1.6px)!important;opacity:.11!important}
+header,.bottomnav{background:linear-gradient(105deg,var(--sajwa-dark-primary),var(--sajwa-primary) 52%,var(--sajwa-dark-primary))!important;border-color:var(--sajwa-accent)!important}
+.brandmark,.headtools select,.iconbtn{background:linear-gradient(145deg,var(--sajwa-primary-2),var(--sajwa-primary))!important;border-color:var(--sajwa-accent)!important;color:var(--sajwa-accent-soft)!important}
+.brandname,.brandtag{color:var(--sajwa-accent-soft)!important}
+.hero,.settings-hero{background:radial-gradient(ellipse at 78% 20%,color-mix(in srgb,var(--sajwa-primary-2) 92%,white 8%),transparent 55%),linear-gradient(135deg,var(--sajwa-dark-primary),var(--sajwa-primary) 60%,var(--sajwa-primary-2))!important;border-color:var(--sajwa-accent)!important}
+.hero h1,.hero .eyebrow,.settings-hero h3,.settings-kicker{color:var(--sajwa-accent-soft)!important}
+.hero p,.settings-hero p{color:var(--sajwa-on-primary)!important}
+.hero:before{border-color:color-mix(in srgb,var(--sajwa-accent) 72%,transparent)!important;box-shadow:0 0 0 12px color-mix(in srgb,var(--sajwa-accent) 13%,transparent),0 0 0 27px color-mix(in srgb,var(--sajwa-accent) 8%,transparent),inset 0 0 50px color-mix(in srgb,var(--sajwa-accent) 13%,transparent)!important}
+.hero:after{color:color-mix(in srgb,var(--sajwa-accent) 25%,transparent)!important}
+.prayer,.listpanel,.readingpanel,.contentpanel,.module-card,.book,.settings-section,.feature,.home-search,.theme-choice{background:linear-gradient(145deg,var(--surface),var(--sajwa-card-2))!important;color:var(--ink)!important;border-color:var(--sajwa-outline)!important}
+.prayer-head h2,.prayer-cell b,.settings-heading h3,.settings-inline-row b,.theme-choice b,.readerbar h3,.contentpanel h3,.module-card h3,.book b{color:var(--ink)!important}
+.prayer-head .muted,.settings-heading p,.settings-inline-row small,.theme-choice small,.viewtop p{color:var(--muted)!important}
+.prayer-cell,.search,.field,.readerbar select,.settings-select,.tasbeeh-select{background:var(--sajwa-card-2)!important;color:var(--ink)!important;border-color:var(--sajwa-outline)!important}
+.prayer-cell span,.ayah-en,.surahrow small,.module-card p{color:var(--muted)!important}
+.prayer-cell.active,.home-tab.active,.feature-icon,.smallbtn,.surahrow .sno,.step-no,.settings-heading-icon{background:linear-gradient(145deg,var(--sajwa-primary-2),var(--sajwa-primary))!important;color:var(--sajwa-on-primary)!important;border-color:var(--sajwa-accent)!important}
+.prayer-cell.active span{color:var(--sajwa-accent-soft)!important}
+.home-tab{background:var(--surface)!important;color:var(--muted)!important;border-color:var(--sajwa-outline)!important}
+.feature{background:linear-gradient(145deg,var(--surface),var(--sajwa-card-2))!important}
+.feature-copy strong,.feature strong{color:var(--ink)!important}.feature-copy small,.feature small{color:var(--muted)!important}
+.daily,.daily-reflection,.notice,.learn-note,.learn-intro,.learn-step,.settings-privacy-note{background:var(--sajwa-tint)!important;color:var(--ink)!important;border-color:var(--sajwa-outline)!important}
+.daily p,.daily-meaning{color:var(--muted)!important}.daily .arabic,.daily-arabic,.ayah-ar,.mushaf-verse-ar,.surahar,.bismillah{color:var(--sajwa-primary-2)!important}
+body.dark .daily .arabic,body.dark .daily-arabic,body.dark .ayah-ar,body.dark .mushaf-verse-ar,body.dark .surahar,body.dark .bismillah{color:var(--sajwa-accent-soft)!important}
+.surahrow{color:var(--ink)!important}.surahrow.selected,.surahrow:hover{background:var(--sajwa-tint)!important}
+.ayah,.readerbar,.surahrow{border-color:var(--sajwa-outline)!important}
+.ayah-tr,.mushaf-translation{color:var(--ink)!important}
+.settings-inline-row,.settings-control{border-color:var(--sajwa-outline)!important}
+.settings-action{background:var(--sajwa-card-2)!important;color:var(--ink)!important;border-color:var(--sajwa-outline)!important}
+.settings-action small{color:var(--muted)!important}
+.theme-choice.active{border-color:var(--sajwa-accent)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--sajwa-accent) 48%,transparent)!important}
+.bottomnav button{color:color-mix(in srgb,var(--sajwa-on-primary) 82%,transparent)!important}
+.bottomnav button span{color:var(--sajwa-accent)!important}
+.bottomnav button.on{background:color-mix(in srgb,var(--sajwa-accent) 18%,transparent)!important;color:var(--sajwa-accent-soft)!important}
+.bottomnav button.on span{color:var(--sajwa-accent-soft)!important}
+.primary,.settings-switch[aria-checked="true"]{background:linear-gradient(135deg,var(--sajwa-accent-soft),var(--sajwa-accent))!important;color:var(--sajwa-dark-primary)!important;border-color:var(--sajwa-accent)!important}
+.ghost,.back{border-color:var(--sajwa-accent)!important}
+.progress-track{background:var(--sajwa-tint)!important}.progress-fill{background:linear-gradient(90deg,var(--sajwa-primary-2),var(--sajwa-accent))!important}
+input[type=range],.check-row input,.settings-range input{accent-color:var(--sajwa-primary-2)!important}
+.compass-wrap,.tasbeeh-shell{background:radial-gradient(ellipse at 50% 0%,var(--sajwa-primary-2),var(--sajwa-primary) 60%,var(--sajwa-dark-primary))!important;border-color:var(--sajwa-accent)!important;color:var(--sajwa-on-primary)!important}
+.compass-readout strong,.compass-readout span,.compass-status,.tasbeeh-topline,.tasbeeh-live,.tasbeeh-count-label,.tasbeeh-target-row,.tasbeeh-ring-label,.tasbeeh-actions,.tasbeeh-tap-hint .tap-en,.tasbeeh-tap-hint .tap-bn{color:var(--sajwa-accent-soft)!important}
+.tasbeeh-live i{background:var(--sajwa-accent)!important;box-shadow:0 0 10px color-mix(in srgb,var(--sajwa-accent) 70%,transparent)!important}
+.tasbeeh-bead{border-color:var(--sajwa-accent)!important;background:conic-gradient(from 25deg,var(--sajwa-primary),var(--sajwa-accent) 18%,var(--sajwa-primary-2) 36%,var(--sajwa-accent-soft) 52%,var(--sajwa-primary) 72%,var(--sajwa-accent) 88%,var(--sajwa-primary))!important;box-shadow:0 0 0 5px color-mix(in srgb,var(--sajwa-accent) 16%,transparent),0 0 0 8px color-mix(in srgb,var(--sajwa-accent) 25%,transparent),0 18px 38px #0009,inset 0 2px 5px #fff8!important}
+.tasbeeh-bead:before{border-color:color-mix(in srgb,var(--sajwa-accent) 65%,transparent)!important;box-shadow:0 0 26px color-mix(in srgb,var(--sajwa-accent) 25%,transparent)!important}
+.bead-inner{background:radial-gradient(circle at 35% 22%,var(--sajwa-primary-2),var(--sajwa-primary) 72%,var(--sajwa-dark-primary))!important;border-color:var(--sajwa-accent-soft)!important;color:var(--sajwa-accent-soft)!important}
+.bead-inner strong,.bead-symbol,.tasbeeh-count{color:var(--sajwa-accent-soft)!important;text-shadow:0 2px 12px color-mix(in srgb,var(--sajwa-accent) 40%,transparent)!important}
+.tasbeeh-actions .smallbtn{background:color-mix(in srgb,var(--sajwa-on-primary) 12%,transparent)!important;color:var(--sajwa-on-primary)!important;border-color:var(--sajwa-accent)!important}
+/* Motion accents follow theme too; keep motion subtle and respect reduced-motion. */
+@keyframes sajwaThemePulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--sajwa-accent) 0%,transparent)}50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--sajwa-accent) 18%,transparent)}}
+@keyframes sajwaThemeGlow{0%,100%{filter:drop-shadow(0 0 0 color-mix(in srgb,var(--sajwa-accent) 0%,transparent))}50%{filter:drop-shadow(0 0 8px color-mix(in srgb,var(--sajwa-accent) 45%,transparent))}}
+.feature:focus-visible,.bottomnav button:focus-visible,.tasbeeh-bead:focus-visible{outline:2px solid var(--sajwa-accent)!important;outline-offset:3px}
+.settings-switch[aria-checked="true"]{box-shadow:0 0 0 2px color-mix(in srgb,var(--sajwa-accent) 35%,transparent)!important}
+body.dark{color:var(--ink)!important}
+body.dark .hero p,body.dark .settings-hero p{color:var(--sajwa-on-primary)!important}
+body.dark .feature-copy strong,body.dark .feature strong,body.dark .prayer-head h2,body.dark .prayer-cell b,body.dark .settings-heading h3,body.dark .settings-inline-row b,body.dark .theme-choice b,body.dark .readerbar h3,body.dark .contentpanel h3,body.dark .module-card h3,body.dark .book b{color:var(--ink)!important}
+body.dark .feature-copy small,body.dark .feature small,body.dark .settings-heading p,body.dark .settings-inline-row small,body.dark .theme-choice small,body.dark .prayer-head .muted,body.dark .prayer-cell span,body.dark .viewtop p{color:var(--muted)!important}
+/* Bring type back slightly from oversized but retain comfortable mobile legibility. */
+body{font-size:15px!important;line-height:1.62!important}
+.hero h1{font-size:clamp(32px,7.2vw,39px)!important}
+.hero p{font-size:13px!important}
+.prayer-head h2,.section-title{font-size:19px!important}
+.prayer-cell b{font-size:11px!important}.prayer-cell span{font-size:12px!important}
+.feature-copy strong,.feature strong{font-size:12px!important}.feature-copy small,.feature small{font-size:10px!important}
+.viewtop h2{font-size:27px!important}.viewtop p{font-size:12px!important}
+.contentpanel p,.listpanel p,.readingpanel p,.module-card p,.book p,.settings-section p{font-size:13px!important}
+.ayah-ar{font-size:29px!important}.ayah-tr{font-size:16px!important}.ayah-en{font-size:13px!important}
+.settings-heading h3{font-size:17px!important}.settings-heading p,.settings-inline-row small{font-size:11px!important}
+.bottomnav button{font-size:9px!important}
+@media(max-width:420px){.hero h1{font-size:32px!important}.hero p{font-size:12px!important}.feature-copy strong,.feature strong{font-size:11px!important}.feature-copy small,.feature small{font-size:9px!important}.viewtop h2{font-size:25px!important}.ayah-ar{font-size:27px!important}.ayah-tr{font-size:15px!important}}
+</style>
 </head><body>
 
 <div id="appIntro" role="dialog" aria-label="SAJWA welcome animation">
@@ -1253,7 +1340,7 @@ const savedSajwaLang=localStorage.getItem('sajwa-lang')||'en';const initialSajwa
 function setTheme(d){const enabled=!!d;document.body.classList.toggle('dark',enabled);document.documentElement.style.colorScheme=enabled?'dark':'light';$('theme').textContent=enabled?'☀':'☾';$('theme').setAttribute('aria-label',enabled?'Switch to light mode':'Switch to dark mode');try{localStorage.setItem('sajwa-dark',enabled?'1':'0')}catch(e){}if(window.syncSettingsControls)syncSettingsControls()}
 let savedTheme='0';try{savedTheme=localStorage.getItem('sajwa-dark')||'0'}catch(e){}setTheme(savedTheme==='1');$('theme').addEventListener('click',()=>setTheme(!document.body.classList.contains('dark')));
 function syncNativeSystemBars(){try{if(!window.SajwaNative||!window.SajwaNative.setSystemBarColors)return;const css=getComputedStyle(document.body);const color=(document.body.classList.contains('dark')?css.getPropertyValue('--sajwa-dark-primary'):css.getPropertyValue('--sajwa-primary')).trim()||'#082b23';window.SajwaNative.setSystemBarColors(color)}catch(e){}}
-function applySajwaTheme(id){const allowed=['emerald','ocean','midnight','royal','rose','sand'];if(!allowed.includes(id))id='emerald';document.body.dataset.theme=id;try{localStorage.setItem('sajwa-theme',id)}catch(e){}syncNativeSystemBars();if(window.syncSettingsControls)syncSettingsControls()}
+function applySajwaTheme(id){const allowed=['emerald','ocean','midnight','royal','rose','sand'];if(!allowed.includes(id))id='emerald';document.body.dataset.theme=id;document.documentElement.dataset.theme=id;try{localStorage.setItem('sajwa-theme',id)}catch(e){}requestAnimationFrame(()=>{syncNativeSystemBars();if(window.syncSettingsControls)syncSettingsControls()})}
 new MutationObserver(syncNativeSystemBars).observe(document.body,{attributes:true,attributeFilter:['class','data-theme']});
 const initialPalette=localStorage.getItem('sajwa-theme')||'emerald';applySajwaTheme(initialPalette);
 function syncSettingsLanguage(){const x=$('settingsLanguage');if(x)x.value=localStorage.getItem('sajwa-lang')||'en'}
