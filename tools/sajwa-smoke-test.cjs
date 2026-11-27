@@ -49,6 +49,75 @@ const { chromium } = require('playwright');
   await page.locator('#lang').selectOption('en');
   await page.waitForTimeout(100);
 
+
+  // Focused regression checks for the reported language, Quran theme and prayer issues.
+  await page.evaluate(() => { localStorage.setItem('sajwa-theme','royal'); applySajwaTheme('royal'); setTheme(true); });
+  await page.locator('#lang').selectOption('bn');
+  await page.evaluate(() => window.openView('quran'));
+  await page.waitForTimeout(250);
+  const quranBn = await page.evaluate(() => ({
+    notice: document.querySelector('#quranView .notice')?.textContent || '',
+    surahMode: document.getElementById('surahModeBtn')?.textContent || '',
+    mushafMode: document.getElementById('mushafModeBtn')?.textContent || '',
+    theme: getComputedStyle(document.querySelector('#quranView .readingpanel')).backgroundColor,
+    royal: document.body.dataset.theme
+  }));
+  if (!quranBn.notice.includes('কুরআনের আরবি পাঠ') || !quranBn.surahMode.includes('সূরা') || !quranBn.mushafMode.includes('মুসহাফ')) {
+    throw new Error('Quran Bengali localization regression: ' + JSON.stringify(quranBn));
+  }
+  if (quranBn.royal !== 'royal') throw new Error('Royal theme was not retained on Quran view.');
+  await page.locator('#lang').selectOption('en');
+  await page.waitForTimeout(100);
+  const quranEn = await page.evaluate(() => ({
+    notice: document.querySelector('#quranView .notice')?.textContent || '',
+    surahMode: document.getElementById('surahModeBtn')?.textContent || '',
+    mushafMode: document.getElementById('mushafModeBtn')?.textContent || ''
+  }));
+  if (!quranEn.notice.includes('Quran text and translations') || !quranEn.surahMode.toLowerCase().includes('surah') || !quranEn.mushafMode.toLowerCase().includes('mushaf')) {
+    throw new Error('Quran English localization regression: ' + JSON.stringify(quranEn));
+  }
+
+  await page.locator('#lang').selectOption('bn');
+  await page.evaluate(() => window.openView('qibla'));
+  await page.waitForTimeout(100);
+  const qiblaBn = await page.locator('#qiblaView').innerText();
+  if (!qiblaBn.includes('কিবলার দিক') || !qiblaBn.includes('কম্পাস চালু করুন')) throw new Error('Qibla Bengali localization regression.');
+
+  await page.evaluate(() => window.openView('hadith'));
+  await page.waitForTimeout(100);
+  const hadithBn = await page.locator('#hadithNotice').innerText();
+  if (!hadithBn.includes('বহুভাষিক Hadislam')) throw new Error('Hadith notice Bengali localization regression.');
+
+  await page.evaluate(() => window.openView('learn'));
+  await page.evaluate(() => showLearnTab('daily'));
+  await page.waitForTimeout(100);
+  await page.locator('#lang').selectOption('en');
+  await page.evaluate(() => showLearnTab('daily'));
+  const learnSource = await page.locator('#learnContent .learn-source').first().innerText();
+  if (!learnSource.startsWith('Source:') || !learnSource.includes('Sahih al-Bukhari')) {
+    throw new Error('Daily dua English source/reference regression: ' + learnSource);
+  }
+
+  await page.evaluate(() => {
+    prayerData = { times: [
+      {name:'Fajr',time:'05:23 AM'}, {name:'Sunrise',time:'06:42 AM'},
+      {name:'Dhuhr',time:'12:10 PM'}, {name:'Asr',time:'03:12 PM'},
+      {name:'Maghrib',time:'05:32 PM'}, {name:'Isha',time:'06:50 PM'}
+    ]};
+    renderPrayerDashboard();
+  });
+  const prayerCards = await page.locator('#prayerGrid .prayer-cell').count();
+  const prayerLabels = await page.locator('#prayerGrid .prayer-cell-name').allTextContents();
+  if (prayerCards !== 6 || prayerLabels.some(x => !x.trim())) {
+    throw new Error('Prayer schedule must render six named cards: ' + JSON.stringify({prayerCards,prayerLabels}));
+  }
+  await page.locator('#lang').selectOption('bn');
+  await page.waitForTimeout(100);
+  const prayerBn = await page.locator('#prayerGrid .prayer-cell-name').allTextContents();
+  if (prayerBn[0] !== 'ফজর' || prayerBn[4] !== 'মাগরিব') {
+    throw new Error('Prayer schedule Bengali labels regression: ' + JSON.stringify(prayerBn));
+  }
+
   if (pageErrors.length) throw new Error('Browser runtime errors:\\n' + pageErrors.join('\\n---\\n'));
   console.log('SAJWA smoke test passed: intro, 12 visibly exclusive feature routes, theme and language controls.');
   await browser.close();
