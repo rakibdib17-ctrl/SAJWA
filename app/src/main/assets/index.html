@@ -2596,19 +2596,22 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
 
 
 <style id="sajwa-prayer-light-active-visibility-fix">
-/* Keep the upcoming prayer tile readable in light mode as well as dark mode. */
-body:not(.dark) #prayerDashboard #prayerGrid .prayer-cell.active,
-html:not(.dark) body #prayerDashboard #prayerGrid .prayer-cell.active{
-  background:linear-gradient(145deg,#38204f,#68418b 62%,#815aa2)!important;
-  border:1.5px solid #c6a56b!important;
-  box-shadow:0 9px 22px #4c286b35,inset 0 1px 0 #ffffff55!important;
+/* Upcoming prayer tile follows the selected SAJWA theme in light and dark modes. */
+#prayerDashboard #prayerGrid .prayer-cell.active{
+  background:radial-gradient(circle at 90% 0%,color-mix(in srgb,var(--sajwa-accent) 30%,transparent),transparent 44%),linear-gradient(145deg,var(--sajwa-dark-primary),var(--sajwa-primary) 60%,var(--sajwa-primary-2))!important;
+  border:1.5px solid var(--sajwa-accent)!important;
+  box-shadow:0 9px 22px var(--sajwa-glow),inset 0 1px 0 #ffffff55!important;
 }
-body:not(.dark) #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-name,
-body:not(.dark) #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-time,
-html:not(.dark) body #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-name,
-html:not(.dark) body #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-time{color:#fff!important}
-body:not(.dark) #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state,
-html:not(.dark) body #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state{background:#d9b7ed!important;color:#38204f!important}
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-name,
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-time{color:var(--sajwa-on-primary)!important}
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state{
+  background:color-mix(in srgb,var(--sajwa-accent) 30%,var(--sajwa-primary))!important;
+  color:var(--sajwa-on-primary)!important;
+}
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-glyph{
+  background:color-mix(in srgb,var(--sajwa-accent) 24%,var(--sajwa-primary))!important;
+  color:var(--sajwa-accent-soft)!important;
+}
 </style>
 <script id="sajwa-qibla-language-sync-fix">
 (function(){
