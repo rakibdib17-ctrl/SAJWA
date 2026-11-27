@@ -189,6 +189,10 @@ class MainActivity : Activity() {
             .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
             .build()
         webView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView, url: String) {
+                super.onPageFinished(view, url)
+                view.postDelayed({ beginFirstRunSetupOrRefresh() }, 180)
+            }
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 val uri = request.url
                 if (uri.scheme == "https" && uri.host == "appassets.androidplatform.net") return false
@@ -277,6 +281,40 @@ class MainActivity : Activity() {
                 } else fetchLocation()
             }
         }
+    }
+
+    private fun beginFirstRunSetupOrRefresh() {
+        val prefs = getSharedPreferences("sajwa_setup", MODE_PRIVATE)
+        val locationGranted =
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        if (!locationGranted && !prefs.getBoolean("runtime_permissions_requested", false)) {
+            prefs.edit().putBoolean("runtime_permissions_requested", true).apply()
+            val requested = mutableListOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            if (Build.VERSION.SDK_INT >= 33) requested.add(Manifest.permission.POST_NOTIFICATIONS)
+            ActivityCompat.requestPermissions(this, requested.toTypedArray(), locationPermissionCode)
+            return
+        }
+        if (locationGranted) fetchLocation()
+        requestExactAlarmAccessOnce()
+    }
+
+    private fun requestExactAlarmAccessOnce() {
+        if (Build.VERSION.SDK_INT < 31) return
+        val prefs = getSharedPreferences("sajwa_setup", MODE_PRIVATE)
+        if (prefs.getBoolean("exact_alarm_prompted", false)) return
+        val alarms = getSystemService(ALARM_SERVICE) as AlarmManager
+        if (alarms.canScheduleExactAlarms()) {
+            prefs.edit().putBoolean("exact_alarm_prompted", true).apply()
+            return
+        }
+        prefs.edit().putBoolean("exact_alarm_prompted", true).apply()
+        try {
+            startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + packageName)))
+        } catch (_: Exception) { }
     }
 
     private fun fetchLocation() {
@@ -428,12 +466,31 @@ class MainActivity : Activity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == locationPermissionCode) {
-            if (grantResults.any { it == PackageManager.PERMISSION_GRANTED }) fetchLocation()
-            else publishError("Location permission is needed to calculate local prayer times.")
+            val locationGranted =
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            if (locationGranted) {
+                fetchLocation()
+                requestExactAlarmAccessOnce()
+            } else {
+                publishError("Location permission is needed to calculate local prayer times. You can enable it in Android Settings.")
+            }
         }
     }
 
-    override fun onResume() { super.onResume(); if (Build.VERSION.SDK_INT >= 31) { val alarms = getSystemService(ALARM_SERVICE) as AlarmManager; if (alarms.canScheduleExactAlarms()) PrayerAlarmScheduler.rescheduleFromSavedLocation(this) }; if (compassRequested && qiblaBearing != null) registerCompassSensors() }
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= 31) {
+            val alarms = getSystemService(ALARM_SERVICE) as AlarmManager
+            if (alarms.canScheduleExactAlarms()) PrayerAlarmScheduler.rescheduleFromSavedLocation(this)
+        }
+        if (::webView.isInitialized &&
+            (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+             ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+            webView.post { fetchLocation() }
+        }
+        if (compassRequested && qiblaBearing != null) registerCompassSensors()
+    }
 
     override fun onPause() { sensorManager.unregisterListener(compassListener); super.onPause() }
 
