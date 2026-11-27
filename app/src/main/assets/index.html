@@ -2613,35 +2613,24 @@ body[data-theme] #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-g
 body[data-theme] #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-glyph{background:#ffffff20!important}
 body[data-theme] #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state{background:transparent!important}
 </style>
-<script id="sajwa-qibla-language-sync-fix">
-(function(){
-  const text={
-    en:{start:'Start compass',stop:'Stop',status:'The compass will request your location and start automatically. Hold your phone flat and keep it away from magnets and metal objects.',finding:'Finding your location and activating the sensor…',error:'Could not start the compass. Check location permission and try again.',active:'Live Qibla lock · The Kaaba marker and red pointer show the Qibla direction. Keep the phone flat for best accuracy.',paused:'Compass paused. Tap Start compass to resume.',unavailable:'The live compass sensor is available in the installed Android app.'},
-    bn:{start:'কম্পাস চালু করুন',stop:'বন্ধ করুন',status:'কম্পাস চালু করতে অবস্থানের অনুমতি চাইবে। ফোনটি সমতল রাখুন এবং চুম্বক ও ধাতব বস্তু থেকে দূরে রাখুন।',finding:'আপনার অবস্থান খোঁজা হচ্ছে এবং সেন্সর চালু হচ্ছে…',error:'কম্পাস চালু করা যায়নি। অবস্থানের অনুমতি পরীক্ষা করে আবার চেষ্টা করুন।',active:'কিবলার দিক নির্ণয় সক্রিয়। কাবার চিহ্ন ও লাল সূচক কিবলার দিক দেখায়। নির্ভুলতার জন্য ফোন সমতল রাখুন।',paused:'কম্পাস বন্ধ আছে। আবার চালু করতে কম্পাস চালু করুন চাপুন।',unavailable:'লাইভ কম্পাস সেন্সরটি ইনস্টল করা Android অ্যাপে পাওয়া যাবে।'},
-    ar:{start:'تشغيل البوصلة',stop:'إيقاف',status:'ستطلب البوصلة إذن الموقع. أبقِ الهاتف مستوياً وبعيداً عن المغناطيس والمعادن.',finding:'جارٍ تحديد موقعك وتشغيل المستشعر…',error:'تعذر تشغيل البوصلة. تحقق من إذن الموقع وحاول مرة أخرى.',active:'اتجاه القبلة مباشر. أبقِ الهاتف مستوياً للحصول على أفضل دقة.',paused:'تم إيقاف البوصلة. اضغط تشغيل البوصلة للاستئناف.',unavailable:'يتوفر مستشعر البوصلة المباشر في تطبيق Android المثبت.'}
-  };
-  function lang(){return ['en','bn','ar'].includes(localStorage.getItem('sajwa-lang'))?localStorage.getItem('sajwa-lang'):'en'}
-  function apply(status){
-    const l=lang(),t=text[l],start=document.getElementById('startCompassBtn'),stop=document.getElementById('stopCompassBtn'),msg=document.getElementById('compassStatus');
-    if(start)start.textContent=t.start;
-    if(stop)stop.textContent=t.stop;
-    if(msg&&status)msg.textContent=t[status]||t.status;
-    const root=document.getElementById('qiblaView');if(root)root.setAttribute('data-language',l);
-  }
-  const originalSetLang=window.setLang;
-  if(typeof originalSetLang==='function')window.setLang=function(v){originalSetLang(v);apply();};
-  const originalOpenView=window.openView;
-  if(typeof originalOpenView==='function')window.openView=function(v){const result=originalOpenView(v);if(v==='qibla')apply();return result;};
-  const originalStart=window.startCompass;
-  if(typeof originalStart==='function')window.startCompass=function(){const result=originalStart();apply('finding');return result;};
-  const originalStop=window.stopCompass;
-  if(typeof originalStop==='function')window.stopCompass=function(){const result=originalStop();apply('paused');return result;};
-  const originalCompass=window.onSajwaCompass;
-  window.onSajwaCompass=function(a,b){const result=typeof originalCompass==='function'?originalCompass(a,b):undefined;apply('active');return result;};
-  const originalError=window.onSajwaCompassError;
-  window.onSajwaCompassError=function(m){const result=typeof originalError==='function'?originalError(m):undefined;apply('error');return result;};
-  document.addEventListener('DOMContentLoaded',()=>apply());
-  apply();
-})();
-</script>
+
+
+<style id="sajwa-adhan-theme-final-fix">
+/* Keep the Adhan control inside the selected palette in BOTH states. */
+.home-adhan-toggle,
+.home-adhan-toggle.is-on,
+.home-adhan-toggle:not(.is-on),
+body .home-adhan-toggle,
+body .home-adhan-toggle.is-on,
+body .home-adhan-toggle:not(.is-on){
+  background:linear-gradient(135deg,var(--sajwa-primary-2,var(--sajwa-primary,#744255)),var(--sajwa-primary,#744255))!important;
+  color:var(--sajwa-on-primary,#fff)!important;
+  border:1px solid var(--sajwa-accent,#d8b66d)!important;
+}
+.home-adhan-toggle .home-adhan-state,
+.home-adhan-toggle.is-on .home-adhan-state{
+  background:var(--sajwa-accent,#d8b66d)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--sajwa-accent,#d8b66d) 24%,transparent)!important;
+}
+</style>
 </body></html>
