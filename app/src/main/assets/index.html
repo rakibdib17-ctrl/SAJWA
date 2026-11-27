@@ -598,6 +598,26 @@ button:active,.feature:active,.book:active,.home-tab:active,.surahrow:active{
 @media(hover:hover){
  .feature:hover,.book:hover{transform:translateY(-2px)}
 }
+/* Build 126: smoother motion while respecting the device's system refresh-rate choice */
+html{scroll-behavior:auto}
+header,.bottomnav{backdrop-filter:none;-webkit-backdrop-filter:none}
+#appIntro{will-change:opacity;contain:layout paint}
+#appIntro .intro-glow,#appIntro svg{will-change:transform,opacity}
+.feature,.feature-icon,.compass-face,.tasbeeh-bead{will-change:auto}
+.hero-art svg{filter:none}
+.feature,.prayer,.daily,.module-card,.listpanel,.readingpanel,.contentpanel,.book{box-shadow:0 5px 16px #092b240a}
+@media(prefers-reduced-motion:reduce){
+ #appIntro .intro-glow,#appIntro .intro-moon,#appIntro .intro-star,
+ #appIntro .intro-minaret,#appIntro .intro-dome,#appIntro .intro-name,
+ #appIntro .intro-tag,#appIntro .intro-line{animation:none!important}
+}
+
+/* Build 128: lighter compass and faster Tasbeeh touch path */
+.tasbeeh-tap-hint [hidden]{display:none!important}
+.tasbeeh-bead{box-shadow:0 8px 20px #0003,inset 0 1px #ffffff35;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.tasbeeh-bead:active{transform:scale(.985)}
+.compass-face{filter:none;contain:layout paint;will-change:transform}
+.compass-face svg{filter:none}
 </style>
 <!-- Authoritative Android WebView header/inset override. Android decor fitting already handles the status bar. -->
 <style id="sajwa-header-inset-fix">
@@ -873,24 +893,3 @@ function showHijri(){try{const d=new Date(),fmt=new Intl.DateTimeFormat('en-u-ca
 })();
 
 </script></body></html>
-
-/* Build 126: smoother motion while respecting the device's system refresh-rate choice */
-html{scroll-behavior:auto}
-header,.bottomnav{backdrop-filter:none;-webkit-backdrop-filter:none}
-#appIntro{will-change:opacity;contain:layout paint}
-#appIntro .intro-glow,#appIntro svg{will-change:transform,opacity}
-.feature,.feature-icon,.compass-face,.tasbeeh-bead{will-change:auto}
-.hero-art svg{filter:none}
-.feature,.prayer,.daily,.module-card,.listpanel,.readingpanel,.contentpanel,.book{box-shadow:0 5px 16px #092b240a}
-@media(prefers-reduced-motion:reduce){
- #appIntro .intro-glow,#appIntro .intro-moon,#appIntro .intro-star,
- #appIntro .intro-minaret,#appIntro .intro-dome,#appIntro .intro-name,
- #appIntro .intro-tag,#appIntro .intro-line{animation:none!important}
-}
-
-/* Build 128: lighter compass and faster Tasbeeh touch path */
-.tasbeeh-tap-hint [hidden]{display:none!important}
-.tasbeeh-bead{box-shadow:0 8px 20px #0003,inset 0 1px #ffffff35;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.tasbeeh-bead:active{transform:scale(.985)}
-.compass-face{filter:none;contain:layout paint;will-change:transform}
-.compass-face svg{filter:none}
