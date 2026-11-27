@@ -2081,14 +2081,15 @@ function translateTasbeehControls(lang){const select=$('dhikrPreset');document.q
  document.documentElement.lang=v;document.documentElement.dir=v==='ar'?'rtl':'ltr';
  const selector=$('lang');if(selector&&selector.value!==v)selector.value=v;
  if(sajwaObserver)sajwaObserver.disconnect();
- sajwaTranslateTree(document.body,v);
- $('welcome').textContent=words[v].welcome;$('intro').textContent=words[v].intro;
+ // Re-render language-aware sections first, then translate the final DOM once.
  if(typeof renderPrayerDashboard==='function'&&prayerData)renderPrayerDashboard();
  if(typeof syncHomeAdhanToggle==='function')syncHomeAdhanToggle();
  translateTasbeehControls(v);
  if(dailyReflectionsReady&&typeof updateDailyReflection==='function')updateDailyReflection();
  if(typeof refreshQiblaLanguage==='function')refreshQiblaLanguage(v);
  if(document.getElementById('learnContent')&&document.getElementById('learnView')?.classList.contains('active'))showLearnTab(window.sajwaLearnTab||'kalima');
+ $('welcome').textContent=words[v].welcome;$('intro').textContent=words[v].intro;
+ sajwaTranslateTree(document.body,v);
  if(sajwaObserver)sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true});
 }
 const savedSajwaLang=localStorage.getItem('sajwa-lang')||'en';const initialSajwaLang=['en','bn','ar'].includes(savedSajwaLang)?savedSajwaLang:'en';$('lang').value=initialSajwaLang;setLang(initialSajwaLang);sajwaEnableTranslation();playIntro();$('lang').onchange=e=>setLang(e.target.value);
@@ -2434,56 +2435,24 @@ function showHijri(){try{const d=new Date(),fmt=new Intl.DateTimeFormat('en-u-ca
 })();
 
 
-/* SAJWA language and motion hardening — English/Bangla only */
+/* SAJWA localization: dictionary compatibility and motion styling only.
+   Language changes are handled exclusively by the central setLang() above. */
 (function(){
-  const langSelect=document.getElementById('lang');
-  if(langSelect){
-    [...langSelect.options].forEach(o=>{if(o.value!=='en'&&o.value!=='bn')o.remove()});
-  }
-  // Build the reverse dictionary too: dynamic modules often render their Bengali
-  // source strings directly, so English mode must translate those back as well.
-  const bnToEn={};
-  Object.entries(sajwaTranslations.bn||{}).forEach(([en,bn])=>{
-    if(typeof bn==='string' && bn.trim() && bnToEn[bn]===undefined) bnToEn[bn]=en;
-  });
-  sajwaTranslations.en=Object.assign({},bnToEn,sajwaTranslations.en||{});
-  // Never translate Arabic-script source text or Arabic-labelled elements.
-  const previousTranslateNode=sajwaTranslateNode;
-  sajwaTranslateNode=function(node,lang){
-    if(node?.parentElement?.closest('[lang="ar"],.learn-ar,.ayah-ar,.dua-ar,.arabic,.daily-arabic'))return;
-    return previousTranslateNode(node,lang);
-  };
-  // Keep Arabic source text unchanged; render only the selected language's pronunciation and meaning.
-  const style=document.createElement('style');
-  style.id='sajwa-language-motion-fix';
-  style.textContent=`
-    .learn-dua .pronunciation-label,.learn-dua .pronunciation{display:block!important}
-    .view.active{animation:sajwaViewEnter .34s cubic-bezier(.2,.75,.25,1) both;will-change:opacity,transform}
-    @keyframes sajwaViewEnter{from{opacity:0;transform:translate3d(0,12px,0);filter:blur(1px)}to{opacity:1;transform:translate3d(0,0,0);filter:blur(0)}}
-    .feature,.book,.module-card,.prayer-cell,.smallbtn,.back{transition:transform .22s ease,background-color .22s ease,border-color .22s ease,box-shadow .22s ease}
-    .feature:active,.book:active,.smallbtn:active,.back:active{transform:scale(.975)}
-    @media(prefers-reduced-motion:reduce){.view.active{animation:none!important;will-change:auto}.feature,.book,.module-card,.prayer-cell,.smallbtn,.back{transition:none!important}}
-  `;
-  document.head.appendChild(style);
-  const previousSetLang=window.setLang||setLang;
-  window.setLang=function(value){
-    const next=value==='bn'?'bn':'en';
-    previousSetLang(next);
-    document.documentElement.lang=next;
-    document.documentElement.dir='ltr';
-    if(langSelect&&langSelect.value!==next)langSelect.value=next;
-    // Re-run after renderers update their language-specific content.
-    requestAnimationFrame(()=>sajwaTranslateTree(document.body,next));
-  };
-  // The inline onchange handler resolves setLang at event time.
-  if(langSelect)langSelect.onchange=e=>window.setLang(e.target.value);
-  const current=(localStorage.getItem('sajwa-lang')||'en')==='bn'?'bn':'en';
-  try{localStorage.setItem('sajwa-lang',current)}catch(e){}
-  window.setLang(current);
-  window.__sajwaStartupReady=true;
-  if(window.__sajwaIntroWatchdog)clearTimeout(window.__sajwaIntroWatchdog);
+ const bnToEn={};
+ Object.entries(sajwaTranslations.bn||{}).forEach(([en,bn])=>{if(typeof bn==='string'&&bn.trim()&&bnToEn[bn]===undefined)bnToEn[bn]=en});
+ sajwaTranslations.en=Object.assign({},bnToEn,sajwaTranslations.en||{});
+ const style=document.createElement('style');style.id='sajwa-language-motion-fix';
+ style.textContent=`
+ .learn-dua .pronunciation-label,.learn-dua .pronunciation{display:block!important}
+ .view.active{animation:sajwaViewEnter .18s ease-out both}
+ @keyframes sajwaViewEnter{from{opacity:.96;transform:translate3d(0,5px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+ .feature,.book,.module-card,.prayer-cell,.smallbtn,.back{transition:transform .16s ease,background-color .16s ease,border-color .16s ease,box-shadow .16s ease}
+ .feature:active,.book:active,.smallbtn:active,.back:active{transform:scale(.985)}
+ @media(prefers-reduced-motion:reduce){.view.active{animation:none!important}.feature,.book,.module-card,.prayer-cell,.smallbtn,.back{transition:none!important}}
+ `;
+ document.head.appendChild(style);
+ window.__sajwaStartupReady=true;
 })();
-
 </script>
 
 <style id="sajwa-functional-theme-and-language-fixes">
