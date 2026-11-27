@@ -2116,7 +2116,7 @@ function openBatterySettings(){if(window.SajwaNative&&typeof SajwaNative.openBat
 function prayerTimeMinutes(value){const str=String(value||'').replace(/[\\u00a0\\u202f]/g,' ').trim();const m=str.match(/(\\d{1,2}):(\\d{2})(?::\\d{2})?\\s*(AM|PM)?/i);if(!m)return null;let h=+m[1],n=+m[2],ap=(m[3]||'').toUpperCase();if(ap==='PM'&&h<12)h+=12;if(ap==='AM'&&h===12)h=0;if(h>23||n>59)return null;return h*60+n}
 function prayerKey(name){const n=String(name||'').toLowerCase();if(n.includes('fajr')||n.includes('subh'))return'fajr';if(n.includes('sunrise'))return'sunrise';if(n.includes('dhuhr')||n.includes('zuhr')||n.includes('zuhur'))return'dhuhr';if(n.includes('asr'))return'asr';if(n.includes('maghrib'))return'maghrib';if(n.includes('isha'))return'isha';return n}
 function pText(en,bn){return(localStorage.getItem('sajwa-lang')||'en')==='bn'?bn:en}
-function renderPrayerDashboard(){if(!prayerData||!Array.isArray(prayerData.times)||!prayerData.times.length)return;const now=new Date(),nowMs=now.getTime(),labels={fajr:['Fajr','ফজর'],sunrise:['Sunrise','সূর্যোদয়'],dhuhr:['Dhuhr','যোহর'],asr:['Asr','আসর'],maghrib:['Maghrib','মাগরিব'],isha:['Isha','এশা']};const rows=prayerData.times.map(x=>{const mins=prayerTimeMinutes(x.time);let at=Number(x.timestamp)>0?new Date(Number(x.timestamp)):null;if((!at||!Number.isFinite(at.getTime()))&&mins!==null)at=new Date(now.getFullYear(),now.getMonth(),now.getDate(),Math.floor(mins/60),mins%60);return{name:x.name,time:x.time,key:prayerKey(x.name),mins,at}});const main=['fajr','dhuhr','asr','maghrib','isha'];let next=rows.filter(x=>main.includes(x.key)&&x.at&&x.at.getTime()>nowMs).sort((a,b)=>a.at-b.at)[0];if(!next){const f=rows.find(x=>x.key==='fajr');if(f){let at=f.at|| (f.mins!==null?new Date(now.getFullYear(),now.getMonth(),now.getDate(),Math.floor(f.mins/60),f.mins%60):null);if(at){while(at.getTime()<=nowMs)at.setDate(at.getDate()+1);next={...f,at}}}}const date=$('prayerDate');if(date)date.textContent=now.toLocaleDateString((localStorage.getItem('sajwa-lang')||'en')==='bn'?'bn-BD':'en-GB',{weekday:'short',day:'numeric',month:'short'});if($('prayerGrid'))$('prayerGrid').innerHTML=rows.map((x,i)=>{const l=labels[x.key]||[x.name,x.name],active=!!(next&&x.key===next.key),glyph={fajr:'☾',sunrise:'☀',dhuhr:'◉',asr:'◷',maghrib:'◌',isha:'✧'}[x.key]||'✦';return '<div class="prayer-cell'+(active?' active':'')+'" data-prayer="'+esc(x.key)+'"><div class="prayer-cell-top"><span class="prayer-cell-name">'+esc(pText(l[0],l[1]))+'</span><span class="prayer-cell-glyph" aria-hidden="true">'+glyph+'</span></div><span class="prayer-cell-time">'+esc(x.time||'—')+'</span><span class="prayer-cell-state">'+(active?esc(pText('UP NEXT','পরবর্তী')):esc(pText('DAILY PRAYER','ওয়াক্ত')) )+'</span></div>'}).join('');const f=rows.find(x=>x.key==='fajr'),m=rows.find(x=>x.key==='maghrib');if($('fastingSehri'))$('fastingSehri').textContent=f?f.time:'—';if($('fastingIftar'))$('fastingIftar').textContent=m?m.time:'—';if($('sehriLabel'))$('sehriLabel').textContent=pText('SEHRI ENDS · FAJR','সেহরির শেষ সময় · ফজর');if($('iftarLabel'))$('iftarLabel').textContent=pText('IFTAR · MAGHRIB','ইফতারের সময় · মাগরিব');if($('fastingTimesTitle'))$('fastingTimesTitle').textContent=pText('Fasting times','সেহরি ও ইফতারের সময়');if($('fastingTimesHint'))$('fastingTimesHint').textContent=pText('Daily • based on local prayer times','প্রতিদিন • স্থানীয় নামাজের সময় অনুযায়ী');if($('prayerKicker'))$('prayerKicker').textContent=pText('YOUR DAILY WORSHIP','আপনার দৈনন্দিন ইবাদত');if($('prayerHeading'))$('prayerHeading').textContent=pText('Prayer times','নামাজের সময়');if($('todayScheduleLabel'))$('todayScheduleLabel').textContent=pText("Today's schedule",'আজকের সময়সূচি');if($('prayerNextLabel'))$('prayerNextLabel').textContent=pText('UPCOMING PRAYER','পরবর্তী নামাজ');if($('prayerCountdownLabel'))$('prayerCountdownLabel').textContent=pText('TIME REMAINING','বাকি সময়');if($('locBtnText'))$('locBtnText').textContent=pText('Refresh location','অবস্থান হালনাগাদ');if($('prayerNextName'))$('prayerNextName').textContent=next?pText((labels[next.key]||[next.name,next.name])[0],(labels[next.key]||[next.name,next.name])[1]):'—';if($('prayerNextTime'))$('prayerNextTime').textContent=next?next.time:'';if(next&&next.at){const sec=Math.max(0,Math.floor((next.at.getTime()-nowMs)/1000)),hh=String(Math.floor(sec/3600)).padStart(2,'0'),mm=String(Math.floor(sec%3600/60)).padStart(2,'0'),ss=String(sec%60).padStart(2,'0');if($('prayerCountdown'))$('prayerCountdown').textContent=hh+':'+mm+':'+ss;const previous=rows.filter(x=>main.includes(x.key)&&x.at&&x.at.getTime()<=nowMs).sort((a,b)=>b.at-a.at)[0];let from=previous?previous.at.getTime():next.at.getTime()-3*60*60*1000;const span=next.at.getTime()-from,pct=span>0?Math.max(0,Math.min(100,(nowMs-from)/span*100)):0;if($('prayerProgress'))$('prayerProgress').style.width=pct+'%'}else{if($('prayerCountdown'))$('prayerCountdown').textContent='--:--:--';if($('prayerProgress'))$('prayerProgress').style.width='0%'}if($('prayerStatusShort'))$('prayerStatusShort').textContent=pText('Local times','স্থানীয় সময়')}
+function renderPrayerDashboard(){if(!prayerData||!Array.isArray(prayerData.times)||!prayerData.times.length)return;const now=new Date(),nowMs=now.getTime(),labels={fajr:['Fajr','ফজর'],sunrise:['Sunrise','সূর্যোদয়'],dhuhr:['Dhuhr','যোহর'],asr:['Asr','আসর'],maghrib:['Maghrib','মাগরিব'],isha:['Isha','এশা']};const rawRows=prayerData.times.map(x=>{const mins=prayerTimeMinutes(x.time);let at=Number(x.timestamp)>0?new Date(Number(x.timestamp)):null;if((!at||!Number.isFinite(at.getTime()))&&mins!==null)at=new Date(now.getFullYear(),now.getMonth(),now.getDate(),Math.floor(mins/60),mins%60);return{name:x.name,time:x.time,key:prayerKey(x.name),mins,at}});const rows=['fajr','sunrise','dhuhr','asr','maghrib','isha'].map(key=>rawRows.find(x=>x.key===key)||({name:labels[key][0],time:'—',key,mins:null,at:null}));const main=['fajr','dhuhr','asr','maghrib','isha'];let next=rows.filter(x=>main.includes(x.key)&&x.at&&x.at.getTime()>nowMs).sort((a,b)=>a.at-b.at)[0];if(!next){const f=rows.find(x=>x.key==='fajr');if(f){let at=f.at|| (f.mins!==null?new Date(now.getFullYear(),now.getMonth(),now.getDate(),Math.floor(f.mins/60),f.mins%60):null);if(at){while(at.getTime()<=nowMs)at.setDate(at.getDate()+1);next={...f,at}}}}const date=$('prayerDate');if(date)date.textContent=now.toLocaleDateString((localStorage.getItem('sajwa-lang')||'en')==='bn'?'bn-BD':'en-GB',{weekday:'short',day:'numeric',month:'short'});if($('prayerGrid'))$('prayerGrid').innerHTML=rows.map((x,i)=>{const l=labels[x.key]||[x.name,x.name],active=!!(next&&x.key===next.key),glyph={fajr:'☾',sunrise:'☀',dhuhr:'◉',asr:'◷',maghrib:'◌',isha:'✧'}[x.key]||'✦';return '<div class="prayer-cell'+(active?' active':'')+'" data-prayer="'+esc(x.key)+'"><div class="prayer-cell-top"><span class="prayer-cell-name">'+esc(pText(l[0],l[1]))+'</span><span class="prayer-cell-glyph" aria-hidden="true">'+glyph+'</span></div><span class="prayer-cell-time">'+esc(x.time||'—')+'</span><span class="prayer-cell-state">'+(active?esc(pText('UP NEXT','পরবর্তী')):esc(pText('DAILY PRAYER','ওয়াক্ত')) )+'</span></div>'}).join('');const f=rows.find(x=>x.key==='fajr'),m=rows.find(x=>x.key==='maghrib');if($('fastingSehri'))$('fastingSehri').textContent=f?f.time:'—';if($('fastingIftar'))$('fastingIftar').textContent=m?m.time:'—';if($('sehriLabel'))$('sehriLabel').textContent=pText('SEHRI ENDS · FAJR','সেহরির শেষ সময় · ফজর');if($('iftarLabel'))$('iftarLabel').textContent=pText('IFTAR · MAGHRIB','ইফতারের সময় · মাগরিব');if($('fastingTimesTitle'))$('fastingTimesTitle').textContent=pText('Fasting times','সেহরি ও ইফতারের সময়');if($('fastingTimesHint'))$('fastingTimesHint').textContent=pText('Daily • based on local prayer times','প্রতিদিন • স্থানীয় নামাজের সময় অনুযায়ী');if($('prayerKicker'))$('prayerKicker').textContent=pText('YOUR DAILY WORSHIP','আপনার দৈনন্দিন ইবাদত');if($('prayerHeading'))$('prayerHeading').textContent=pText('Prayer times','নামাজের সময়');if($('todayScheduleLabel'))$('todayScheduleLabel').textContent=pText("Today's schedule",'আজকের সময়সূচি');if($('prayerNextLabel'))$('prayerNextLabel').textContent=pText('UPCOMING PRAYER','পরবর্তী নামাজ');if($('prayerCountdownLabel'))$('prayerCountdownLabel').textContent=pText('TIME REMAINING','বাকি সময়');if($('locBtnText'))$('locBtnText').textContent=pText('Refresh location','অবস্থান হালনাগাদ');if($('prayerNextName'))$('prayerNextName').textContent=next?pText((labels[next.key]||[next.name,next.name])[0],(labels[next.key]||[next.name,next.name])[1]):'—';if($('prayerNextTime'))$('prayerNextTime').textContent=next?next.time:'';if(next&&next.at){const sec=Math.max(0,Math.floor((next.at.getTime()-nowMs)/1000)),hh=String(Math.floor(sec/3600)).padStart(2,'0'),mm=String(Math.floor(sec%3600/60)).padStart(2,'0'),ss=String(sec%60).padStart(2,'0');if($('prayerCountdown'))$('prayerCountdown').textContent=hh+':'+mm+':'+ss;const previous=rows.filter(x=>main.includes(x.key)&&x.at&&x.at.getTime()<=nowMs).sort((a,b)=>b.at-a.at)[0];let from=previous?previous.at.getTime():next.at.getTime()-3*60*60*1000;const span=next.at.getTime()-from,pct=span>0?Math.max(0,Math.min(100,(nowMs-from)/span*100)):0;if($('prayerProgress'))$('prayerProgress').style.width=pct+'%'}else{if($('prayerCountdown'))$('prayerCountdown').textContent='--:--:--';if($('prayerProgress'))$('prayerProgress').style.width='0%'}if($('prayerStatusShort'))$('prayerStatusShort').textContent=pText('Local times','স্থানীয় সময়')}
 window.onSajwaPrayerData=function(raw){try{prayerData=JSON.parse(raw);if(!prayerData||!Array.isArray(prayerData.times)||!prayerData.times.length)throw Error('Missing prayer data');$('locationLabel').textContent=(prayerData.country||'Local location')+' · '+(prayerData.timezone||'Device time');renderPrayerDashboard();$('prayerStatus').textContent='Method: '+prayerData.method+' · Asr: '+prayerData.madhab+'. '+(prayerData.alarmsScheduled?'Automatic Adhan alarms scheduled for the next 7 days.':'Prayer times calculated. Enable exact alarms for automatic Adhan.')+' Sehri ends at Fajr; Iftar begins at Maghrib. Confirm local mosque timetable.';$('locBtn').disabled=false;$('locBtnText').textContent=pText('Refresh location','অবস্থান হালনাগাদ');$('qiblaDegree').textContent=Number(prayerData.qibla).toFixed(1)+'°';if(compassStartPending&&window.SajwaNative){compassStartPending=false;SajwaNative.startCompass();$('compassStatus').textContent='Compass active · point your phone toward the Kaaba direction.'}}catch(e){$('locBtn').disabled=false;$('prayerStatus').textContent='Prayer times could not be displayed. Please refresh location.'}};
 window.onSajwaPrayerError=msg=>{$('locBtn').disabled=false;$('prayerStatus').textContent=msg;compassStartPending=false;if(currentView==='qibla'&&$('compassStatus'))$('compassStatus').textContent=msg};
 function startCompass(){if(window.SajwaNative){compassStartPending=true;$('compassStatus').textContent='Finding your location and activating the sensor…';try{SajwaNative.requestLocation()}catch(e){compassStartPending=false;$('compassStatus').textContent='Could not start the compass. Check location permission and try again.'}}else $('compassStatus').textContent='The live compass sensor is available in the installed Android app.'}window.onSajwaCompassError=function(message){compassStartPending=false;$('compassStatus').textContent=message};
@@ -2445,4 +2445,108 @@ function showHijri(){try{const d=new Date(),fmt=new Intl.DateTimeFormat('en-u-ca
   if(window.__sajwaIntroWatchdog)clearTimeout(window.__sajwaIntroWatchdog);
 })();
 
-</script></body></html>
+</script>
+
+<style id="sajwa-functional-theme-and-language-fixes">
+/* Functional fix only: Quran reading surfaces follow the selected theme.
+   Preserve existing shapes, spacing, typography and component structure. */
+body.dark[data-theme] #quranView .listpanel,
+body.dark[data-theme] #quranView .readingpanel{
+  background:linear-gradient(145deg,var(--surface),var(--sajwa-card-2))!important;
+  color:var(--ink)!important;border-color:var(--sajwa-outline)!important;
+}
+body.dark[data-theme] #quranView .ayah,
+body.dark[data-theme] #quranView .mushaf-page,
+body.dark[data-theme] #quranView .mushaf-translation{
+  background:linear-gradient(145deg,var(--sajwa-card),var(--sajwa-card-2))!important;
+  color:var(--ink)!important;border-color:var(--sajwa-outline)!important;
+}
+body.dark[data-theme] #quranView .notice{
+  background:var(--sajwa-tint)!important;color:var(--ink)!important;
+  border-color:var(--sajwa-outline)!important;
+}
+body.dark[data-theme] #quranView .readingpanel :is(h1,h2,h3,h4,strong,label),
+body.dark[data-theme] #quranView .listpanel :is(h1,h2,h3,h4,strong,label),
+body.dark[data-theme] #quranView .mushaf-page :is(span,b){color:var(--ink)!important}
+body.dark[data-theme] #quranView .readingpanel .muted,
+body.dark[data-theme] #quranView .listpanel small,
+body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
+</style>
+<script id="sajwa-functional-language-fixes">
+(function(){
+  const bn = {
+    "Al-Quran":"আল-কুরআন","Read, reflect and listen":"পড়ুন, ভাবুন ও তিলাওয়াত শুনুন",
+    "Search surah...":"সূরা খুঁজুন...","Loading 114 surahs…":"১১৪টি সূরা লোড হচ্ছে…",
+    "Select a Surah":"একটি সূরা নির্বাচন করুন","The Noble Quran":"পবিত্র কুরআন",
+    "Surah view":"সূরা অনুযায়ী","Mushaf pages":"মুসহাফের পৃষ্ঠা",
+    "Choose a surah to begin reading.":"পড়া শুরু করতে একটি সূরা নির্বাচন করুন।",
+    "The Opening":"সূচনা","Al-Fatiha":"আল-ফাতিহা","English meaning":"ইংরেজি অর্থ",
+    "English pronunciation":"ইংরেজি উচ্চারণ","← Previous":"← আগেরটি","Next →":"পরবর্তী →",
+    "Save reading position":"পড়ার অবস্থান সংরক্ষণ","Play Surah audio":"সূরার তিলাওয়াত চালান",
+    "Stop audio":"অডিও বন্ধ করুন","Loading verses…":"আয়াত লোড হচ্ছে…",
+    "Loading Mushaf page…":"মুসহাফের পৃষ্ঠা লোড হচ্ছে…","Previous page":"আগের পৃষ্ঠা",
+    "Next page →":"পরের পৃষ্ঠা →","Offline copy":"অফলাইন কপি","Translation":"অনুবাদ",
+    "Page ":"পৃষ্ঠা ","Juz ":"পারা ","Hafs · Uthmani text":"হাফস · উসমানি পাঠ",
+    "Quran text and translations are retrieved from AlQuran Cloud. Arabic is shown alongside the selected translation. An internet connection is currently required; offline Quran downloads are a later milestone.":"কুরআনের আরবি পাঠ ও অনুবাদ AlQuran Cloud থেকে নেওয়া হয়। নির্বাচিত অনুবাদের পাশাপাশি আরবি পাঠ দেখানো হয়। বর্তমানে ব্যবহারের জন্য ইন্টারনেট সংযোগ প্রয়োজন; অফলাইনে কুরআন ডাউনলোডের সুবিধা পরবর্তী সংস্করণে যুক্ত হবে।",
+    "Qibla bearing":"কিবলার দিক","Phone heading":"ফোনের দিক",
+    "The compass will request your location and start automatically. Hold your phone flat and keep it away from magnets and metal objects.":"কম্পাস চালু করতে অবস্থানের অনুমতি চাইবে। ফোনটি সমতল রাখুন এবং চুম্বক ও ধাতব বস্তু থেকে দূরে রাখুন।",
+    "Live Qibla lock · The Kaaba marker and red pointer show the Qibla direction. Keep the phone flat for best accuracy.":"লাইভ কিবলা নির্দেশনা · কাবার চিহ্ন ও লাল সূচক কিবলার দিক দেখায়। নির্ভুলতার জন্য ফোন সমতল রাখুন।",
+    "Start compass":"কম্পাস চালু করুন","Stop":"বন্ধ করুন",
+    "The compass uses your phone's rotation sensor and local magnetic declination correction. If the needle is unstable, move the phone in a slow figure-eight and compare the direction with a trusted mosque or map.":"কম্পাসটি ফোনের ঘূর্ণন সেন্সর ও স্থানীয় চৌম্বক বিচ্যুতি সংশোধন ব্যবহার করে। সূচক স্থির না থাকলে ফোনটি ধীরে আটের মতো ঘোরান এবং নির্ভরযোগ্য মসজিদ বা মানচিত্রের দিকের সঙ্গে মিলিয়ে নিন।",
+    "Hadith Library":"হাদিস লাইব্রেরি","Explore the Prophetic tradition":"নবীজির সুন্নাহ সম্পর্কে জানুন",
+    "THE SIX MAJOR COLLECTIONS":"ছয়টি প্রধান হাদিস সংকলন","Knowledge with its source.":"সূত্রসহ নির্ভরযোগ্য জ্ঞান।",
+    "Choose a collection to browse. Every narration must retain its collection, book, hadith number and grading where supplied.":"পড়ার জন্য একটি সংকলন বেছে নিন। প্রতিটি বর্ণনার সঙ্গে সংকলন, গ্রন্থ, হাদিস নম্বর ও প্রযোজ্য ক্ষেত্রে মান উল্লেখ থাকতে হবে।",
+    "Connecting to the multilingual Hadislam data service. If the service is unavailable, use the verified Sunnah.com collection link. We will not display unattributed or unverified narrations.":"বহুভাষিক Hadislam ডেটা সেবার সঙ্গে সংযোগ করা হচ্ছে। সেবাটি পাওয়া না গেলে যাচাইকৃত Sunnah.com সংকলনের লিংক ব্যবহার করুন। সূত্রহীন বা যাচাই না করা বর্ণনা দেখানো হবে না।",
+    "Adhan On":"আজান চালু","Adhan Off":"আজান বন্ধ","Copy collection link":"সংকলনের লিংক কপি করুন",
+    "Source-referenced collection":"সূত্র-উল্লেখসহ সংকলন","Dua & Azkar":"দোয়া ও আজকার",
+    "Qur'anic supplications with verse references":"কুরআনের আয়াতের সূত্রসহ দোয়া",
+    "Supplications from the Quran":"কুরআনের দোয়া",
+    "Arabic text and translations are labelled with their Quran verse references. Tap the counter as you recite.":"আরবি পাঠ ও অনুবাদের সঙ্গে কুরআনের আয়াতের সূত্র দেওয়া আছে। পড়ার সময় কাউন্টারে চাপ দিন।"
+  };
+  const en = {
+    "সূচনা":"The Opening","আল-ফাতিহা":"Al-Fatiha","সূরা অনুযায়ী":"Surah view",
+    "মুসহাফের পৃষ্ঠা":"Mushaf pages","কিবলার দিক":"Qibla bearing","ফোনের দিক":"Phone heading",
+    "কম্পাস চালু করুন":"Start compass","বন্ধ করুন":"Stop","হাদিস লাইব্রেরি":"Hadith Library",
+    "নবীজির সুন্নাহ সম্পর্কে জানুন":"Explore the Prophetic tradition",
+    "ছয়টি প্রধান হাদিস সংকলন":"THE SIX MAJOR COLLECTIONS",
+    "সূত্রসহ নির্ভরযোগ্য জ্ঞান।":"Knowledge with its source.",
+    "আজান চালু":"Adhan On","আজান বন্ধ":"Adhan Off","আগেরটি":"Previous","পরবর্তী":"Next"
+  };
+  Object.assign(sajwaTranslations.bn,bn);
+  Object.assign(sajwaTranslations.en,en);
+  const sourceEnglish=value=>String(value||'')
+    .replace(/সহিহ বুখারি/g,'Sahih al-Bukhari')
+    .replace(/সহিহ মুসলিম/g,'Sahih Muslim')
+    .replace(/সুনান আবু দাউদ/g,'Sunan Abu Dawud')
+    .replace(/তিরমিজি/g,'Jami at-Tirmidhi')
+    .replace(/কুরআন/g,'Quran')
+    .replace(/[০-৯]/g,d=>'০১২৩৪৫৬৭৮৯'.indexOf(d));
+  const oldLearnCard=window.learnCard;
+  if(typeof oldLearnCard==='function'){
+    window.learnCard=function(item,index){
+      const html=oldLearnCard(item,index);
+      if(localStorage.getItem('sajwa-lang')!=='en'||!item||!item[6])return html;
+      return html.replace(esc(item[6]),esc(sourceEnglish(item[6])));
+    };
+  }
+  const oldSetLang=window.setLang;
+  if(typeof oldSetLang==='function'){
+    window.setLang=function(value){
+      const lang=value==='bn'?'bn':'en';
+      oldSetLang(lang);
+      requestAnimationFrame(()=>{
+        sajwaTranslateTree(document.body,lang);
+        if(typeof renderPrayerDashboard==='function'&&prayerData)renderPrayerDashboard();
+        if(typeof syncHomeAdhanToggle==='function')syncHomeAdhanToggle();
+        if(document.getElementById('learnView')?.classList.contains('active')&&typeof showLearnTab==='function')showLearnTab(window.sajwaLearnTab||'daily');
+        sajwaTranslateTree(document.body,lang);
+      });
+    };
+    const select=document.getElementById('lang');
+    if(select)select.onchange=e=>window.setLang(e.target.value);
+    window.setLang(localStorage.getItem('sajwa-lang')||'en');
+  }
+})();
+</script>
+
+</body></html>
