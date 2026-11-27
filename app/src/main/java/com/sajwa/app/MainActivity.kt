@@ -201,7 +201,8 @@ class MainActivity : Activity() {
                 return assetLoader.shouldInterceptRequest(android.net.Uri.parse(url))
             }
         }
-        webView.setBackgroundColor(android.graphics.Color.rgb(246, 245, 239))
+        // Match the WebView's exposed top inset/blank area to the SAJWA forest-green header.
+        webView.setBackgroundColor(sajwaForest)
         // Decor fitting handles status/navigation bars and cutouts; do not add a second inset.
         setContentView(webView)
         if (savedInstanceState == null) webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
