@@ -20,7 +20,7 @@ const { chromium } = require('playwright');
   const views = ['quran','prayer','qibla','dua','tasbeeh','tracker','hadith','learn','hajj','calendar','ramadan','settings'];
   for (const view of views) {
     await page.evaluate(() => window.openView('home'));
-    const card = page.locator('.feature[onclick*="openView(\\'' + view + '\\')"]').first();
+    const card = page.locator(`.feature[onclick*="openView('${view}')"]`).first();
     await card.click({ timeout: 7000 });
     const state = await page.locator('#' + view + 'View').evaluate(el => ({
       active: el.classList.contains('active'),
