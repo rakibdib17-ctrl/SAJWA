@@ -1663,79 +1663,7 @@ body[data-theme] .home-adhan-toggle{color:var(--sajwa-on-primary)!important;bord
 body[data-theme] .home-adhan-toggle.is-on{background:linear-gradient(135deg,var(--sajwa-primary-2),var(--sajwa-primary))!important}
 body[data-theme] .home-adhan-toggle .home-adhan-state{background:var(--sajwa-accent)!important}
 </style>
-<style id="sajwa-emerald-gold-full-redesign">
-:root{--lux-forest:#032b25;--lux-deep:#011a18;--lux-green:#075344;--lux-gold:#d8b66d;--lux-cream:#f7e8cc;--lux-ink:#172a25}
-html,body{background:radial-gradient(ellipse at 50% 0%,#14594c 0%,#052d28 42%,#011b19 100%)!important;color:#f8f1e3}
-body{background-attachment:fixed!important}
-header,.app-header,.topbar{background:linear-gradient(105deg,#032c27f5,#075345f2)!important;border-bottom:1px solid rgba(220,185,111,.52)!important;box-shadow:0 8px 28px #00130f66!important}
-header .brand,.brandname,.brandtitle{color:#f1d99f!important}
-header button,.headtools button,.headtools select{border:1px solid rgba(224,190,121,.55)!important;background:linear-gradient(145deg,#126452,#06382f)!important;color:#f8e8c3!important;border-radius:14px!important}
-main{max-width:1180px!important}
-.view{color:#f7efdf}
-#home{display:flex;flex-direction:column;gap:22px}
-#home #prayerDashboard{order:0}
-#home>.hero{order:1}
-#home>.sectionhead,#home>.home-tools,#home>.feature-section,#home>.daily-card{order:2}
-.prayer-dashboard{position:relative;overflow:hidden;background:linear-gradient(145deg,#f8edda 0%,#ead4ad 100%)!important;color:#183a31!important;border:1px solid #d7b66e!important;border-radius:24px!important;padding:23px!important;box-shadow:0 16px 36px #00140f70,inset 0 1px #fff!important}
-.prayer-dashboard:before{content:"۞";position:absolute;right:16px;top:-48px;font-size:210px;line-height:1;color:#9e7b3a;opacity:.08;pointer-events:none}
-.prayer-dash-head{position:relative;z-index:1;align-items:center}
-.prayer-kicker,.prayer-next-copy>span:first-child{color:#927039!important;letter-spacing:2px!important;font-weight:800}
-.prayer-dash-head h2{color:#123b31!important;font-family:Georgia,serif!important;font-size:clamp(24px,3vw,32px)!important}
-.prayer-meta,.prayer-dashboard .muted{color:#65766b!important}
-.prayer-location-btn{background:linear-gradient(135deg,#075443,#032b25)!important;color:#fff0d0!important;border:1px solid #c9a65c!important;border-radius:14px!important}
-.prayer-next-card{background:linear-gradient(120deg,#063a32,#08705a)!important;border:1px solid #d7b66e!important;border-radius:19px!important;box-shadow:0 9px 22px #174c3b33!important;color:#fff4dc!important}
-.prayer-next-card *{color:#fff2d6!important}
-.prayer-progress{background:#ffffff35!important}
-.prayer-progress span{background:linear-gradient(90deg,#d8b66d,#fff0bd)!important}
-.prayer-list-head strong{color:#173c31!important}
-.prayer-list-head span{color:#6e796e!important}
-.prayer-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
-.prayer-cell{min-height:88px!important;padding:14px 12px!important;border-radius:17px!important;background:linear-gradient(150deg,#fffaf0,#ead9bc)!important;border:1px solid #d5bd91!important;box-shadow:0 5px 13px #3e38251b,inset 0 1px #fff!important;color:#183b31!important}
-.prayer-cell b{color:#345b4b!important;font-size:14px!important}
-.prayer-cell span{color:#123d32!important;font-weight:800!important;font-size:17px!important}
-.prayer-cell.active,.prayer-cell.current,.prayer-cell.next{background:linear-gradient(145deg,#08735b,#034336)!important;border:1px solid #e4c47a!important;box-shadow:0 0 0 2px #d6b66b55,0 8px 20px #034b3d44!important}
-.prayer-cell.active b,.prayer-cell.active span,.prayer-cell.current b,.prayer-cell.current span,.prayer-cell.next b,.prayer-cell.next span{color:#fff0ce!important}
-.fasting-times{background:linear-gradient(120deg,#f4e4c8,#fff6e6)!important;border:1px solid #d6b875!important;border-radius:17px!important;color:#173b31!important}
-.fasting-times strong,.fasting-times small,.fasting-title strong{color:#244b3d!important}
-.hero{position:relative;overflow:hidden;min-height:300px!important;display:flex;align-items:center;border:1px solid #d8b66d!important;border-radius:25px!important;background:radial-gradient(circle at 85% 35%,#16725e 0%,transparent 43%),linear-gradient(125deg,#032a24 0%,#075345 60%,#0d6754 100%)!important;box-shadow:0 18px 42px #00130f80,inset 0 1px #ffffff2b!important}
-.hero:before{content:"";position:absolute;inset:0;background:repeating-radial-gradient(circle at 88% 92%,transparent 0 22px,#d9bb7830 23px 24px,transparent 25px 43px);mask-image:linear-gradient(90deg,transparent 35%,#000 100%);pointer-events:none}
-.hero-copy{position:relative;z-index:2;max-width:720px!important;padding:32px!important}
-.hero .eyebrow{color:#e3c783!important;letter-spacing:3px!important;font-weight:800}
-.hero h1{color:#fff0cf!important;font-family:Georgia,"Times New Roman",serif!important;font-size:clamp(32px,5vw,52px)!important;line-height:1.13!important;text-shadow:0 3px 18px #001a15}
-.hero p{color:#e5e8d9!important;max-width:560px;font-size:16px!important;line-height:1.7!important}
-.hero-art{opacity:.58!important;filter:drop-shadow(0 0 15px #e0c17b55)}
-.sajwa-hero-actions{gap:10px!important}
-.sajwa-hero-actions .primary{background:linear-gradient(135deg,#ffe7a9,#d7ad5d)!important;color:#173b30!important;border:1px solid #fff0c9!important;box-shadow:0 7px 18px #001c175c!important}
-.sajwa-hero-actions .ghost,.home-adhan-toggle{background:linear-gradient(135deg,#0b594a,#03352e)!important;color:#fff0d1!important;border:1px solid #d4b36d!important}
-.home-adhan-toggle.is-on{background:linear-gradient(135deg,#d9b86e,#f5dfa7)!important;color:#183c30!important}
-.sectionhead h2,.section-title,.feature-section-head h3{color:#f4dfb1!important}
-.sectionhead .muted,.feature-section-head>span{color:#d3c9ae!important}
-.home-search,.home-tabs,.feature,.daily-card{border-color:#b99a5d!important}
-.home-search{background:#f6ead6!important;color:#173b30!important}
-.home-search input{color:#183a30!important}
-.home-tab{color:#eadcbf!important}
-.home-tab.active{background:linear-gradient(135deg,#d9b86e,#f5dfa7)!important;color:#173b30!important}
-.feature{background:linear-gradient(145deg,#fff0d8,#e8d1a9)!important;color:#183a30!important;border:1px solid #d1b16c!important;border-radius:18px!important;box-shadow:0 7px 17px #00150f55!important}
-.feature strong,.feature small,.feature-copy{color:#183a30!important}
-.feature-icon{background:linear-gradient(145deg,#08745c,#034235)!important;color:#ffe7a9!important;border:1px solid #d8b66d!important}
-.viewtop h2,.viewtop h3{color:#f5e4bd!important}
-.viewtop p{color:#d5cbb6!important}
-.back,.smallbtn,.field,.search,.readerbar select{border-radius:13px!important}
-.back,.smallbtn{background:linear-gradient(135deg,#0b604e,#03352e)!important;color:#ffedc8!important;border:1px solid #d5b66f!important}
-.settings-section,.settings-hero,.reader-layout,.listpanel,.readingpanel,.tasbeeh-shell,.compass-shell,.learn-panel,.dua-card,.notice,.tracker-card{border:1px solid #c7a866!important;border-radius:20px!important;box-shadow:0 12px 28px #00140f55!important}
-.settings-section,.readingpanel,.listpanel,.learn-panel,.tracker-card{background:linear-gradient(145deg,#fff0d9,#ead4af)!important;color:#183b30!important}
-.settings-section h3,.settings-section h2,.settings-section label,.settings-section p,.readingpanel h3,.readingpanel .muted{color:#183b30!important}
-.settings-hero,.tasbeeh-shell,.compass-shell{background:radial-gradient(circle at 85% 10%,#146b57,transparent 45%),linear-gradient(145deg,#032b25,#075344)!important;color:#f8e8c4!important}
-.tasbeeh-count,.tasbeeh-dhikr,.tasbeeh-count-label,.tasbeeh-shell label{color:#ffe9b8!important}
-.tasbeeh-bead{border:2px solid #e1c078!important;background:radial-gradient(circle at 35% 25%,#16846a,#034235 72%)!important;box-shadow:0 0 0 8px #d7b66d20,0 12px 30px #00130f88!important}
-.ayah,.ayah-card,.surah-item,.prayer-cell,.theme-choice{border-radius:16px!important}
-.bottom-nav,nav.bottom-nav,.nav-bar{background:linear-gradient(110deg,#032b25f5,#075344f5)!important;border:1px solid #d2b16c!important;box-shadow:0 -8px 32px #00130f88!important}
-.bottom-nav button,.nav-bar button{color:#e9dec4!important}
-.bottom-nav button.active,.nav-bar button.active{background:linear-gradient(145deg,#d9b86e,#f5dfa7)!important;color:#163b30!important;border-radius:15px!important}
-button:focus-visible{outline:2px solid #e5c77f!important;outline-offset:3px}
-@media(max-width:600px){.prayer-dashboard{padding:17px!important}.prayer-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.prayer-cell{min-height:80px!important;padding:11px 9px!important}.prayer-cell b{font-size:12px!important}.prayer-cell span{font-size:15px!important}.hero{min-height:290px!important}.hero-copy{padding:23px!important}.hero-art{opacity:.3!important;position:absolute;right:-65px;bottom:-25px;width:230px}.hero h1{font-size:34px!important}.hero p{font-size:14px!important}.sajwa-hero-actions{display:flex;flex-wrap:wrap}.sajwa-hero-actions>*{flex:1 1 auto}}
-@media(prefers-reduced-motion:no-preference){.feature,.prayer-cell,.theme-choice,.home-adhan-toggle{transition:transform .22s ease,box-shadow .22s ease}.feature:active,.theme-choice:active{transform:scale(.985)}}
-</style>
+
 <style id="sajwa-reference-contrast-prayer-fix">
 :root{--ref-gold:#d5b36c;--ref-ink:#19372f}
 .viewtop h2,.viewtop h3{color:#fff0cb!important}.viewtop p{color:#e4dac4!important;opacity:1!important}
@@ -1931,27 +1859,7 @@ body.dark[data-theme] .prayer-dashboard .prayer-cell{background:linear-gradient(
 </style>
 
 
-<style id="sajwa-prayer-dashboard-final-visibility">
-#prayerDashboard{display:block!important;visibility:visible!important;opacity:1!important}
-#prayerDashboard .prayer-next-card{display:flex!important;position:relative!important;isolation:isolate!important;min-height:112px!important;visibility:visible!important;opacity:1!important;background:linear-gradient(125deg,#07372e 0%,#0b5945 62%,#14765a 100%)!important;color:#fff!important}
-#prayerDashboard .prayer-next-copy,#prayerDashboard .prayer-count-wrap{display:flex!important;flex-direction:column!important;visibility:visible!important;opacity:1!important;min-width:0!important;z-index:1!important}
-#prayerDashboard .prayer-next-copy>span,#prayerDashboard .prayer-count-wrap>span{display:block!important;color:#f5dfaa!important;visibility:visible!important;opacity:1!important}
-#prayerDashboard .prayer-next-copy strong,#prayerDashboard .prayer-count-wrap strong{display:block!important;color:#fff!important;visibility:visible!important;opacity:1!important;text-shadow:0 1px 2px #0005!important}
-#prayerDashboard .prayer-next-copy>span:last-child{color:#fff!important}
-#prayerDashboard .prayer-progress{display:block!important;visibility:visible!important;opacity:1!important}
-#prayerDashboard #prayerGrid{display:grid!important;visibility:visible!important;opacity:1!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
-#prayerDashboard #prayerGrid .prayer-cell{display:flex!important;visibility:visible!important;opacity:1!important;min-width:0!important;background:linear-gradient(150deg,#fffdf7,#f1e7d2)!important;color:#17372d!important}
-#prayerDashboard #prayerGrid .prayer-cell .prayer-cell-name{display:block!important;color:#17372d!important;visibility:visible!important;opacity:1!important}
-#prayerDashboard #prayerGrid .prayer-cell .prayer-cell-time{display:block!important;color:#075b45!important;visibility:visible!important;opacity:1!important}
-#prayerDashboard #prayerGrid .prayer-cell .prayer-cell-state{display:inline-flex!important;color:#6d705f!important;visibility:visible!important;opacity:1!important}
-#prayerDashboard #prayerGrid .prayer-cell.active{background:linear-gradient(145deg,#082b23,#145b45)!important;border:1.5px solid #d9bd82!important}
-#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-name,#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-time{color:#fff!important}
-#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state{background:#d9bd82!important;color:#17372d!important}
-body.dark #prayerDashboard #prayerGrid .prayer-cell:not(.active){background:linear-gradient(150deg,#263a34,#1c302b)!important}
-body.dark #prayerDashboard #prayerGrid .prayer-cell:not(.active) .prayer-cell-name{color:#f5f1e6!important}
-body.dark #prayerDashboard #prayerGrid .prayer-cell:not(.active) .prayer-cell-time{color:#c7e9df!important}
-@media(max-width:380px){#prayerDashboard .prayer-next-card{gap:7px;padding:15px 11px 21px!important}#prayerDashboard .prayer-count-wrap strong{font-size:17px!important}#prayerDashboard #prayerGrid .prayer-cell{min-height:96px!important;padding:10px 8px!important}}
-</style>
+
 </head><body>
 
 <div id="appIntro" role="dialog" aria-label="SAJWA welcome animation">
@@ -2051,7 +1959,7 @@ body.dark #prayerDashboard #prayerGrid .prayer-cell:not(.active) .prayer-cell-ti
 </div>
 <div class="settings-section">
 <div class="settings-heading"><span class="settings-heading-icon">⌁</span><div><h3>Language & privacy</h3><p>Your choices stay on this device</p></div></div>
-<div class="settings-control"><label for="settingsLanguage"><b>App language</b><small>Change all supported interface labels</small></label><select id="settingsLanguage" class="settings-select" onchange="setLang(this.value)"><option value="en">English</option><option value="bn">বাংলা</option></select></div>
+<div class="settings-control"><label for="settingsLanguage"><b>App language</b><small>Change all supported interface labels</small></label><select id="settingsLanguage" class="settings-select" onchange="setLang(this.value)"><option value="en">English</option><option value="bn">বাংলা</option><option value="ar">العربية</option></select></div>
 <div class="settings-privacy-note"><span>🔒</span><p><b>Your worship, your privacy.</b><br>App preferences, counters and saved items are kept in this app's local storage. Cloud sync is not enabled.</p></div>
 </div>
 <div class="settings-section settings-support">
@@ -2095,13 +2003,13 @@ function sajwaTranslateValue(value,lang){const canonical=sajwaCanonicalText(valu
 function sajwaTranslateNode(node,lang){if(!node||node.nodeType!==3)return;const current=node.nodeValue??'',applied=sajwaAppliedText.get(node);let original=sajwaOriginalText.get(node);if(original===undefined|| (applied!==undefined&&current!==applied)){original=sajwaCanonicalText(current);sajwaOriginalText.set(node,original)}const clean=original.trim();if(!clean)return;const lead=original.match(/^\\s*/)?.[0]||'',trail=original.match(/\\s*$/)?.[0]||'',next=lead+sajwaTranslateValue(clean,lang)+trail;if(current!==next)node.nodeValue=next;sajwaAppliedText.set(node,next)}
 function sajwaTranslateTree(root=document.body,lang=localStorage.getItem('sajwa-lang')||'en'){if(!root)return;const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;while((node=walker.nextNode())){if(node.parentElement?.closest('script,style,.ayah-ar,.ayah-tr,.dua-ar,.dua-tr,.pronunciation,.daily-arabic,.daily-meaning,.tasbeeh-dhikr'))continue;if(!node.parentElement?.closest('.learn-content'))sajwaTranslateNode(node,lang)}root.querySelectorAll?.('input[placeholder],input[aria-label],button[aria-label],select[aria-label],img[alt],title').forEach(el=>{for(const attr of ['placeholder','aria-label','alt','title'])if(el.hasAttribute(attr)){let saved=sajwaOriginalAttrs.get(el);if(!saved){saved={};sajwaOriginalAttrs.set(el,saved)}const current=el.getAttribute(attr);if(saved[attr]===undefined)saved[attr]=sajwaCanonicalText(current);else if(current!==saved[attr]&&current!==sajwaTranslateValue(saved[attr],lang))saved[attr]=sajwaCanonicalText(current);el.setAttribute(attr,sajwaTranslateValue(saved[attr],lang))}})}
 let sajwaObserver=null;
-function sajwaEnableTranslation(){if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body,localStorage.getItem('sajwa-lang')||'en');sajwaObserver=new MutationObserver(records=>{const lang=localStorage.getItem('sajwa-lang')||'en';for(const record of records){if(record.type==='characterData')sajwaTranslateNode(record.target,lang);record.addedNodes?.forEach(n=>{if(n.nodeType===3)sajwaTranslateNode(n,lang);else if(n.nodeType===1)sajwaTranslateTree(n,lang)})}});sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true})}
+function sajwaEnableTranslation(){if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body,localStorage.getItem('sajwa-lang')||'en');sajwaObserver=new MutationObserver(records=>{const lang=localStorage.getItem('sajwa-lang')||'en';for(const record of records){if(record.type==='characterData')sajwaTranslateNode(record.target,lang);record.addedNodes?.forEach(n=>{if(n.nodeType===3)sajwaTranslateNode(n,lang);else if(n.nodeType===1)sajwaTranslateTree(n,lang)})}});sajwaObserver.observe(document.body,{subtree:true,childList:true})}
 function dismissIntro(){const el=document.getElementById('appIntro');if(el)el.classList.add('dismissed');try{sessionStorage.setItem('sajwa-intro-seen','1')}catch(e){}}
 function playIntro(){const el=document.getElementById('appIntro');if(!el)return;try{if(sessionStorage.getItem('sajwa-intro-seen')==='1'){el.classList.add('dismissed');return}}catch(e){}setTimeout(dismissIntro,2000)}
 
 const words={en:{welcome:"Let your heart find its way back.",intro:"A thoughtful space for Quran, prayer and remembrance — made for your everyday journey."},bn:{welcome:"হৃদয় ফিরে আসুক প্রশান্তির পথে।",intro:"কুরআন, নামাজ ও আল্লাহর স্মরণের জন্য আপনার প্রতিদিনের সঙ্গী।"},ar:{welcome:"دع قلبك يجد طريقه إلى السكينة.",intro:"مساحة للتلاوة والصلاة والذكر في رحلتك اليومية."}};
 let dailyReflectionsReady=false;
-function translateTasbeehControls(lang){const select=$('dhikrPreset');document.querySelectorAll('.tasbeeh-tap-hint').forEach(el=>{const en=el.querySelector('.tap-en'),bn=el.querySelector('.tap-bn');if(en)en.hidden=lang!=='en';if(bn)bn.hidden=lang!=='bn';el.dir=lang==='ar'?'rtl':'ltr';});if(!select)return;const labels={en:['سُبْحَانَ اللَّهِ · SubhanAllah','الْحَمْدُ لِلَّهِ · Alhamdulillah','اللَّهُ أَكْبَرُ · Allahu Akbar','أَسْتَغْفِرُ اللَّهَ · Astaghfirullah','Custom dhikr…'],bn:['سُبْحَانَ اللَّهِ · সুবহানাল্লাহ','الْحَمْدُ لِلَّهِ · আলহামদুলিল্লাহ','اللَّهُ أَكْبَرُ · আল্লাহু আকবার','أَسْتَغْفِرُ اللَّهَ · আস্তাগফিরুল্লাহ','নিজের জিকির লিখুন…'],ar:['سُبْحَانَ اللَّهِ · سبحان الله','الْحَمْدُ لِلَّهِ · الحمد لله','اللَّهُ أَكْبَرُ · الله أكبر','أَسْتَغْفِرُ اللَّهَ · أستغفر الله','ذكر مخصص…']};[...select.options].forEach((o,i)=>{if(i<5)o.textContent=labels[lang][i]});select.dir='ltr';select.style.textAlign='start';const custom=$('customDhikr');if(custom){custom.placeholder=lang==='bn'?'নিজের জিকির লিখুন':lang==='ar'?'اكتب ذكرك':'Write your own dhikr';custom.dir=lang==='ar'?'rtl':'auto'}const target=$('tasTarget');if(target)target.dir='ltr';} function setLang(v){if(!['en','bn','ar'].includes(v))v='en';try{localStorage.setItem('sajwa-lang',v)}catch(e){}document.documentElement.lang=v;document.documentElement.dir=v==='ar'?'rtl':'ltr';const selector=$('lang');if(selector&&selector.value!==v)selector.value=v;const settingsSelector=$('settingsLanguage');if(settingsSelector&&settingsSelector.value!==v)settingsSelector.value=v;$('welcome').textContent=words[v].welcome;$('intro').textContent=words[v].intro;if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body,v);translateTasbeehControls(v);if(dailyReflectionsReady)updateDailyReflection();if(document.getElementById('learnContent')&&document.getElementById('learnView')?.classList.contains('active'))showLearnTab(window.sajwaLearnTab||'kalima');if(sajwaObserver)sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true});window.dispatchEvent(new CustomEvent('sajwa:languagechange',{detail:{language:v}}));if(typeof renderPrayerDashboard==='function'&&prayerData)renderPrayerDashboard();}
+function translateTasbeehControls(lang){const select=$('dhikrPreset');document.querySelectorAll('.tasbeeh-tap-hint').forEach(el=>{const en=el.querySelector('.tap-en'),bn=el.querySelector('.tap-bn');if(en)en.hidden=lang!=='en';if(bn)bn.hidden=lang!=='bn';el.dir=lang==='ar'?'rtl':'ltr';});if(!select)return;const labels={en:['سُبْحَانَ اللَّهِ · SubhanAllah','الْحَمْدُ لِلَّهِ · Alhamdulillah','اللَّهُ أَكْبَرُ · Allahu Akbar','أَسْتَغْفِرُ اللَّهَ · Astaghfirullah','Custom dhikr…'],bn:['سُبْحَانَ اللَّهِ · সুবহানাল্লাহ','الْحَمْدُ لِلَّهِ · আলহামদুলিল্লাহ','اللَّهُ أَكْبَرُ · আল্লাহু আকবার','أَسْتَغْفِرُ اللَّهَ · আস্তাগফিরুল্লাহ','নিজের জিকির লিখুন…'],ar:['سُبْحَانَ اللَّهِ · سبحان الله','الْحَمْدُ لِلَّهِ · الحمد لله','اللَّهُ أَكْبَرُ · الله أكبر','أَسْتَغْفِرُ اللَّهَ · أستغفر الله','ذكر مخصص…']};[...select.options].forEach((o,i)=>{if(i<5)o.textContent=labels[lang][i]});select.dir='ltr';select.style.textAlign='start';const custom=$('customDhikr');if(custom){custom.placeholder=lang==='bn'?'নিজের জিকির লিখুন':lang==='ar'?'اكتب ذكرك':'Write your own dhikr';custom.dir=lang==='ar'?'rtl':'auto'}const target=$('tasTarget');if(target)target.dir='ltr';} function setLang(v){if(!['en','bn','ar'].includes(v))v='en';try{localStorage.setItem('sajwa-lang',v)}catch(e){}document.documentElement.lang=v;document.documentElement.dir=v==='ar'?'rtl':'ltr';const selector=$('lang');if(selector&&selector.value!==v)selector.value=v;const settingsSelector=$('settingsLanguage');if(settingsSelector&&settingsSelector.value!==v)settingsSelector.value=v;$('welcome').textContent=words[v].welcome;$('intro').textContent=words[v].intro;if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body,v);translateTasbeehControls(v);if(dailyReflectionsReady)updateDailyReflection();if(document.getElementById('learnContent')&&document.getElementById('learnView')?.classList.contains('active'))showLearnTab(window.sajwaLearnTab||'kalima');if(sajwaObserver)sajwaObserver.observe(document.body,{subtree:true,childList:true});window.dispatchEvent(new CustomEvent('sajwa:languagechange',{detail:{language:v}}));if(typeof renderPrayerDashboard==='function'&&prayerData)renderPrayerDashboard();}
 const savedSajwaLang=localStorage.getItem('sajwa-lang')||'en';const initialSajwaLang=['en','bn','ar'].includes(savedSajwaLang)?savedSajwaLang:'en';$('lang').value=initialSajwaLang;setLang(initialSajwaLang);sajwaEnableTranslation();playIntro();$('lang').onchange=e=>setLang(e.target.value);
 function setTheme(d){const enabled=!!d;document.body.classList.toggle('dark',enabled);document.documentElement.style.colorScheme=enabled?'dark':'light';$('theme').textContent=enabled?'☀':'☾';$('theme').setAttribute('aria-label',enabled?'Switch to light mode':'Switch to dark mode');try{localStorage.setItem('sajwa-dark',enabled?'1':'0')}catch(e){}if(window.syncSettingsControls)syncSettingsControls()}
 let savedTheme='0';try{savedTheme=localStorage.getItem('sajwa-dark')||'0'}catch(e){}setTheme(savedTheme==='1');$('theme').addEventListener('click',()=>setTheme(!document.body.classList.contains('dark')));
@@ -2688,60 +2596,7 @@ html[lang="bn"] #prayerDashboard .fasting-title strong{font-size:clamp(14px,3.8v
 </script>
 
 
-<style id="sajwa-prayer-state-authoritative-fix">
-/* Final authority: the next-prayer tile must remain legible in both themes. */
-#prayerDashboard #prayerGrid .prayer-cell.active,
-#prayerDashboard #prayerGrid .prayer-cell.current,
-#prayerDashboard #prayerGrid .prayer-cell.next{
-  background:linear-gradient(145deg,#0b7058 0%,#064b3b 58%,#03352c 100%)!important;
-  border:1.5px solid #e2c47b!important;
-  color:#fff!important;
-  box-shadow:0 0 0 2px #d6b66b55,0 9px 22px #034b3d44!important;
-  opacity:1!important;visibility:visible!important;
-}
-#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-name,
-#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-time,
-#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state,
-#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-glyph,
-#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-name,
-#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-time,
-#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-state,
-#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-glyph,
-#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-name,
-#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-time,
-#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-state,
-#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-glyph{
-  color:#fff!important;opacity:1!important;visibility:visible!important;
-}
-#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state,
-#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-state,
-#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-state{
-  display:inline-flex!important;align-self:flex-start!important;
-  background:#e2c47b!important;color:#17372d!important;
-  border-radius:99px!important;padding:5px 9px!important;
-}
-#prayerDashboard .prayer-next-card{background:linear-gradient(125deg,#07372e,#0b5945 62%,#14765a)!important;color:#fff!important}
-#prayerDashboard .prayer-next-card :is(span,strong){color:#fff!important;opacity:1!important;visibility:visible!important}
-#prayerDashboard .prayer-next-card .prayer-next-copy>span:first-child,
-#prayerDashboard .prayer-next-card .prayer-count-wrap>span{color:#f5dfaa!important}
-body.dark #prayerDashboard #prayerGrid .prayer-cell.active,
-body.dark #prayerDashboard #prayerGrid .prayer-cell.current,
-body.dark #prayerDashboard #prayerGrid .prayer-cell.next{
-  background:linear-gradient(145deg,#0b7058,#03352c)!important;
-}
-</style>
-<script id="sajwa-prayer-language-refresh">
-(function(){
-  function refreshPrayerLanguage(){
-    const lang=localStorage.getItem('sajwa-lang')||'en';
-    const labels={en:["UPCOMING PRAYER","TIME REMAINING","Today's schedule","Local times"],bn:["পরবর্তী নামাজ","বাকি সময়","আজকের সময়সূচি","স্থানীয় সময়"],ar:["الصلاة القادمة","الوقت المتبقي","مواقيت اليوم","التوقيت المحلي"]};
-    const t=labels[lang]||labels.en;
-    [['prayerNextLabel',t[0]],['prayerCountdownLabel',t[1]],['todayScheduleLabel',t[2]],['prayerStatusShort',t[3]]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value});
-    if(typeof renderPrayerDashboard==='function'&&window.prayerData)renderPrayerDashboard();
-  }
-  window.addEventListener('sajwa:languagechange',refreshPrayerLanguage);
-  document.addEventListener('DOMContentLoaded',refreshPrayerLanguage,{once:true});
-})();
-</script>
+
+
 
 </body></html>
