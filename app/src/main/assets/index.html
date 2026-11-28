@@ -2568,14 +2568,11 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
     requestAnimationFrame(()=>applyQiblaLanguage(lang));
     setTimeout(()=>applyQiblaLanguage(lang),30);
   }
-  const originalSetLang=window.setLang;
-  if(typeof originalSetLang==='function'){
-    window.setLang=function(value){
-      const lang=['bn','en','ar'].includes(value)?value:'en';
-      originalSetLang(lang);
-      refreshQiblaLanguage(lang);
-    };
-  }
+  // The core setLang is the only language controller. Qibla listens to its event.
+  window.addEventListener('sajwa:languagechange',event=>{
+    const lang=['bn','en','ar'].includes(event.detail?.language)?event.detail.language:'en';
+    refreshQiblaLanguage(lang);
+  });
   const originalOpenView=window.openView;
   if(typeof originalOpenView==='function'){
     window.openView=function(value){
@@ -2584,8 +2581,6 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
       return result;
     };
   }
-  const langSelect=document.getElementById('lang');
-  if(langSelect)langSelect.onchange=event=>window.setLang(event.target.value);
   refreshQiblaLanguage(localStorage.getItem('sajwa-lang')||'en');
 })();
 </script>
@@ -2594,20 +2589,20 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
 <style id="sajwa-prayer-light-active-visibility-fix">
 /* Upcoming prayer tile follows the selected SAJWA theme in light and dark modes. */
 #prayerDashboard #prayerGrid .prayer-cell.active{
-  background:radial-gradient(circle at 90% 0%,color-mix(in srgb,var(--sajwa-accent) 30%,transparent),transparent 44%),linear-gradient(145deg,var(--sajwa-dark-primary),var(--sajwa-primary) 60%,var(--sajwa-primary-2))!important;
-  border:1.5px solid var(--sajwa-accent)!important;
-  box-shadow:0 9px 22px var(--sajwa-glow),inset 0 1px 0 #ffffff55!important;
+  background:linear-gradient(145deg,#082b23 0%,#124638 58%,#1b6048 100%)!important;
+  border:1.5px solid #d9bd82!important;
+  box-shadow:0 9px 22px #082b2430,inset 0 1px 0 #ffffff55!important;
+  color:#ffffff!important;
+  opacity:1!important;
+  visibility:visible!important;
 }
 #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-name,
-#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-time{color:var(--sajwa-on-primary)!important}
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-time,
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state{color:#ffffff!important;opacity:1!important;visibility:visible!important}
 #prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state{
-  background:color-mix(in srgb,var(--sajwa-accent) 30%,var(--sajwa-primary))!important;
-  color:var(--sajwa-on-primary)!important;
+  background:#28634d!important;border:1px solid #d9bd8266!important;border-radius:99px!important;
 }
-#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-glyph{
-  background:color-mix(in srgb,var(--sajwa-accent) 24%,var(--sajwa-primary))!important;
-  color:var(--sajwa-accent-soft)!important;
-}
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-glyph{color:#f0dfb5!important}
 </style>
 <script id="sajwa-qibla-language-sync-fix">
 (function(){
@@ -2624,8 +2619,8 @@ body.dark[data-theme] #quranView .mushaf-page-foot{color:var(--muted)!important}
     if(msg&&status)msg.textContent=t[status]||t.status;
     const root=document.getElementById('qiblaView');if(root)root.setAttribute('data-language',l);
   }
-  const originalSetLang=window.setLang;
-  if(typeof originalSetLang==='function')window.setLang=function(v){originalSetLang(v);apply();};
+  // Subscribe to the single core language controller; never wrap/replace setLang.
+  window.addEventListener('sajwa:languagechange',()=>apply());
   const originalOpenView=window.openView;
   if(typeof originalOpenView==='function')window.openView=function(v){const result=originalOpenView(v);if(v==='qibla')apply();return result;};
   const originalStart=window.startCompass;
