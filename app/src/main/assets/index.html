@@ -1969,7 +1969,7 @@ body.dark #prayerDashboard #prayerGrid .prayer-cell:not(.active) .prayer-cell-ti
   <div class="intro-name">SAJWA</div><div class="intro-tag">FIND PEACE IN FAITH</div><div class="intro-line"></div>
  </div>
 </div>
-<header><div class="brand"><div class="brandmark" aria-label="SAJWA logo"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 3.5 28.2 15.8 40.5 20 28.2 24.2 24 36.5 19.8 24.2 7.5 20 19.8 15.8 24 3.5Z" stroke="#f3e5c2" stroke-width="1.5"/><path d="M24 11.5 27 20l8.5 3-8.5 3-3 8.5-3-8.5-8.5-3 8.5-3 3-8.5Z" fill="#d6b779"/><circle cx="24" cy="23" r="3.2" fill="#082c23"/><path d="M24 1v5M24 42v5M1 24h5M42 24h5" stroke="#f3e5c2" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="brandname">SAJWA</div><div class="brandtag">FIND PEACE IN FAITH</div></div></div><div class="headtools"><select id="lang" aria-label="Language"><option value="en">English</option><option value="bn">বাংলা</option></select><button class="iconbtn" id="theme" aria-label="Toggle theme">☾</button></div></header>
+<header><div class="brand"><div class="brandmark" aria-label="SAJWA logo"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 3.5 28.2 15.8 40.5 20 28.2 24.2 24 36.5 19.8 24.2 7.5 20 19.8 15.8 24 3.5Z" stroke="#f3e5c2" stroke-width="1.5"/><path d="M24 11.5 27 20l8.5 3-8.5 3-3 8.5-3-8.5-8.5-3 8.5-3 3-8.5Z" fill="#d6b779"/><circle cx="24" cy="23" r="3.2" fill="#082c23"/><path d="M24 1v5M24 42v5M1 24h5M42 24h5" stroke="#f3e5c2" stroke-width="1.2" stroke-linecap="round"/></svg></div><div><div class="brandname">SAJWA</div><div class="brandtag">FIND PEACE IN FAITH</div></div></div><div class="headtools"><select id="lang" aria-label="Language"><option value="en">English</option><option value="bn">বাংলা</option><option value="ar">العربية</option></select><button class="iconbtn" id="theme" aria-label="Toggle theme">☾</button></div></header>
 <main>
 <section id="home" class="view active">
 <section class="prayer prayer-dashboard" id="prayerDashboard">
@@ -2165,7 +2165,7 @@ function openBatterySettings(){if(window.SajwaNative&&typeof SajwaNative.openBat
 
 function prayerTimeMinutes(value){const str=String(value||'').replace(/[\\u00a0\\u202f]/g,' ').trim();const m=str.match(/(\\d{1,2}):(\\d{2})(?::\\d{2})?\\s*(AM|PM)?/i);if(!m)return null;let h=+m[1],n=+m[2],ap=(m[3]||'').toUpperCase();if(ap==='PM'&&h<12)h+=12;if(ap==='AM'&&h===12)h=0;if(h>23||n>59)return null;return h*60+n}
 function prayerKey(name){const n=String(name||'').normalize('NFKD').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9\u0980-\u09ff\u0600-\u06ff]+/g,' ').trim();if(n.includes('fajr')||n.includes('subh')||n.includes('ফজর')||n.includes('الفجر'))return'fajr';if(n.includes('sunrise')||n==='shuruq'||n==='shurooq'||n.includes('সূর্যোদয়')||n.includes('الشروق'))return'sunrise';if(n.includes('dhuhr')||n.includes('zuhr')||n.includes('zuhur')||n.includes('noon')||n.includes('যোহর')||n.includes('الظهر'))return'dhuhr';if(n.includes('asr')||n.includes('আসর')||n.includes('العصر'))return'asr';if(n.includes('maghrib')||n.includes('sunset')||n==='iftar'||n.includes('মাগরিব')||n.includes('المغرب'))return'maghrib';if(n.includes('isha')||n.includes('এশা')||n.includes('العشاء'))return'isha';return n}
-function pText(en,bn){return(localStorage.getItem('sajwa-lang')||'en')==='bn'?bn:en}
+const sajwaArabicPrayerLabels={Fajr:'الفجر',Sunrise:'الشروق',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'};function pText(en,bn){const lang=localStorage.getItem('sajwa-lang')||'en';return lang==='bn'?bn:lang==='ar'?(sajwaArabicPrayerLabels[en]||en):en}
 function renderPrayerDashboard(){if(!prayerData||!Array.isArray(prayerData.times)||!prayerData.times.length)return;const now=new Date(),nowMs=now.getTime(),labels={fajr:['Fajr','ফজর'],sunrise:['Sunrise','সূর্যোদয়'],dhuhr:['Dhuhr','যোহর'],asr:['Asr','আসর'],maghrib:['Maghrib','মাগরিব'],isha:['Isha','এশা']};const rawRows=prayerData.times.map(x=>{const mins=prayerTimeMinutes(x.time);let at=Number(x.timestamp)>0?new Date(Number(x.timestamp)):null;if((!at||!Number.isFinite(at.getTime()))&&mins!==null)at=new Date(now.getFullYear(),now.getMonth(),now.getDate(),Math.floor(mins/60),mins%60);return{name:x.name,time:x.time,key:prayerKey(x.name),mins,at}});const rows=['fajr','sunrise','dhuhr','asr','maghrib','isha'].map(key=>rawRows.find(x=>x.key===key)||({name:labels[key][0],time:'—',key,mins:null,at:null}));const main=['fajr','dhuhr','asr','maghrib','isha'];let next=rows.filter(x=>main.includes(x.key)&&x.at&&x.at.getTime()>nowMs).sort((a,b)=>a.at-b.at)[0];if(!next){const f=rows.find(x=>x.key==='fajr');if(f){let at=f.at|| (f.mins!==null?new Date(now.getFullYear(),now.getMonth(),now.getDate(),Math.floor(f.mins/60),f.mins%60):null);if(at){while(at.getTime()<=nowMs)at.setDate(at.getDate()+1);next={...f,at}}}}const date=$('prayerDate');if(date)date.textContent=now.toLocaleDateString((localStorage.getItem('sajwa-lang')||'en')==='bn'?'bn-BD':'en-GB',{weekday:'short',day:'numeric',month:'short'});if($('prayerGrid'))$('prayerGrid').innerHTML=rows.map((x,i)=>{const l=labels[x.key]||[x.name,x.name],active=!!(next&&x.key===next.key),glyph={fajr:'☾',sunrise:'☀',dhuhr:'◉',asr:'◷',maghrib:'◌',isha:'✧'}[x.key]||'✦';return '<div class="prayer-cell'+(active?' active':'')+'" data-prayer="'+esc(x.key)+'"><div class="prayer-cell-top"><span class="prayer-cell-name">'+esc(pText(l[0],l[1]))+'</span><span class="prayer-cell-glyph" aria-hidden="true">'+glyph+'</span></div><span class="prayer-cell-time">'+esc(x.time||'—')+'</span><span class="prayer-cell-state">'+(active?esc(pText('UP NEXT','পরবর্তী')):esc(pText('DAILY PRAYER','ওয়াক্ত')) )+'</span></div>'}).join('');const f=rows.find(x=>x.key==='fajr'),m=rows.find(x=>x.key==='maghrib');if($('fastingSehri'))$('fastingSehri').textContent=f?f.time:'—';if($('fastingIftar'))$('fastingIftar').textContent=m?m.time:'—';if($('sehriLabel'))$('sehriLabel').textContent=pText('SEHRI ENDS · FAJR','সেহরির শেষ সময় · ফজর');if($('iftarLabel'))$('iftarLabel').textContent=pText('IFTAR · MAGHRIB','ইফতারের সময় · মাগরিব');if($('fastingTimesTitle'))$('fastingTimesTitle').textContent=pText('Fasting times','সেহরি ও ইফতারের সময়');if($('fastingTimesHint'))$('fastingTimesHint').textContent=pText('Daily • based on local prayer times','প্রতিদিন • স্থানীয় নামাজের সময় অনুযায়ী');if($('prayerKicker'))$('prayerKicker').textContent=pText('YOUR DAILY WORSHIP','আপনার দৈনন্দিন ইবাদত');if($('prayerHeading'))$('prayerHeading').textContent=pText('Prayer times','নামাজের সময়');if($('todayScheduleLabel'))$('todayScheduleLabel').textContent=pText("Today's schedule",'আজকের সময়সূচি');if($('prayerNextLabel'))$('prayerNextLabel').textContent=pText('UPCOMING PRAYER','পরবর্তী নামাজ');if($('prayerCountdownLabel'))$('prayerCountdownLabel').textContent=pText('TIME REMAINING','বাকি সময়');if($('locBtnText'))$('locBtnText').textContent=pText('Refresh location','অবস্থান হালনাগাদ');if($('prayerNextName'))$('prayerNextName').textContent=next?pText((labels[next.key]||[next.name,next.name])[0],(labels[next.key]||[next.name,next.name])[1]):'—';if($('prayerNextTime'))$('prayerNextTime').textContent=next?next.time:'';if(next&&next.at){const sec=Math.max(0,Math.floor((next.at.getTime()-nowMs)/1000)),hh=String(Math.floor(sec/3600)).padStart(2,'0'),mm=String(Math.floor(sec%3600/60)).padStart(2,'0'),ss=String(sec%60).padStart(2,'0');if($('prayerCountdown'))$('prayerCountdown').textContent=hh+':'+mm+':'+ss;const previous=rows.filter(x=>main.includes(x.key)&&x.at&&x.at.getTime()<=nowMs).sort((a,b)=>b.at-a.at)[0];let from=previous?previous.at.getTime():next.at.getTime()-3*60*60*1000;const span=next.at.getTime()-from,pct=span>0?Math.max(0,Math.min(100,(nowMs-from)/span*100)):0;if($('prayerProgress'))$('prayerProgress').style.width=pct+'%'}else{if($('prayerCountdown'))$('prayerCountdown').textContent='--:--:--';if($('prayerProgress'))$('prayerProgress').style.width='0%'}if($('prayerStatusShort'))$('prayerStatusShort').textContent=pText('Local times','স্থানীয় সময়')}
 window.onSajwaPrayerData=function(raw){try{prayerData=JSON.parse(raw);window.prayerData=prayerData;if(!prayerData||!Array.isArray(prayerData.times)||!prayerData.times.length)throw Error('Missing prayer data');$('locationLabel').textContent=(prayerData.country||'Local location')+' · '+(prayerData.timezone||'Device time');renderPrayerDashboard();$('prayerStatus').textContent='Method: '+prayerData.method+' · Asr: '+prayerData.madhab+'. '+(prayerData.alarmsScheduled?'Automatic Adhan alarms scheduled for the next 7 days.':'Prayer times calculated. Enable exact alarms for automatic Adhan.')+' Sehri ends at Fajr; Iftar begins at Maghrib. Confirm local mosque timetable.';$('locBtn').disabled=false;$('locBtnText').textContent=pText('Refresh location','অবস্থান হালনাগাদ');$('qiblaDegree').textContent=Number(prayerData.qibla).toFixed(1)+'°';if(compassStartPending&&window.SajwaNative){compassStartPending=false;SajwaNative.startCompass();$('compassStatus').textContent='Compass active · point your phone toward the Kaaba direction.'}}catch(e){$('locBtn').disabled=false;$('prayerStatus').textContent='Prayer times could not be displayed. Please refresh location.'}};
 window.onSajwaPrayerError=msg=>{$('locBtn').disabled=false;$('prayerStatus').textContent=msg;compassStartPending=false;if(currentView==='qibla'&&$('compassStatus'))$('compassStatus').textContent=msg};
@@ -2684,6 +2684,63 @@ html[lang="bn"] #prayerDashboard .fasting-title strong{font-size:clamp(14px,3.8v
  window.addEventListener('sajwa:languagechange',apply);
  window.addEventListener('sajwa:prayerdata',apply);
  apply();
+})();
+</script>
+
+
+<style id="sajwa-prayer-state-authoritative-fix">
+/* Final authority: the next-prayer tile must remain legible in both themes. */
+#prayerDashboard #prayerGrid .prayer-cell.active,
+#prayerDashboard #prayerGrid .prayer-cell.current,
+#prayerDashboard #prayerGrid .prayer-cell.next{
+  background:linear-gradient(145deg,#0b7058 0%,#064b3b 58%,#03352c 100%)!important;
+  border:1.5px solid #e2c47b!important;
+  color:#fff!important;
+  box-shadow:0 0 0 2px #d6b66b55,0 9px 22px #034b3d44!important;
+  opacity:1!important;visibility:visible!important;
+}
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-name,
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-time,
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state,
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-glyph,
+#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-name,
+#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-time,
+#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-state,
+#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-glyph,
+#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-name,
+#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-time,
+#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-state,
+#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-glyph{
+  color:#fff!important;opacity:1!important;visibility:visible!important;
+}
+#prayerDashboard #prayerGrid .prayer-cell.active .prayer-cell-state,
+#prayerDashboard #prayerGrid .prayer-cell.current .prayer-cell-state,
+#prayerDashboard #prayerGrid .prayer-cell.next .prayer-cell-state{
+  display:inline-flex!important;align-self:flex-start!important;
+  background:#e2c47b!important;color:#17372d!important;
+  border-radius:99px!important;padding:5px 9px!important;
+}
+#prayerDashboard .prayer-next-card{background:linear-gradient(125deg,#07372e,#0b5945 62%,#14765a)!important;color:#fff!important}
+#prayerDashboard .prayer-next-card :is(span,strong){color:#fff!important;opacity:1!important;visibility:visible!important}
+#prayerDashboard .prayer-next-card .prayer-next-copy>span:first-child,
+#prayerDashboard .prayer-next-card .prayer-count-wrap>span{color:#f5dfaa!important}
+body.dark #prayerDashboard #prayerGrid .prayer-cell.active,
+body.dark #prayerDashboard #prayerGrid .prayer-cell.current,
+body.dark #prayerDashboard #prayerGrid .prayer-cell.next{
+  background:linear-gradient(145deg,#0b7058,#03352c)!important;
+}
+</style>
+<script id="sajwa-prayer-language-refresh">
+(function(){
+  function refreshPrayerLanguage(){
+    const lang=localStorage.getItem('sajwa-lang')||'en';
+    const labels={en:["UPCOMING PRAYER","TIME REMAINING","Today's schedule","Local times"],bn:["পরবর্তী নামাজ","বাকি সময়","আজকের সময়সূচি","স্থানীয় সময়"],ar:["الصلاة القادمة","الوقت المتبقي","مواقيت اليوم","التوقيت المحلي"]};
+    const t=labels[lang]||labels.en;
+    [['prayerNextLabel',t[0]],['prayerCountdownLabel',t[1]],['todayScheduleLabel',t[2]],['prayerStatusShort',t[3]]].forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value});
+    if(typeof renderPrayerDashboard==='function'&&window.prayerData)renderPrayerDashboard();
+  }
+  window.addEventListener('sajwa:languagechange',refreshPrayerLanguage);
+  document.addEventListener('DOMContentLoaded',refreshPrayerLanguage,{once:true});
 })();
 </script>
 
