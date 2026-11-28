@@ -2,7 +2,7 @@ name: Build SAJWA Android APK
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev/build198-ui-notification-widget]
   workflow_dispatch:
 
 permissions:
