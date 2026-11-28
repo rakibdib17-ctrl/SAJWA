@@ -1860,6 +1860,28 @@ body.dark[data-theme] .prayer-dashboard .prayer-cell{background:linear-gradient(
 
 
 
+
+<style id="sajwa-brand-theme-polish-v1">
+body[data-theme="pink"]{--forest:#74364f;--forest2:#a94f72;--gold:#c36b91;--gold2:#f6d7e4;--paper:#fff5f8;--surface:#fff;--ink:#3c2430;--muted:#765d68;--line:#efdce4;--soft:#f9eaf0;--sajwa-primary:#74364f;--sajwa-primary-2:#a94f72;--sajwa-accent:#d78eac;--sajwa-accent-soft:#f8dce8;--sajwa-on-primary:#fff9fc;--sajwa-tint:#fae8ef;--sajwa-card:#fffdfd;--sajwa-card-2:#fff0f5;--sajwa-outline:#edcfdd;--sajwa-glow:rgba(116,54,79,.18);--sajwa-dark-primary:#351923}
+body.dark[data-theme="pink"]{--paper:#21151c;--surface:#30202a;--ink:#fff0f6;--muted:#d4b6c4;--line:#513746;--soft:#3b2632;--sajwa-primary:#4c2638;--sajwa-primary-2:#713b55;--sajwa-accent:#d18aaa;--sajwa-accent-soft:#f2c9dc;--sajwa-on-primary:#fff7fb;--sajwa-tint:#402837;--sajwa-card:#30202a;--sajwa-card-2:#3a2732;--sajwa-outline:#604052;--sajwa-glow:rgba(209,138,170,.16);--sajwa-dark-primary:#21131a}
+body[data-theme="pink"] header,body[data-theme="pink"] .bottomnav{background:#74364f!important}
+body[data-theme="pink"] .hero{background:radial-gradient(ellipse at 82% 25%,#d78eac 0,transparent 42%),linear-gradient(120deg,#492334,#8d4562)!important}
+body[data-theme="pink"] .feature-icon,body[data-theme="pink"] .prayer-cell.active{background:linear-gradient(145deg,#a94f72,#74364f)!important}
+body[data-theme="pink"] .primary,body[data-theme="pink"] .home-adhan-toggle{background:linear-gradient(135deg,#a94f72,#74364f)!important;color:#fff!important}
+body[data-theme="pink"] .theme-pink{background:linear-gradient(120deg,#51283a,#d78eac)}
+body[data-theme] .settings-section,body[data-theme] .card,body[data-theme] .contentpanel,body[data-theme] .feature,body[data-theme] .prayer-cell,body[data-theme] .settings-action,body[data-theme] .settings-select,body[data-theme] .theme-choice{color:var(--ink);background-color:var(--surface)}
+body[data-theme] .muted,body[data-theme] .settings-heading p,body[data-theme] .settings-inline-row small,body[data-theme] .settings-control small,body[data-theme] .theme-choice small{color:var(--muted)!important;opacity:1}
+body[data-theme] input,body[data-theme] select,body[data-theme] textarea{color:var(--ink);background-color:var(--surface);border-color:var(--line)}
+body[data-theme] button:focus-visible,body[data-theme] select:focus-visible,body[data-theme] input:focus-visible,body[data-theme] textarea:focus-visible{outline:3px solid var(--sajwa-accent)!important;outline-offset:3px}
+body[data-theme] .theme-choice.active{border:2px solid var(--sajwa-primary);box-shadow:0 0 0 3px var(--sajwa-glow)}
+body[data-theme] .brandname{color:var(--sajwa-accent-soft)!important}
+body[data-theme] .brandtag{color:#fff!important;opacity:.9}
+html[lang="bn"] .brandname,html[lang="bn"] .brandtag{font-family:"Noto Sans Bengali","Hind Siliguri",sans-serif!important;letter-spacing:0!important}
+html[lang="ar"] body,html[lang="ar"] button,html[lang="ar"] input,html[lang="ar"] select,html[lang="ar"] .brandname,html[lang="ar"] .brandtag{font-family:"Amiri","Noto Naskh Arabic",serif}
+html[lang="ar"] .brandname{font-size:24px!important;letter-spacing:0!important}
+html[lang="ar"] .brandtag{font-size:14px!important;letter-spacing:0!important}
+@media(prefers-reduced-motion:reduce){body[data-theme] *,body[data-theme] *:before,body[data-theme] *:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
 </head><body>
 
 <div id="appIntro" role="dialog" aria-label="SAJWA welcome animation">
@@ -1941,6 +1963,7 @@ body.dark[data-theme] .prayer-dashboard .prayer-cell{background:linear-gradient(
 <button class="theme-choice" data-theme-choice="midnight" onclick="applySajwaTheme('midnight')"><span class="theme-preview theme-midnight"><i></i><i></i><i></i></span><b>Midnight</b><small>Deep focus</small><span class="theme-check">✓</span></button>
 <button class="theme-choice" data-theme-choice="royal" onclick="applySajwaTheme('royal')"><span class="theme-preview theme-royal"><i></i><i></i><i></i></span><b>Royal</b><small>Quiet luxury</small><span class="theme-check">✓</span></button>
 <button class="theme-choice" data-theme-choice="rose" onclick="applySajwaTheme('rose')"><span class="theme-preview theme-rose"><i></i><i></i><i></i></span><b>Rose</b><small>Warm & gentle</small><span class="theme-check">✓</span></button>
+<button class="theme-choice" data-theme-choice="pink" onclick="applySajwaTheme('pink')"><span class="theme-preview theme-pink"><i></i><i></i><i></i></span><b>Pink</b><small>Soft blush</small><span class="theme-check">✓</span></button>
 <button class="theme-choice" data-theme-choice="sand" onclick="applySajwaTheme('sand')"><span class="theme-preview theme-sand"><i></i><i></i><i></i></span><b>Sand</b><small>Soft neutral</small><span class="theme-check">✓</span></button>
 </div>
 <div class="settings-inline-row"><div><b>Dark appearance</b><small>Use a darker version of your selected theme</small></div><button id="settingsDarkToggle" class="settings-switch" role="switch" aria-checked="false" onclick="setTheme(!document.body.classList.contains('dark'));syncSettingsControls()"><span></span></button></div>
@@ -2014,7 +2037,7 @@ const savedSajwaLang=localStorage.getItem('sajwa-lang')||'en';const initialSajwa
 function setTheme(d){const enabled=!!d;document.body.classList.toggle('dark',enabled);document.documentElement.style.colorScheme=enabled?'dark':'light';$('theme').textContent=enabled?'☀':'☾';$('theme').setAttribute('aria-label',enabled?'Switch to light mode':'Switch to dark mode');try{localStorage.setItem('sajwa-dark',enabled?'1':'0')}catch(e){}if(window.syncSettingsControls)syncSettingsControls()}
 let savedTheme='0';try{savedTheme=localStorage.getItem('sajwa-dark')||'0'}catch(e){}setTheme(savedTheme==='1');$('theme').addEventListener('click',()=>setTheme(!document.body.classList.contains('dark')));
 function syncNativeSystemBars(){try{if(!window.SajwaNative||!window.SajwaNative.setSystemBarColors)return;const css=getComputedStyle(document.body);const color=(document.body.classList.contains('dark')?css.getPropertyValue('--sajwa-dark-primary'):css.getPropertyValue('--sajwa-primary')).trim()||'#082b23';window.SajwaNative.setSystemBarColors(color)}catch(e){}}
-function applySajwaTheme(id){const allowed=['emerald','ocean','midnight','royal','rose','sand'];if(!allowed.includes(id))id='emerald';document.body.dataset.theme=id;document.documentElement.dataset.theme=id;try{localStorage.setItem('sajwa-theme',id)}catch(e){}requestAnimationFrame(()=>{syncNativeSystemBars();if(window.syncSettingsControls)syncSettingsControls()})}
+function applySajwaTheme(id){const allowed=['emerald','ocean','midnight','royal','rose','pink','sand'];if(!allowed.includes(id))id='emerald';document.body.dataset.theme=id;document.documentElement.dataset.theme=id;try{localStorage.setItem('sajwa-theme',id)}catch(e){}requestAnimationFrame(()=>{syncNativeSystemBars();if(window.syncSettingsControls)syncSettingsControls()})}
 new MutationObserver(syncNativeSystemBars).observe(document.body,{attributes:true,attributeFilter:['class','data-theme']});
 const initialPalette=localStorage.getItem('sajwa-theme')||'emerald';applySajwaTheme(initialPalette);
 function syncSettingsLanguage(){const x=$('settingsLanguage');if(x)x.value=localStorage.getItem('sajwa-lang')||'en'}
@@ -2599,4 +2622,30 @@ html[lang="bn"] #prayerDashboard .fasting-title strong{font-size:clamp(14px,3.8v
 
 
 
+
+<script id="sajwa-brand-language-and-contrast-v1">
+(function(){
+'use strict';
+const brandCopy={en:{name:'SAJWA',tag:'FIND PEACE IN WORSHIP'},bn:{name:'সাজওয়া',tag:'ইবাদতে খুঁজে নিন প্রশান্তি'},ar:{name:'سجوى',tag:'اعثر على السكينة في العبادة'}};
+function paintBrand(){
+ const lang=['bn','ar'].includes(document.documentElement.lang)?document.documentElement.lang:'en',copy=brandCopy[lang];
+ document.querySelectorAll('.brandname,.intro-name').forEach(el=>{el.textContent=copy.name;el.setAttribute('lang',lang);el.dir=lang==='ar'?'rtl':'ltr'});
+ document.querySelectorAll('.brandtag,.intro-tag').forEach(el=>{el.textContent=copy.tag;el.setAttribute('lang',lang);el.dir=lang==='ar'?'rtl':'ltr'});
+ document.title=lang==='bn'?'সাজওয়া — ইবাদতে প্রশান্তি':lang==='ar'?'سجوى — السكينة في العبادة':'SAJWA — Find Peace in Worship';
+ const meta=document.querySelector('meta[name="theme-color"]');if(meta){const color=getComputedStyle(document.body).getPropertyValue('--sajwa-primary').trim();meta.content=color||'#74364f'}
+}
+const baseSetLang=window.setLang;
+if(typeof baseSetLang==='function'){window.setLang=function(lang){const result=baseSetLang.apply(this,arguments);requestAnimationFrame(paintBrand);return result}}
+window.addEventListener('sajwa:languagechange',paintBrand);window.addEventListener('pageshow',paintBrand);document.addEventListener('DOMContentLoaded',paintBrand);
+new MutationObserver(paintBrand).observe(document.documentElement,{attributes:true,attributeFilter:['lang','data-theme']});
+window.sajwaContrastAudit=function(){
+ const rgb=s=>(s.match(/[0-9.]+/g)||[]).slice(0,3).map(Number);
+ const lum=a=>{const x=a.map(v=>v/255).map(v=>v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*x[0]+.7152*x[1]+.0722*x[2]};
+ const ratio=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+ const css=getComputedStyle(document.body),result={theme:document.body.dataset.theme||'emerald',mode:document.body.classList.contains('dark')?'dark':'light',bodyTextBackground:ratio(rgb(css.color),rgb(css.backgroundColor)).toFixed(2),minimum:'4.5:1 normal text'};
+ window.__sajwaContrastAudit=result;return result;
+};
+paintBrand();
+})();
+</script>
 </body></html>
