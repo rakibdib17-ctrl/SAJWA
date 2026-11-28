@@ -2042,7 +2042,7 @@ ar:{
 "Update prayer times":"تحديث أوقات الصلاة","Enable exact prayer alarms":"تفعيل تنبيهات الصلاة الدقيقة","Exact prayer alarm access is enabled.":"تم تفعيل إذن تنبيهات الصلاة الدقيقة.","Enable Alarms & reminders for SAJWA in Android settings, then return and tap this button again.":"فعّل إذن المنبهات والتذكيرات لتطبيق SAJWA من إعدادات أندرويد، ثم عد واضغط الزر مرة أخرى.","Location is turned off. Enable Location/GPS in Android settings and try again.":"خدمات الموقع متوقفة. فعّل الموقع أو GPS من إعدادات أندرويد ثم حاول مرة أخرى.","Compass accuracy is low. Move away from magnets and slowly rotate the phone in a figure-eight.":"دقة البوصلة منخفضة. ابتعد عن المغناطيس والمعادن وحرّك الهاتف ببطء على شكل رقم ثمانية."
 }};
 const sajwaOriginalText=new WeakMap(),sajwaOriginalAttrs=new WeakMap();
-function sajwaTranslateNode(node,lang){if(!node||node.nodeType!==3)return;let original=sajwaOriginalText.get(node);if(original===undefined){original=node.nodeValue;sajwaOriginalText.set(node,original)}const clean=original.trim();if(!clean)return;const dict=sajwaTranslations[lang]||{};let result=dict[clean];if(!result){result=clean;const keys=Object.keys(dict).sort((a,b)=>b.length-a.length);for(const key of keys){if(result.includes(key))result=result.split(key).join(dict[key])}}if(result!==clean||lang==='en'){const lead=original.match(/^\s*/)?.[0]||'',trail=original.match(/\s*$/)?.[0]||'';const next=lead+result+trail;if(node.nodeValue!==next)node.nodeValue=next}else if(node.nodeValue!==original)node.nodeValue=original}
+function sajwaTranslateNode(node,lang){if(!node||node.nodeType!==3)return;let state=sajwaOriginalText.get(node);const current=node.nodeValue??'';if(!state){state={source:current,output:null};sajwaOriginalText.set(node,state)}else if(current!==state.output){state.source=current}const original=state.source,clean=original.trim();if(!clean){state.output=original;return}const dict=sajwaTranslations[lang]||{};let result=dict[clean];if(!result){result=clean;const keys=Object.keys(dict).sort((a,b)=>b.length-a.length);for(const key of keys){if(result.includes(key))result=result.split(key).join(dict[key])}}const lead=original.match(/^\\s*/)?.[0]||'',trail=original.match(/\\s*$/)?.[0]||'',next=lead+result+trail;if(current!==next)node.nodeValue=next;state.output=next}
 function sajwaTranslateTree(root=document.body,lang=localStorage.getItem('sajwa-lang')||'en'){const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;while((node=walker.nextNode())){if(node.parentElement?.closest('script,style,.ayah-ar,.ayah-tr,.dua-ar,.dua-tr,.pronunciation,.daily-arabic,.daily-meaning,.tasbeeh-dhikr'))continue;if(!node.parentElement?.closest('.learn-content'))sajwaTranslateNode(node,lang)}root.querySelectorAll?.('input[placeholder],input[aria-label],button[aria-label],select[aria-label],img[alt],title').forEach(el=>{for(const attr of ['placeholder','aria-label','alt','title'])if(el.hasAttribute(attr)){let saved=sajwaOriginalAttrs.get(el);if(!saved){saved={};sajwaOriginalAttrs.set(el,saved)}if(saved[attr]===undefined)saved[attr]=el.getAttribute(attr);const raw=saved[attr];el.setAttribute(attr,(sajwaTranslations[lang]||{})[raw]||raw)}})}
 let sajwaObserver=null;
 function sajwaEnableTranslation(){if(sajwaObserver)sajwaObserver.disconnect();sajwaTranslateTree(document.body);sajwaObserver=new MutationObserver(records=>{const lang=localStorage.getItem('sajwa-lang')||'en';for(const record of records){if(record.type==='characterData')sajwaTranslateNode(record.target,lang);record.addedNodes?.forEach(n=>{if(n.nodeType===3)sajwaTranslateNode(n,lang);else if(n.nodeType===1)sajwaTranslateTree(n,lang)})}});sajwaObserver.observe(document.body,{subtree:true,childList:true,characterData:true})}
@@ -2665,4 +2665,19 @@ button{ -webkit-tap-highlight-color:transparent }
 }
 </style>
 
+
+<style id="sajwa-adhan-theme-final-fix">
+/* Keep the Adhan toggle inside the active SAJWA palette in every state. */
+body[data-theme] .home-adhan-toggle,
+body[data-theme] .home-adhan-toggle.is-on,
+body[data-theme] .home-adhan-toggle:not(.is-on){
+  background:linear-gradient(135deg,var(--sajwa-primary),var(--sajwa-primary-2))!important;
+  color:var(--sajwa-on-primary)!important;
+  border:1px solid var(--sajwa-accent)!important;
+}
+body[data-theme] .home-adhan-toggle .home-adhan-state{
+  background:var(--sajwa-accent)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--sajwa-accent) 20%,transparent)!important;
+}
+</style>
 </body></html>
